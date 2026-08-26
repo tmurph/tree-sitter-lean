@@ -508,6 +508,7 @@ module.exports = grammar({
       $.arrow,
       $.fun,
       $.quantifier,
+      $.big_operator,
       $.let,
       $.have,
       $.if,
@@ -762,6 +763,12 @@ module.exports = grammar({
       ',',
       field('body', $._expression),
     ),
+
+    // Indexed big-union/intersection/sup/inf notation — see #10.
+    big_operator: $ => prec.right(seq(
+      field('operator', choice('⋃', '⋂', '⨆', '⨅')),
+      $._quantifier_tail,
+    )),
 
     // Have expression: `have h : T := proof; body`
     have: $ => prec.right(seq(
