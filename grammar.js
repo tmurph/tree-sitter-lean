@@ -58,6 +58,7 @@ module.exports = grammar({
     $._syntax_quotation_body,   // Inner content of `` `( ... ) `` (balanced)
     $._brace_field_sep,         // Newline as field separator inside `{ … }`
     $._by_cases_name_token,     // Identifier immediately followed by `:` — see #14
+    $._tactic_comma_token,      // `,` between `tactic_use` arguments — see #29
   ],
 
   // Keyword extraction improves error detection and compile time
@@ -874,6 +875,7 @@ module.exports = grammar({
       $.tactic_cases,
       $.tactic_by_cases,
       $.tactic_choose,
+      $.tactic_use,
       $.tactic_rewrite,
       $.tactic_have,
       $.tactic_let,
@@ -954,6 +956,17 @@ module.exports = grammar({
       choice('choose', token('choose!')),
       repeat1(field('binder', $.identifier)),
       optional(seq('using', field('using', $._expression))),
+    )),
+
+    // `use e1, e2, ...` — see #29. Comma between arguments uses
+    // `$._tactic_comma_token` (external scanner), not a plain literal `,`
+    // — costs ~1200 extra states, a cheaper GLR-fork alternative was tried
+    // and rejected as non-deterministic-feeling for nested `use`.
+    // `(discharger := ...)` intentionally not supported.
+    tactic_use: $ => prec.right(seq(
+      choice('use', token('use!')),
+      field('arg', $._expression),
+      repeat(seq(alias($._tactic_comma_token, ','), field('arg', $._expression))),
     )),
 
     // `rw`/`rewrite` always take a config list, optionally with `at`

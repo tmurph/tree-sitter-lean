@@ -34,6 +34,7 @@ enum TokenType {
   SYNTAX_QUOTATION_BODY,  // content inside `` `( ... ) `` up to matching `)`
   BRACE_FIELD_SEP,        // newline-as-separator inside `{ … }` struct instance
   BY_CASES_NAME,          // identifier immediately (mod spaces) followed by `:`
+  TACTIC_COMMA,           // `,` between `tactic_use` arguments (see step 6)
 };
 
 #define MAX_DEPTH 64
@@ -267,6 +268,15 @@ bool tree_sitter_lean_external_scanner_scan(
       }
       return false;
     }
+  }
+
+  /* 0c. TACTIC_COMMA — a `,` between `tactic_use` arguments, always
+         preferred over LAYOUT_END where valid — see #29. */
+  if (valid_symbols[TACTIC_COMMA] && lexer->lookahead == ',') {
+    lexer->advance(lexer, false);
+    lexer->mark_end(lexer);
+    lexer->result_symbol = TACTIC_COMMA;
+    return true;
   }
 
   /* 1y. BRACE_FIELD_SEP — inside `{ … }`, a newline acts as a field

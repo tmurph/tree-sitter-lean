@@ -413,3 +413,88 @@ example : True := by
           binder: (identifier)
           binder: (identifier)
           binder: (identifier))))))
+
+===============
+Tactic Use Many
+===============
+
+example : True := by
+  use (X i), (Y i), ?_, ?_, hKt
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (example
+      type: (true)
+      body: (by
+        (tactic_use
+          arg: (parenthesized
+            (application
+              name: (identifier)
+              arguments: (identifier)))
+          arg: (parenthesized
+            (application
+              name: (identifier)
+              arguments: (identifier)))
+          arg: (synthetic_hole)
+          arg: (synthetic_hole)
+          arg: (identifier))))))
+
+================
+Tactic Use Alone
+================
+
+example : True := by
+  use x
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (example
+      type: (true)
+      body: (by
+        (tactic_use
+          arg: (identifier))))))
+
+===============
+Tactic Use Bang
+===============
+
+example : True := by
+  use! x
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (example
+      type: (true)
+      body: (by
+        (tactic_use
+          arg: (identifier))))))
+
+===========================
+Tactic Use Nested In Parens
+===========================
+
+def f : Nat × Nat := ⟨(by use 1, 2, 3), 4⟩
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      type: (binary_expression
+        left: (identifier)
+        right: (identifier))
+      body: (anonymous_constructor
+        (parenthesized
+          (by
+            (tactic_use
+              arg: (number)
+              arg: (number)
+              arg: (number))))
+        (number)))))
