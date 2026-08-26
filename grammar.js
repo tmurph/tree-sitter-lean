@@ -83,6 +83,8 @@ module.exports = grammar({
     [$.import, $._modifier],
     [$._syntax_atom, $._atom],
     [$._atom, $._pattern],
+    // See #12.
+    [$.anonymous_constructor, $.anonymous_constructor_pattern],
     [$.inductive],
     [$.class_inductive],
     [$.return, $.do_return],
@@ -998,6 +1000,7 @@ module.exports = grammar({
       $.tuple_pattern,
       $.constructor_pattern,
       $.syntax_quotation,
+      $.anonymous_constructor_pattern,
     ),
 
     // Tuple pattern: `(a, b)` or `(a, b, c)`
@@ -1008,6 +1011,9 @@ module.exports = grammar({
       commaSep1($._pattern),
       ')',
     ),
+
+    // rcases-style destructuring pattern used by `obtain` — see #12.
+    anonymous_constructor_pattern: $ => seq('⟨', commaSep($._pattern), '⟩'),
 
     // List pattern: `[x]`, `[x, y]` — only in do_let to avoid
     // GLR conflict with instance_binder in fun binders.
