@@ -571,6 +571,7 @@ module.exports = grammar({
     _atom: $ => choice(
       $.identifier,
       $.escaped_identifier,
+      $.sort_star,
       $.number,
       $.float,
       $.string,
@@ -1298,6 +1299,9 @@ module.exports = grammar({
 
     // Escaped identifier: `«name with spaces»`
     escaped_identifier: _ => /«[^»]*»/,
+
+    // Auto-bound-universe sugar `Type*`/`Sort*` — see #7.
+    sort_star: _ => choice('Type*', 'Sort*'),
 
     float: _ => token(prec(1, seq(/\d+/, '.', optional(/\d+/)))),
 
