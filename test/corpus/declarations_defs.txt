@@ -496,3 +496,87 @@ theorem foo := sorry
     (definition
       (identifier)
       (sorry))))
+
+==================================
+Theorem With By Proof And Where
+==================================
+
+theorem foo : True := by
+  exact bar
+where
+  bar : True := trivial
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      type: (true)
+      body: (by
+        (tactic_apply
+          tactic: (identifier)
+          arg: (identifier)))
+      body: (where_decl
+        name: (identifier)
+        type: (true)
+        body: (identifier)))))
+
+=============================================
+Theorem With Multi-Tactic By Proof And Where
+=============================================
+
+theorem foo : True := by
+  have h := bar
+  exact h
+where
+  bar : True := trivial
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      type: (true)
+      body: (by
+        (tactic_have
+          name: (identifier)
+          value: (identifier))
+        (tactic_apply
+          tactic: (identifier)
+          arg: (identifier)))
+      body: (where_decl
+        name: (identifier)
+        type: (true)
+        body: (identifier)))))
+
+======================================
+Theorem With By Proof And Multi-Where
+======================================
+
+theorem foo : True := by
+  exact bar
+where
+  bar : True := baz
+  baz : True := trivial
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      type: (true)
+      body: (by
+        (tactic_apply
+          tactic: (identifier)
+          arg: (identifier)))
+      body: (where_decl
+        name: (identifier)
+        type: (true)
+        body: (identifier))
+      body: (where_decl
+        name: (identifier)
+        type: (true)
+        body: (identifier)))))

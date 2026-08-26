@@ -352,11 +352,21 @@ module.exports = grammar({
     ),
 
     // Shared body production for definition and instance — factored out
-    // to let the parser reuse states across both declaration forms.
+    // to let the parser reuse states across both declaration forms. The
+    // `:=`-bodied alternative can be followed by its own trailing `where`
+    // clause (mutual-recursion sugar) — see #45.
     _declaration_body: $ => choice(
-      seq(':=', $._layout_start, field('body', $._expression), $._layout_end),
-      seq('where', $._layout_start, repeat1(seq(field('body', $.where_decl), optional($._layout_semicolon))), $._layout_end),
+      seq(':=', $._layout_start, field('body', $._expression), $._layout_end, optional($._where_clause)),
+      $._where_clause,
       repeat1($.match_arm),
+    ),
+
+    // `where` clause: one or more auxiliary declarations, indentation-
+    // delimited like any other layout block. Shared between the
+    // `where`-as-body form (structure-instance style, no `:=`) and the
+    // trailing form above.
+    _where_clause: $ => seq(
+      'where', $._layout_start, repeat1(seq(field('body', $.where_decl), optional($._layout_semicolon))), $._layout_end,
     ),
 
     // instance — name is optional; aliased to `definition` in the parse tree.
