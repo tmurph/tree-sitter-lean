@@ -580,3 +580,50 @@ where
         name: (identifier)
         type: (true)
         body: (identifier)))))
+
+=============================================
+Equation-Style Definition With Trailing Where
+=============================================
+
+def f : Nat → Nat
+  | 0 => 1
+  | n+1 => aux n
+where
+  aux : Nat → Nat
+    | 0 => 1
+    | n+1 => aux n
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      type: (arrow
+        domain: (identifier)
+        codomain: (identifier))
+      (match_arm
+        patterns: (number)
+        body: (number))
+      (match_arm
+        patterns: (binary_expression
+          left: (identifier)
+          right: (number))
+        body: (application
+          name: (identifier)
+          arguments: (identifier)))
+      body: (where_decl
+        name: (identifier)
+        type: (arrow
+          domain: (identifier)
+          codomain: (identifier))
+        (match_arm
+          patterns: (number)
+          body: (number))
+        (match_arm
+          patterns: (binary_expression
+            left: (identifier)
+            right: (number))
+          body: (application
+            name: (identifier)
+            arguments: (identifier)))))))

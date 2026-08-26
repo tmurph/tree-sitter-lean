@@ -352,13 +352,14 @@ module.exports = grammar({
     ),
 
     // Shared body production for definition and instance — factored out
-    // to let the parser reuse states across both declaration forms. The
-    // `:=`-bodied alternative can be followed by its own trailing `where`
-    // clause (mutual-recursion sugar) — see #45.
+    // to let the parser reuse states across both declaration forms. Both
+    // the `:=`-bodied and equation-style (match_arm) alternatives can be
+    // followed by their own trailing `where` clause (mutual-recursion
+    // sugar) — see #45.
     _declaration_body: $ => choice(
       seq(':=', $._layout_start, field('body', $._expression), $._layout_end, optional($._where_clause)),
       $._where_clause,
-      repeat1($.match_arm),
+      seq(repeat1($.match_arm), optional($._where_clause)),
     ),
 
     // `where` clause: one or more auxiliary declarations, indentation-
