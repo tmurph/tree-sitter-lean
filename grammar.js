@@ -644,6 +644,8 @@ module.exports = grammar({
       field('arguments', choice(
         $._atom,
         alias($._tight_projection, $.projection),
+        alias($._tight_complement, $.complement),
+        alias($._tight_inverse, $.inverse),
         $.fun,
         $.if,
         $.match,
@@ -677,16 +679,29 @@ module.exports = grammar({
       optional(field('modifier', choice('!', '?'))),
     )),
 
-    // Set complement `sᶜ` — see #9. NOTE: `f xᶜ` parses as `(f x)ᶜ`, not
-    // `f (xᶜ)` (see the issue for why, and whether that's been revisited).
+    // Set complement `sᶜ` — see #9. `f xᶜ` now correctly binds as
+    // `f (xᶜ)` via `_tight_complement` below — see #37.
     complement: $ => prec.left(PREC.proj, seq(
       field('term', $._expression),
       token.immediate('ᶜ'),
     )),
 
-    // Inverse `f⁻¹` — see #31. Mirrors `complement` just above.
+    // Inverse `f⁻¹` — see #31. Mirrors `complement` just above. `f x⁻¹`
+    // binds as `f (x⁻¹)` via `_tight_inverse` below — see #37.
     inverse: $ => prec.left(PREC.proj, seq(
       field('term', $._expression),
+      token.immediate('⁻¹'),
+    )),
+
+    // Tight complement/inverse, for use as an application argument — see
+    // #37. Mirrors `_tight_projection` above.
+    _tight_complement: $ => prec.left(PREC.proj, seq(
+      field('term', choice($._atom, alias($._tight_complement, $.complement))),
+      token.immediate('ᶜ'),
+    )),
+
+    _tight_inverse: $ => prec.left(PREC.proj, seq(
+      field('term', choice($._atom, alias($._tight_inverse, $.inverse))),
       token.immediate('⁻¹'),
     )),
 
