@@ -6,8 +6,8 @@ edition = "2021"
 keywords = ["tree-sitter", "parser", "lean", "lean4"]
 license = "MIT"
 name = "tree-sitter-lean4"
-repository = "https://github.com/wvhulle/tree-sitter-lean"
-version = "0.3.0"
+repository = "https://github.com/tmurph/tree-sitter-lean"
+version = "0.4.0"
 
 build = "build.rs"
 include = ["build.rs", "src/*", "grammar.js", "grammar/*", "tree-sitter.json"]
