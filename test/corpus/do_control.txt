@@ -8,19 +8,20 @@ instance : do return ToString Nat where
 ---
 
 (module
-  (definition
-    type: (do
-      (do_return
-        value: (application
-          name: (identifier)
-          arguments: (identifier))))
-    body: (where_decl
-      name: (identifier)
-      binders: (explicit_binder
+  (decorated_declaration
+    declaration: (definition
+      type: (do
+        (do_return
+          value: (application
+            name: (identifier)
+            arguments: (identifier))))
+      body: (where_decl
         name: (identifier)
-        type: (identifier))
-      type: (identifier)
-      body: (string))))
+        binders: (explicit_binder
+          name: (identifier)
+          type: (identifier))
+        type: (identifier)
+        body: (string)))))
 
 ===================
 Nested If/Then/Else
@@ -93,20 +94,21 @@ def tryCatch1 : IO Unit := do
 ---
 
 (module
-  (definition
-    name: (identifier)
-    type: (application
+  (decorated_declaration
+    declaration: (definition
       name: (identifier)
-      arguments: (identifier))
-    body: (do
-      (try
-        body: (application
-          name: (identifier)
-          arguments: (parenthesized))
-        var: (identifier)
-        handler: (application
-          name: (identifier)
-          arguments: (parenthesized))))))
+      type: (application
+        name: (identifier)
+        arguments: (identifier))
+      body: (do
+        (try
+          body: (application
+            name: (identifier)
+            arguments: (parenthesized))
+          var: (identifier)
+          handler: (application
+            name: (identifier)
+            arguments: (parenthesized)))))))
 
 ==============================
 Do Try Catch With Wildcard
@@ -121,20 +123,21 @@ def tryCatch2 : IO Unit := do
 ---
 
 (module
-  (definition
-    name: (identifier)
-    type: (application
+  (decorated_declaration
+    declaration: (definition
       name: (identifier)
-      arguments: (identifier))
-    body: (do
-      (try
-        body: (application
-          name: (identifier)
-          arguments: (parenthesized))
-        var: (hole)
-        handler: (application
-          name: (identifier)
-          arguments: (parenthesized))))))
+      type: (application
+        name: (identifier)
+        arguments: (identifier))
+      body: (do
+        (try
+          body: (application
+            name: (identifier)
+            arguments: (parenthesized))
+          var: (hole)
+          handler: (application
+            name: (identifier)
+            arguments: (parenthesized)))))))
 
 ========================================
 Do Let With List Pattern And Fallback
@@ -180,23 +183,24 @@ def letBindTuple : IO Unit := do
 ---
 
 (module
-  (definition
-    name: (identifier)
-    type: (application
+  (decorated_declaration
+    declaration: (definition
       name: (identifier)
-      arguments: (identifier))
-    body: (do
-      (let_bind
-        name: (tuple_pattern
-          (identifier)
-          (identifier))
-        value: (application
-          name: (identifier)
-          arguments: (tuple
-            (number)
-            (number))))
-      (return
-        value: (parenthesized)))))
+      type: (application
+        name: (identifier)
+        arguments: (identifier))
+      body: (do
+        (let_bind
+          name: (tuple_pattern
+            (identifier)
+            (identifier))
+          value: (application
+            name: (identifier)
+            arguments: (tuple
+              (number)
+              (number))))
+        (return
+          value: (parenthesized))))))
 
 ====================================
 Let Bind With Type Annotation
@@ -209,20 +213,21 @@ def letBindTyped : IO Unit := do
 ---
 
 (module
-  (definition
-    name: (identifier)
-    type: (application
+  (decorated_declaration
+    declaration: (definition
       name: (identifier)
-      arguments: (identifier))
-    body: (do
-      (let_bind
+      type: (application
         name: (identifier)
-        type: (identifier)
-        value: (application
+        arguments: (identifier))
+      body: (do
+        (let_bind
           name: (identifier)
-          arguments: (number)))
-      (return
-        value: (parenthesized)))))
+          type: (identifier)
+          value: (application
+            name: (identifier)
+            arguments: (number)))
+        (return
+          value: (parenthesized))))))
 
 ==========================
 Multi Iterator For Loop
@@ -235,25 +240,26 @@ def multiFor (xs ys : List Nat) : IO Unit := do
 ---
 
 (module
-  (definition
-    name: (identifier)
-    binders: (binders
-      (explicit_binder
-        name: (identifier)
-        name: (identifier)
-        type: (application
-          name: (identifier)
-          arguments: (identifier))))
-    type: (application
+  (decorated_declaration
+    declaration: (definition
       name: (identifier)
-      arguments: (identifier))
-    body: (do
-      (for_in
-        var: (identifier)
-        iterable: (identifier)
-        var: (identifier)
-        iterable: (identifier)
-        body: (do
-          (application
+      binders: (binders
+        (explicit_binder
+          name: (identifier)
+          name: (identifier)
+          type: (application
             name: (identifier)
-            arguments: (parenthesized)))))))
+            arguments: (identifier))))
+      type: (application
+        name: (identifier)
+        arguments: (identifier))
+      body: (do
+        (for_in
+          var: (identifier)
+          iterable: (identifier)
+          var: (identifier)
+          iterable: (identifier)
+          body: (do
+            (application
+              name: (identifier)
+              arguments: (parenthesized))))))))

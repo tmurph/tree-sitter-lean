@@ -108,9 +108,10 @@ open Foo in
 (module
   (open
     namespace: (identifier)
-    (definition
-      name: (identifier)
-      body: (identifier))))
+    (decorated_declaration
+      declaration: (definition
+        name: (identifier)
+        body: (identifier)))))
 
 ======================
 Open With Missing Name
@@ -253,9 +254,9 @@ def f : Lean.Elab.Command.CommandElabM Lean.Syntax :=
 ---
 
 (module
-  (definition
-    (identifier)
-    (projection
+  (decorated_declaration
+    (definition
+      (identifier)
       (application
         (projection
           (projection
@@ -264,6 +265,7 @@ def f : Lean.Elab.Command.CommandElabM Lean.Syntax :=
               (identifier))
             (identifier))
           (identifier))
-        (identifier))
-      (identifier))
-    (syntax_quotation)))
+        (projection
+          (identifier)
+          (identifier)))
+      (syntax_quotation))))

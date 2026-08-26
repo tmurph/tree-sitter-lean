@@ -13,36 +13,36 @@ Attributes
 ---
 
 (module
-  (declaration
+  (decorated_declaration
     attributes: (attributes
       (attribute_entry
         name: (identifier)))
-    (definition
+    declaration: (definition
       name: (identifier)
       body: (number)))
-  (declaration
+  (decorated_declaration
     attributes: (attributes
       (attribute_entry
         name: (identifier)))
-    (definition
+    declaration: (definition
       type: (identifier)
       body: (anonymous_constructor
         (number))))
-  (declaration
+  (decorated_declaration
     attributes: (attributes
       (attribute_entry
         name: (identifier)))
-    (definition
+    declaration: (definition
       name: (identifier)
       type: (binary_expression
         left: (number)
         right: (number))
       body: (identifier)))
-  (declaration
+  (decorated_declaration
     attributes: (attributes
       (attribute_entry
         name: (identifier)))
-    (constant
+    declaration: (constant
       name: (identifier)
       type: (identifier))))
 
@@ -55,13 +55,13 @@ Multiple Attributes
 ---
 
 (module
-  (declaration
+  (decorated_declaration
     attributes: (attributes
       (attribute_entry
         name: (identifier))
       (attribute_entry
         name: (identifier)))
-    (definition
+    declaration: (definition
       name: (identifier)
       body: (number))))
 
@@ -111,12 +111,12 @@ Extern Attribute
 ---
 
 (module
-  (declaration
+  (decorated_declaration
     attributes: (attributes
       (attribute_entry
         name: (identifier)
         arg: (string)))
-    (definition
+    declaration: (definition
       name: (identifier)
       body: (number))))
 
@@ -130,13 +130,18 @@ attribute [simp, inline] Foo
 ---
 
 (module
-  (attribute
-    (identifier)
-    (identifier))
-  (attribute
-    (identifier)
-    (identifier)
-    (identifier)))
+  (decorated_declaration
+    (attribute
+      (attribute_ref
+        (identifier))
+      (identifier)))
+  (decorated_declaration
+    (attribute
+      (attribute_ref
+        (identifier))
+      (attribute_ref
+        (identifier))
+      (identifier))))
 
 ==========================
 Explicit Attribute Removal
@@ -185,11 +190,11 @@ Partial With Attribute
 ---
 
 (module
-  (declaration
+  (decorated_declaration
     attributes: (attributes
       (attribute_entry
         name: (identifier)))
-    (definition
+    declaration: (definition
       name: (identifier)
       body: (number))))
 
@@ -206,37 +211,38 @@ inductive FooBar where
 ---
 
 (module
-  (inductive
-    name: (identifier)
-    constructors: (constructor
+  (decorated_declaration
+    declaration: (inductive
       name: (identifier)
-      type: (identifier))
-    constructors: (constructor
-      name: (identifier)
-      name: (identifier)
-      type: (identifier))
-    constructors: (constructor
-      name: (identifier)
-      type: (arrow
-        domain: (identifier)
-        codomain: (identifier)))
-    constructors: (constructor
-      name: (identifier)
-      binders: (binders
-        (implicit_binder
-          name: (identifier)
-          type: (identifier))
-        (instance_binder
-          type: (application
+      constructors: (constructor
+        name: (identifier)
+        type: (identifier))
+      constructors: (constructor
+        name: (identifier)
+        name: (identifier)
+        type: (identifier))
+      constructors: (constructor
+        name: (identifier)
+        type: (arrow
+          domain: (identifier)
+          codomain: (identifier)))
+      constructors: (constructor
+        name: (identifier)
+        binders: (binders
+          (implicit_binder
             name: (identifier)
-            arguments: (identifier)))
-        (explicit_binder
-          name: (identifier)
-          name: (identifier)
-          type: (identifier)))
-      type: (arrow
-        domain: (identifier)
-        codomain: (identifier)))))
+            type: (identifier))
+          (instance_binder
+            type: (application
+              name: (identifier)
+              arguments: (identifier)))
+          (explicit_binder
+            name: (identifier)
+            name: (identifier)
+            type: (identifier)))
+        type: (arrow
+          domain: (identifier)
+          codomain: (identifier))))))
 
 ==============================
 Inductive Type No Constructors
@@ -247,8 +253,9 @@ inductive Foo
 ---
 
 (module
-  (inductive
-    name: (identifier)))
+  (decorated_declaration
+    declaration: (inductive
+      name: (identifier))))
 
 ==============================
 Inductive Type With Parameters
@@ -259,18 +266,19 @@ inductive Foo (F : Type) | x (foo : F)
 ---
 
 (module
-  (inductive
-    name: (identifier)
-    binders: (binders
-      (explicit_binder
-        name: (identifier)
-        type: (identifier)))
-    constructors: (constructor
+  (decorated_declaration
+    declaration: (inductive
       name: (identifier)
       binders: (binders
         (explicit_binder
           name: (identifier)
-          type: (identifier))))))
+          type: (identifier)))
+      constructors: (constructor
+        name: (identifier)
+        binders: (binders
+          (explicit_binder
+            name: (identifier)
+            type: (identifier)))))))
 
 =======================
 Inductive Type One Line
@@ -281,12 +289,13 @@ inductive Bit | bit0 | bit1
 ---
 
 (module
-  (inductive
-    name: (identifier)
-    constructors: (constructor
-      name: (identifier))
-    constructors: (constructor
-      name: (identifier))))
+  (decorated_declaration
+    declaration: (inductive
+      name: (identifier)
+      constructors: (constructor
+        name: (identifier))
+      constructors: (constructor
+        name: (identifier)))))
 
 ================================
 Inductive Type Superfluous Where
@@ -297,12 +306,13 @@ inductive Bit where | bit0 | bit1
 ---
 
 (module
-  (inductive
-    name: (identifier)
-    constructors: (constructor
-      name: (identifier))
-    constructors: (constructor
-      name: (identifier))))
+  (decorated_declaration
+    declaration: (inductive
+      name: (identifier)
+      constructors: (constructor
+        name: (identifier))
+      constructors: (constructor
+        name: (identifier)))))
 
 ========================
 Inductive Type With Type
@@ -313,9 +323,10 @@ inductive Foo : Bar
 ---
 
 (module
-  (inductive
-    name: (identifier)
-    type: (identifier)))
+  (decorated_declaration
+    declaration: (inductive
+      name: (identifier)
+      type: (identifier))))
 
 ==========================
 Inductive Type Colon Equal
@@ -327,10 +338,11 @@ inductive Foo :=
 ---
 
 (module
-  (inductive
-    name: (identifier)
-    constructors: (constructor
-      name: (identifier))))
+  (decorated_declaration
+    declaration: (inductive
+      name: (identifier)
+      constructors: (constructor
+        name: (identifier)))))
 
 ====================
 Class Inductive Type
@@ -345,37 +357,38 @@ class inductive FooBar where
 ---
 
 (module
-  (class_inductive
-    name: (identifier)
-    constructors: (constructor
+  (decorated_declaration
+    declaration: (class_inductive
       name: (identifier)
-      type: (identifier))
-    constructors: (constructor
-      name: (identifier)
-      name: (identifier)
-      type: (identifier))
-    constructors: (constructor
-      name: (identifier)
-      type: (arrow
-        domain: (identifier)
-        codomain: (identifier)))
-    constructors: (constructor
-      name: (identifier)
-      binders: (binders
-        (implicit_binder
-          name: (identifier)
-          type: (identifier))
-        (instance_binder
-          type: (application
+      constructors: (constructor
+        name: (identifier)
+        type: (identifier))
+      constructors: (constructor
+        name: (identifier)
+        name: (identifier)
+        type: (identifier))
+      constructors: (constructor
+        name: (identifier)
+        type: (arrow
+          domain: (identifier)
+          codomain: (identifier)))
+      constructors: (constructor
+        name: (identifier)
+        binders: (binders
+          (implicit_binder
             name: (identifier)
-            arguments: (identifier)))
-        (explicit_binder
-          name: (identifier)
-          name: (identifier)
-          type: (identifier)))
-      type: (arrow
-        domain: (identifier)
-        codomain: (identifier)))))
+            type: (identifier))
+          (instance_binder
+            type: (application
+              name: (identifier)
+              arguments: (identifier)))
+          (explicit_binder
+            name: (identifier)
+            name: (identifier)
+            type: (identifier)))
+        type: (arrow
+          domain: (identifier)
+          codomain: (identifier))))))
 
 =================
 Inline Namespaced

@@ -8,23 +8,24 @@ theorem ex3 (p q : Prop) : p → q → p ∧ q :=
 ---
 
 (module
-  (definition
-    (identifier)
-    (binders
-      (explicit_binder
-        (identifier)
-        (identifier)
-        (identifier)))
-    (arrow
+  (decorated_declaration
+    (definition
       (identifier)
+      (binders
+        (explicit_binder
+          (identifier)
+          (identifier)
+          (identifier)))
       (arrow
         (identifier)
-        (binary_expression
+        (arrow
           (identifier)
-          (identifier))))
-    (fun
-      (hole)
-      (hole)
-      (anonymous_constructor
-        (identifier)
-        (identifier)))))
+          (binary_expression
+            (identifier)
+            (identifier))))
+      (fun
+        (hole)
+        (hole)
+        (anonymous_constructor
+          (identifier)
+          (identifier))))))

@@ -118,15 +118,16 @@ def pipeline1 := [1, 2] |> List.length
 ---
 
 (module
-  (definition
-    name: (identifier)
-    body: (binary_expression
-      left: (list
-        (number)
-        (number))
-      right: (projection
-        term: (identifier)
-        name: (identifier)))))
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      body: (binary_expression
+        left: (list
+          (number)
+          (number))
+        right: (projection
+          term: (identifier)
+          name: (identifier))))))
 
 ==============================
 Pipeline Reverse Operator <|
@@ -137,15 +138,16 @@ def pipeline2 := List.length <| [1, 2]
 ---
 
 (module
-  (definition
-    name: (identifier)
-    body: (binary_expression
-      left: (projection
-        term: (identifier)
-        name: (identifier))
-      right: (list
-        (number)
-        (number)))))
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      body: (binary_expression
+        left: (projection
+          term: (identifier)
+          name: (identifier))
+        right: (list
+          (number)
+          (number))))))
 
 ============================
 Pipeline Dot Operator |>.
@@ -156,13 +158,14 @@ def pipeline3 := [1, 2] |>.length
 ---
 
 (module
-  (definition
-    name: (identifier)
-    body: (binary_expression
-      left: (list
-        (number)
-        (number))
-      right: (identifier))))
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      body: (binary_expression
+        left: (list
+          (number)
+          (number))
+        right: (identifier)))))
 
 ========================
 Dollar Operator $
@@ -173,12 +176,13 @@ def dollar1 := List.length $ [1, 2]
 ---
 
 (module
-  (definition
-    name: (identifier)
-    body: (binary_expression
-      left: (projection
-        term: (identifier)
-        name: (identifier))
-      right: (list
-        (number)
-        (number)))))
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      body: (binary_expression
+        left: (projection
+          term: (identifier)
+          name: (identifier))
+        right: (list
+          (number)
+          (number))))))

@@ -8,14 +8,15 @@ def hello : IO Unit := do
 ---
 
 (module
-  (definition
-    name: (identifier)
-    type: (application
+  (decorated_declaration
+    declaration: (definition
       name: (identifier)
-      arguments: (identifier))
-    body: (do
-      (return
-        value: (parenthesized)))))
+      type: (application
+        name: (identifier)
+        arguments: (identifier))
+      body: (do
+        (return
+          value: (parenthesized))))))
 
 =====================================
 Do with let bind and return
@@ -28,19 +29,20 @@ def readAndDouble : IO Nat := do
 ---
 
 (module
-  (definition
-    name: (identifier)
-    type: (application
+  (decorated_declaration
+    declaration: (definition
       name: (identifier)
-      arguments: (identifier))
-    body: (do
-      (let_bind
+      type: (application
         name: (identifier)
-        value: (identifier))
-      (return
-        value: (binary_expression
-          left: (identifier)
-          right: (identifier))))))
+        arguments: (identifier))
+      body: (do
+        (let_bind
+          name: (identifier)
+          value: (identifier))
+        (return
+          value: (binary_expression
+            left: (identifier)
+            right: (identifier)))))))
 
 =====================================
 Do with let mut and for loop
@@ -151,38 +153,39 @@ def nestedDo : IO Unit := do
 ---
 
 (module
-  (definition
-    name: (identifier)
-    type: (application
+  (decorated_declaration
+    declaration: (definition
       name: (identifier)
-      arguments: (identifier))
-    body: (do
-      (for_in
-        var: (identifier)
-        iterable: (application
-          name: (projection
-            term: (identifier)
-            name: (identifier))
-          arguments: (number))
-        body: (do
-          (for_in
-            var: (identifier)
-            iterable: (application
-              name: (projection
-                term: (identifier)
-                name: (identifier))
-              arguments: (number))
-            body: (do
-              (application
+      type: (application
+        name: (identifier)
+        arguments: (identifier))
+      body: (do
+        (for_in
+          var: (identifier)
+          iterable: (application
+            name: (projection
+              term: (identifier)
+              name: (identifier))
+            arguments: (number))
+          body: (do
+            (for_in
+              var: (identifier)
+              iterable: (application
                 name: (projection
                   term: (identifier)
                   name: (identifier))
-                arguments: (interpolated_string
-                  (string
-                    (interpolation
-                      (identifier))
-                    (interpolation
-                      (identifier))))))))))))
+                arguments: (number))
+              body: (do
+                (application
+                  name: (projection
+                    term: (identifier)
+                    name: (identifier))
+                  arguments: (interpolated_string
+                    (string
+                      (interpolation
+                        (identifier))
+                      (interpolation
+                        (identifier)))))))))))))
 
 =====================================
 Do with match
@@ -196,34 +199,35 @@ def describeList (xs : List Nat) : IO Unit := do
 ---
 
 (module
-  (definition
-    name: (identifier)
-    binders: (binders
-      (explicit_binder
-        name: (identifier)
-        type: (application
-          name: (identifier)
-          arguments: (identifier))))
-    type: (application
+  (decorated_declaration
+    declaration: (definition
       name: (identifier)
-      arguments: (identifier))
-    body: (do
-      (do_match
-        scrutinees: (identifier)
-        (do_match_arm
-          patterns: (list)
-          body: (application
-            name: (projection
-              term: (identifier)
-              name: (identifier))
-            arguments: (string)))
-        (do_match_arm
-          patterns: (hole)
-          body: (application
-            name: (projection
-              term: (identifier)
-              name: (identifier))
-            arguments: (string)))))))
+      binders: (binders
+        (explicit_binder
+          name: (identifier)
+          type: (application
+            name: (identifier)
+            arguments: (identifier))))
+      type: (application
+        name: (identifier)
+        arguments: (identifier))
+      body: (do
+        (do_match
+          scrutinees: (identifier)
+          (do_match_arm
+            patterns: (list)
+            body: (application
+              name: (projection
+                term: (identifier)
+                name: (identifier))
+              arguments: (string)))
+          (do_match_arm
+            patterns: (hole)
+            body: (application
+              name: (projection
+                term: (identifier)
+                name: (identifier))
+              arguments: (string))))))))
 
 =====================================
 Id.run do block

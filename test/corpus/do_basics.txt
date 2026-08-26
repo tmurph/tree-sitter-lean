@@ -9,22 +9,23 @@ def main : IO UInt32 := do
 ---
 
 (module
-  (definition
-    name: (identifier)
-    type: (application
+  (decorated_declaration
+    declaration: (definition
       name: (identifier)
-      arguments: (identifier))
-    body: (do
-      (application
-        name: (projection
-          term: (identifier)
-          name: (identifier))
-        arguments: (string))
-      (application
-        name: (projection
-          term: (identifier)
-          name: (identifier))
-        arguments: (string)))))
+      type: (application
+        name: (identifier)
+        arguments: (identifier))
+      body: (do
+        (application
+          name: (projection
+            term: (identifier)
+            name: (identifier))
+          arguments: (string))
+        (application
+          name: (projection
+            term: (identifier)
+            name: (identifier))
+          arguments: (string))))))
 
 ========
 Repeated
@@ -37,23 +38,24 @@ def main : IO UInt32 := do do
 ---
 
 (module
-  (definition
-    name: (identifier)
-    type: (application
+  (decorated_declaration
+    declaration: (definition
       name: (identifier)
-      arguments: (identifier))
-    body: (do
-      (do
-        (application
-          name: (projection
-            term: (identifier)
-            name: (identifier))
-          arguments: (string))
-        (application
-          name: (projection
-            term: (identifier)
-            name: (identifier))
-          arguments: (string))))))
+      type: (application
+        name: (identifier)
+        arguments: (identifier))
+      body: (do
+        (do
+          (application
+            name: (projection
+              term: (identifier)
+              name: (identifier))
+            arguments: (string))
+          (application
+            name: (projection
+              term: (identifier)
+              name: (identifier))
+            arguments: (string)))))))
 
 ==========
 Let (Bind)
@@ -67,19 +69,20 @@ def f : Unit := do
 ---
 
 (module
-  (definition
-    name: (identifier)
-    type: (identifier)
-    body: (do
-      (let_bind
-        name: (identifier)
-        value: (number))
-      (let_bind
-        name: (identifier)
-        value: (number))
-      (let
-        name: (identifier)
-        value: (number)))))
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      type: (identifier)
+      body: (do
+        (let_bind
+          name: (identifier)
+          value: (number))
+        (let_bind
+          name: (identifier)
+          value: (number))
+        (do_let
+          pattern: (identifier)
+          value: (number))))))
 
 =============
 Let Annotated
@@ -91,14 +94,15 @@ def f : Unit := do
 ---
 
 (module
-  (definition
-    name: (identifier)
-    type: (identifier)
-    body: (do
-      (let
-        name: (identifier)
-        type: (identifier)
-        value: (number)))))
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      type: (identifier)
+      body: (do
+        (do_let
+          pattern: (identifier)
+          type: (identifier)
+          value: (number))))))
 
 ===========
 Let Mutable
@@ -110,13 +114,14 @@ def bar : Unit := do
 ---
 
 (module
-  (definition
-    name: (identifier)
-    type: (identifier)
-    body: (do
-      (let_mut
-        name: (identifier)
-        value: (number)))))
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      type: (identifier)
+      body: (do
+        (let_mut
+          name: (identifier)
+          value: (number))))))
 
 ========
 For Loop
@@ -165,28 +170,29 @@ def foo (xs : Array (Nat × Nat)) : Unit := do
 ---
 
 (module
-  (definition
-    name: (identifier)
-    (binders
-      (explicit_binder
-        name: (identifier)
-        type: (application
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      binders: (binders
+        (explicit_binder
           name: (identifier)
-          arguments: (parenthesized
-            (binary_expression
-              (identifier)
-              (identifier))))))
-    type: (identifier)
-    body: (do
-      (for_in
-        (anonymous_constructor
-          (identifier)
-          (identifier))
-        iterable: (identifier)
-        body: (do
-          (application
+          type: (application
             name: (identifier)
-            arguments: (string)))))))
+            arguments: (parenthesized
+              (binary_expression
+                left: (identifier)
+                right: (identifier))))))
+      type: (identifier)
+      body: (do
+        (for_in
+          var: (anonymous_constructor_pattern
+            (identifier)
+            (identifier))
+          iterable: (identifier)
+          body: (do
+            (application
+              name: (identifier)
+              arguments: (string))))))))
 
 ======
 Return
@@ -198,12 +204,13 @@ def f : Nat := do
 ---
 
 (module
-  (definition
-    (identifier)
-    (identifier)
-    (do
-      (return
-        (number)))))
+  (decorated_declaration
+    (definition
+      (identifier)
+      (identifier)
+      (do
+        (return
+          (number))))))
 
 ===============
 Return One Line
@@ -233,11 +240,12 @@ def f : Unit := do
 ---
 
 (module
-  (definition
-    (identifier)
-    (identifier)
-    (do
-      (return))))
+  (decorated_declaration
+    (definition
+      (identifier)
+      (identifier)
+      (do
+        (return)))))
 
 ======
 Unless
@@ -250,15 +258,16 @@ def check : IO Unit := do
 ---
 
 (module
-  (definition
-    name: (identifier)
-    type: (application
+  (decorated_declaration
+    declaration: (definition
       name: (identifier)
-      arguments: (identifier))
-    body: (do
-      (do_unless
-        condition: (true)
-        body: (do
-          (application
-            name: (identifier)
-            arguments: (string)))))))
+      type: (application
+        name: (identifier)
+        arguments: (identifier))
+      body: (do
+        (do_unless
+          condition: (true)
+          body: (do
+            (application
+              name: (identifier)
+              arguments: (string))))))))

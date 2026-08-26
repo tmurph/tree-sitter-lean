@@ -77,18 +77,19 @@ def foo (d : Bar) : Baz :=
 ---
 
 (module
-  (definition
-    name: (identifier)
-    binders: (binders
-      (explicit_binder
-        name: (identifier)
-        type: (identifier)))
-    type: (identifier)
-    body: (match
-      scrutinees: (identifier)
-      (match_arm
-        patterns: (identifier)
-        body: (number)))))
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      binders: (binders
+        (explicit_binder
+          name: (identifier)
+          type: (identifier)))
+      type: (identifier)
+      body: (match
+        scrutinees: (identifier)
+        (match_arm
+          patterns: (identifier)
+          body: (number))))))
 
 ==============
 Match Multiple
@@ -101,23 +102,24 @@ def foo (a b c : Nat) :=
 ---
 
 (module
-  (definition
-    name: (identifier)
-    binders: (binders
-      (explicit_binder
-        name: (identifier)
-        name: (identifier)
-        name: (identifier)
-        type: (identifier)))
-    body: (match
-      scrutinees: (identifier)
-      scrutinees: (identifier)
-      scrutinees: (identifier)
-      (match_arm
-        patterns: (hole)
-        patterns: (hole)
-        patterns: (hole)
-        body: (true)))))
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      binders: (binders
+        (explicit_binder
+          name: (identifier)
+          name: (identifier)
+          name: (identifier)
+          type: (identifier)))
+      body: (match
+        scrutinees: (identifier)
+        scrutinees: (identifier)
+        scrutinees: (identifier)
+        (match_arm
+          patterns: (hole)
+          patterns: (hole)
+          patterns: (hole)
+          body: (true))))))
 
 =========================
 Match Multiple With Apply
@@ -179,29 +181,30 @@ def f (x : Option Nat) : Nat :=
 ---
 
 (module
-  (definition
-    name: (identifier)
-    binders: (binders
-      (explicit_binder
-        name: (identifier)
-        type: (application
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      binders: (binders
+        (explicit_binder
           name: (identifier)
-          arguments: (identifier))))
-    type: (identifier)
-    body: (match
-      scrutinees: (identifier)
-      (match_arm
-        patterns: (application
-          name: (identifier)
-          arguments: (identifier))
-        body: (let
-          name: (identifier)
-          value: (binary_expression
-            left: (identifier)
-            right: (number))
-          body: (binary_expression
-            left: (identifier)
-            right: (number))))
-      (match_arm
-        patterns: (identifier)
-        body: (number)))))
+          type: (application
+            name: (identifier)
+            arguments: (identifier))))
+      type: (identifier)
+      body: (match
+        scrutinees: (identifier)
+        (match_arm
+          patterns: (application
+            name: (identifier)
+            arguments: (identifier))
+          body: (let
+            name: (identifier)
+            value: (binary_expression
+              left: (identifier)
+              right: (number))
+            body: (binary_expression
+              left: (identifier)
+              right: (number))))
+        (match_arm
+          patterns: (identifier)
+          body: (number))))))

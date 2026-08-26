@@ -291,41 +291,46 @@ example : 4 = 4 % 5 := rfl
       right: (binary_expression
         left: (number)
         right: (number))))
-  (example
-    type: (binary_expression
-      left: (number)
-      right: (binary_expression
+  (decorated_declaration
+    declaration: (example
+      type: (binary_expression
         left: (number)
-        right: (number)))
-    body: (identifier))
-  (example
-    type: (binary_expression
-      left: (number)
-      right: (binary_expression
+        right: (binary_expression
+          left: (number)
+          right: (number)))
+      body: (identifier)))
+  (decorated_declaration
+    declaration: (example
+      type: (binary_expression
         left: (number)
-        right: (number)))
-    body: (identifier))
-  (example
-    type: (binary_expression
-      left: (number)
-      right: (binary_expression
+        right: (binary_expression
+          left: (number)
+          right: (number)))
+      body: (identifier)))
+  (decorated_declaration
+    declaration: (example
+      type: (binary_expression
         left: (number)
-        right: (number)))
-    body: (identifier))
-  (example
-    type: (binary_expression
-      left: (number)
-      right: (binary_expression
+        right: (binary_expression
+          left: (number)
+          right: (number)))
+      body: (identifier)))
+  (decorated_declaration
+    declaration: (example
+      type: (binary_expression
         left: (number)
-        right: (number)))
-    body: (identifier))
-  (example
-    type: (binary_expression
-      left: (number)
-      right: (binary_expression
+        right: (binary_expression
+          left: (number)
+          right: (number)))
+      body: (identifier)))
+  (decorated_declaration
+    declaration: (example
+      type: (binary_expression
         left: (number)
-        right: (number)))
-    body: (identifier))
+        right: (binary_expression
+          left: (number)
+          right: (number)))
+      body: (identifier)))
   (hash_command
     (binary_expression
       left: (binary_expression
@@ -405,42 +410,46 @@ example : 2 ≥ id 3 = false := rfl
 ---
 
 (module
-  (example
-    (binary_expression
+  (decorated_declaration
+    (example
       (binary_expression
-        (application
-          (identifier)
+        (binary_expression
+          (application
+            (identifier)
+            (number))
           (number))
-        (number))
-      (true))
-    (identifier))
-  (example
-    (binary_expression
+        (true))
+      (identifier)))
+  (decorated_declaration
+    (example
       (binary_expression
-        (number)
-        (application
-          (identifier)
-          (number)))
-      (false))
-    (identifier))
-  (example
-    (binary_expression
+        (binary_expression
+          (number)
+          (application
+            (identifier)
+            (number)))
+        (false))
+      (identifier)))
+  (decorated_declaration
+    (example
       (binary_expression
-        (application
-          (identifier)
+        (binary_expression
+          (application
+            (identifier)
+            (number))
           (number))
-        (number))
-      (true))
-    (identifier))
-  (example
-    (binary_expression
+        (true))
+      (identifier)))
+  (decorated_declaration
+    (example
       (binary_expression
-        (number)
-        (application
-          (identifier)
-          (number)))
-      (false))
-    (identifier)))
+        (binary_expression
+          (number)
+          (application
+            (identifier)
+            (number)))
+        (false))
+      (identifier))))
 
 ==================================
 Unary Arrow In Expression Do Lift
@@ -452,16 +461,17 @@ def unaryLift : IO Nat := do
 ---
 
 (module
-  (definition
-    name: (identifier)
-    type: (application
+  (decorated_declaration
+    declaration: (definition
       name: (identifier)
-      arguments: (identifier))
-    body: (do
-      (application
+      type: (application
         name: (identifier)
-        arguments: (parenthesized
-          (unary_expression
-            operand: (application
-              name: (identifier)
-              arguments: (number))))))))
+        arguments: (identifier))
+      body: (do
+        (application
+          name: (identifier)
+          arguments: (parenthesized
+            (unary_expression
+              operand: (application
+                name: (identifier)
+                arguments: (number)))))))))

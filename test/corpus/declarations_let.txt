@@ -9,12 +9,13 @@ def foo :=
 ---
 
 (module
-  (definition
-    name: (identifier)
-    body: (let
+  (decorated_declaration
+    declaration: (definition
       name: (identifier)
-      value: (number)
-      body: (identifier))))
+      body: (let
+        name: (identifier)
+        value: (number)
+        body: (identifier)))))
 
 =============
 Let Annotated
@@ -27,13 +28,14 @@ def foo :=
 ---
 
 (module
-  (definition
-    name: (identifier)
-    body: (let
+  (decorated_declaration
+    declaration: (definition
       name: (identifier)
-      type: (identifier)
-      value: (number)
-      body: (identifier))))
+      body: (let
+        name: (identifier)
+        type: (identifier)
+        value: (number)
+        body: (identifier)))))
 
 ============
 Let Function
@@ -46,25 +48,26 @@ def foo : Nat :=
 ---
 
 (module
-  (definition
-    name: (identifier)
-    type: (identifier)
-    body: (let
+  (decorated_declaration
+    declaration: (definition
       name: (identifier)
-      parameters: (parameters
-        (explicit_binder
-          name: (identifier)
-          name: (identifier)
-          type: (identifier)))
-      value: (binary_expression
-        left: (identifier)
-        right: (identifier))
-      body: (return
-        value: (application
-          name: (application
+      type: (identifier)
+      body: (let
+        name: (identifier)
+        parameters: (parameters
+          (explicit_binder
             name: (identifier)
-            arguments: (number))
-          arguments: (number))))))
+            name: (identifier)
+            type: (identifier)))
+        value: (binary_expression
+          left: (identifier)
+          right: (identifier))
+        body: (return
+          value: (application
+            name: (application
+              name: (identifier)
+              arguments: (number))
+            arguments: (number)))))))
 
 ============================
 Let Function Bare Parameters
@@ -77,19 +80,20 @@ f true false
 ---
 
 (module
-  (definition
-    name: (identifier)
-    body: (let
+  (decorated_declaration
+    declaration: (definition
       name: (identifier)
-      parameters: (parameters
-        (identifier)
-        (identifier))
-      value: (number)
-      body: (application
-        name: (application
-          name: (identifier)
-          arguments: (true))
-        arguments: (false)))))
+      body: (let
+        name: (identifier)
+        parameters: (parameters
+          (identifier)
+          (identifier))
+        value: (number)
+        body: (application
+          name: (application
+            name: (identifier)
+            arguments: (true))
+          arguments: (false))))))
 
 ==============
 Let Semicolons
@@ -120,70 +124,74 @@ def quux :=
 ---
 
 (module
-  (definition
-    (identifier)
-    (let
+  (decorated_declaration
+    (definition
       (identifier)
-      (number)
       (let
         (identifier)
         (number)
         (let
           (identifier)
           (number)
-          (binary_expression
+          (let
+            (identifier)
+            (number)
             (binary_expression
-              (identifier)
-              (identifier))
-            (identifier))))))
-  (definition
-    (identifier)
-    (let
+              (binary_expression
+                (identifier)
+                (identifier))
+              (identifier)))))))
+  (decorated_declaration
+    (definition
       (identifier)
-      (number)
       (let
         (identifier)
         (number)
         (let
           (identifier)
           (number)
-          (binary_expression
+          (let
+            (identifier)
+            (number)
             (binary_expression
-              (identifier)
-              (identifier))
-            (identifier))))))
-  (definition
-    (identifier)
-    (let
+              (binary_expression
+                (identifier)
+                (identifier))
+              (identifier)))))))
+  (decorated_declaration
+    (definition
       (identifier)
-      (number)
       (let
         (identifier)
         (number)
         (let
           (identifier)
           (number)
-          (binary_expression
+          (let
+            (identifier)
+            (number)
             (binary_expression
-              (identifier)
-              (identifier))
-            (identifier))))))
-  (definition
-    (identifier)
-    (let
+              (binary_expression
+                (identifier)
+                (identifier))
+              (identifier)))))))
+  (decorated_declaration
+    (definition
       (identifier)
-      (number)
       (let
         (identifier)
         (number)
         (let
           (identifier)
           (number)
-          (binary_expression
+          (let
+            (identifier)
+            (number)
             (binary_expression
-              (identifier)
-              (identifier))
-            (identifier)))))))
+              (binary_expression
+                (identifier)
+                (identifier))
+              (identifier))))))))
 
 ==========
 No Let Mut
@@ -196,14 +204,15 @@ def foo :=
 ---
 
 (module
-  (definition
-    name: (identifier)
-    body: (let
+  (decorated_declaration
+    declaration: (definition
       name: (identifier)
-      parameters: (parameters
-        (identifier))
-      value: (number)
-      body: (identifier))))
+      body: (let
+        name: (identifier)
+        parameters: (parameters
+          (identifier))
+        value: (number)
+        body: (identifier)))))
 
 ============
 No Let Arrow
@@ -236,12 +245,13 @@ example : Nat:=
 ---
 
 (module
-  (example
-    (identifier)
-    (have
+  (decorated_declaration
+    (example
       (identifier)
-      (identifier)
-      (number))))
+      (have
+        (identifier)
+        (identifier)
+        (number)))))
 
 ======
 Abbrev
@@ -262,44 +272,48 @@ abbrev Baz
 ---
 
 (module
-  (definition
-    name: (identifier)
-    body: (identifier))
-  (definition
-    name: (identifier)
-    type: (arrow
-      domain: (identifier)
-      codomain: (identifier))
-    body: (identifier))
-  (definition
-    name: (identifier)
-    binders: (binders
-      (implicit_binder
-        name: (identifier))
-      (instance_binder
-        type: (application
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      body: (identifier)))
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      type: (arrow
+        domain: (identifier)
+        codomain: (identifier))
+      body: (identifier)))
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      binders: (binders
+        (implicit_binder
+          name: (identifier))
+        (instance_binder
+          type: (application
+            name: (identifier)
+            arguments: (identifier)))
+        (explicit_binder
           name: (identifier)
-          arguments: (identifier)))
-      (explicit_binder
-        name: (identifier)
-        type: (identifier)))
-    type: (arrow
-      domain: (identifier)
-      codomain: (identifier))
-    body: (identifier))
-  (definition
-    name: (identifier)
-    (match_arm
-      patterns: (number)
-      body: (number))
-    (match_arm
-      patterns: (hole)
-      body: (number)))
-  (declaration
+          type: (identifier)))
+      type: (arrow
+        domain: (identifier)
+        codomain: (identifier))
+      body: (identifier)))
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      (match_arm
+        patterns: (number)
+        body: (number))
+      (match_arm
+        patterns: (hole)
+        body: (number))))
+  (decorated_declaration
     attributes: (attributes
       (attribute_entry
         name: (identifier)))
-    (definition
+    declaration: (definition
       name: (identifier)
       name: (identifier)
       body: (identifier))))
@@ -315,18 +329,21 @@ constant C : Nat := 3
 ---
 
 (module
-  (constant
-    name: (identifier)
-    type: (identifier))
-  (constant
-    name: (identifier)
-    type: (arrow
-      domain: (identifier)
-      codomain: (identifier)))
-  (constant
-    name: (identifier)
-    type: (identifier)
-    body: (number)))
+  (decorated_declaration
+    declaration: (constant
+      name: (identifier)
+      type: (identifier)))
+  (decorated_declaration
+    declaration: (constant
+      name: (identifier)
+      type: (arrow
+        domain: (identifier)
+        codomain: (identifier))))
+  (decorated_declaration
+    declaration: (constant
+      name: (identifier)
+      type: (identifier)
+      body: (number))))
 
 ==========================
 Constant With Missing Type
@@ -337,8 +354,9 @@ constant B
 ---
 
 (module
-  (constant
-    (identifier)))
+  (decorated_declaration
+    (constant
+      (identifier))))
 
 ==========================
 Constant With Missing Name
@@ -381,11 +399,12 @@ axiom foo : 1 = 2
 ---
 
 (module
-  (axiom
-    name: (identifier)
-    type: (binary_expression
-      left: (number)
-      right: (number))))
+  (decorated_declaration
+    declaration: (axiom
+      name: (identifier)
+      type: (binary_expression
+        left: (number)
+        right: (number)))))
 
 =======================
 Axiom With Missing Name
@@ -452,12 +471,13 @@ deriving Baz, Quux
 ---
 
 (module
-  (inductive
-    name: (identifier)
-    constructors: (constructor
-      name: (identifier))
-    deriving: (identifier)
-    deriving: (identifier)))
+  (decorated_declaration
+    declaration: (inductive
+      name: (identifier)
+      constructors: (constructor
+        name: (identifier))
+      deriving: (identifier)
+      deriving: (identifier))))
 
 ================
 Deriving Nothing

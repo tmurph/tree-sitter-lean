@@ -190,14 +190,15 @@ def ellipsisStruct (f : Foo) := { f with a := 1 }
 ---
 
 (module
-  (definition
-    name: (identifier)
-    binders: (binders
-      (explicit_binder
-        name: (identifier)
-        type: (identifier)))
-    body: (structure_instance
-      extends: (identifier)
-      (field_assignment
-        name: (identifier)
-        value: (number)))))
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      binders: (binders
+        (explicit_binder
+          name: (identifier)
+          type: (identifier)))
+      body: (structure_instance
+        extends: (identifier)
+        (field_assignment
+          name: (identifier)
+          value: (number))))))

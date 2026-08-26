@@ -7,11 +7,12 @@ notation " ♔ " => Foo.bar
 ---
 
 (module
-  (notation
-    (string)
-    (projection
-      (identifier)
-      (identifier))))
+  (decorated_declaration
+    (notation
+      (string)
+      (projection
+        (identifier)
+        (identifier)))))
 
 ===========
 Macro Rules
@@ -282,7 +283,8 @@ builtin_initialize foo : bar ←
 ---
 
 (module
-  (initialize
-    (identifier)
-    (identifier)
-    (identifier)))
+  (decorated_declaration
+    (initialize
+      (identifier)
+      (identifier)
+      (identifier))))

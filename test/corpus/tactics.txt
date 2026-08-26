@@ -9,46 +9,47 @@ theorem foo {m n : Nat} : 2 * m + 2 * n = 2 * (n + m) := by
 ---
 
 (module
-  (definition
-    name: (identifier)
-    binders: (binders
-      (implicit_binder
-        name: (identifier)
-        name: (identifier)
-        type: (identifier)))
-    type: (binary_expression
-      left: (binary_expression
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      binders: (binders
+        (implicit_binder
+          name: (identifier)
+          name: (identifier)
+          type: (identifier)))
+      type: (binary_expression
         left: (binary_expression
-          left: (number)
-          right: (identifier))
+          left: (binary_expression
+            left: (number)
+            right: (identifier))
+          right: (binary_expression
+            left: (number)
+            right: (identifier)))
         right: (binary_expression
           left: (number)
-          right: (identifier)))
-      right: (binary_expression
-        left: (number)
-        right: (parenthesized
-          (binary_expression
-            left: (identifier)
-            right: (identifier)))))
-    body: (by
-      (tactic_rewrite
-        arg: (projection
-          term: (identifier)
-          name: (identifier)))
-      (tactic_apply
-        tactic: (identifier)
-        arg: (projection
-          term: (parenthesized
-            (application
-              name: (application
+          right: (parenthesized
+            (binary_expression
+              left: (identifier)
+              right: (identifier)))))
+      body: (by
+        (tactic_rewrite
+          arg: (projection
+            term: (identifier)
+            name: (identifier)))
+        (tactic_apply
+          tactic: (identifier)
+          arg: (projection
+            term: (parenthesized
+              (application
                 name: (application
-                  name: (projection
-                    term: (identifier)
-                    name: (identifier))
-                  arguments: (number))
-                arguments: (identifier))
-              arguments: (identifier)))
-          name: (identifier))))))
+                  name: (application
+                    name: (projection
+                      term: (identifier)
+                      name: (identifier))
+                    arguments: (number))
+                  arguments: (identifier))
+                arguments: (identifier)))
+            name: (identifier)))))))
 
 =================
 Tactic Expression
@@ -112,13 +113,14 @@ example : 2 = 2 := by simp
 ---
 
 (module
-  (example
-    (binary_expression
-      (number)
-      (number))
-    (by
-      (tactic_apply
-        (identifier)))))
+  (decorated_declaration
+    (example
+      (binary_expression
+        (number)
+        (number))
+      (by
+        (tactic_apply
+          (identifier))))))
 
 ========================
 Simp With Extra Theorems
@@ -129,16 +131,17 @@ example : 2 = 2 := by simp [foo, bar]
 ---
 
 (module
-  (example
-    type: (binary_expression
-      left: (number)
-      right: (number))
-    body: (by
-      (tactic_apply
-        tactic: (identifier)
-        arg: (tactic_config
-          (identifier)
-          (identifier))))))
+  (decorated_declaration
+    declaration: (example
+      type: (binary_expression
+        left: (number)
+        right: (number))
+      body: (by
+        (tactic_apply
+          tactic: (identifier)
+          arg: (tactic_config
+            (identifier)
+            (identifier)))))))
 
 =====
 Intro
@@ -151,26 +154,27 @@ example : ∀ x y : Nat, x + y = x + y := by
 ---
 
 (module
-  (example
-    (quantifier
-      (identifier)
-      (identifier)
-      (identifier)
-      (binary_expression
-        (binary_expression
-          (identifier)
-          (identifier))
-        (binary_expression
-          (identifier)
-          (identifier))))
-    (by
-      (tactic_apply
+  (decorated_declaration
+    (example
+      (quantifier
         (identifier)
-        (application
+        (identifier)
+        (identifier)
+        (binary_expression
+          (binary_expression
+            (identifier)
+            (identifier))
+          (binary_expression
+            (identifier)
+            (identifier))))
+      (by
+        (tactic_apply
           (identifier)
-          (identifier)))
-      (tactic_apply
-        (identifier)))))
+          (application
+            (identifier)
+            (identifier)))
+        (tactic_apply
+          (identifier))))))
 
 =====
 Apply
@@ -181,16 +185,17 @@ example : true ↔ true := by apply Iff.intro
 ---
 
 (module
-  (example
-    (binary_expression
-      (true)
-      (true))
-    (by
-      (tactic_apply
-        (identifier)
-        (projection
+  (decorated_declaration
+    (example
+      (binary_expression
+        (true)
+        (true))
+      (by
+        (tactic_apply
           (identifier)
-          (identifier))))))
+          (projection
+            (identifier)
+            (identifier)))))))
 
 ========================
 Some Unknown User Tactic
@@ -204,18 +209,19 @@ example : true ↔ true := by
 ---
 
 (module
-  (example
-    (binary_expression
-      (true)
-      (true))
-    (by
-      (tactic_apply
-        (identifier))
-      (tactic_apply
-        (identifier)
-        (identifier))
-      (tactic_apply
-        (identifier)))))
+  (decorated_declaration
+    (example
+      (binary_expression
+        (true)
+        (true))
+      (by
+        (tactic_apply
+          (identifier))
+        (tactic_apply
+          (identifier)
+          (identifier))
+        (tactic_apply
+          (identifier))))))
 
 ==========
 Semicolons
@@ -231,34 +237,35 @@ example : (true ↔ true) ↔ (true ↔ true) := by
 ---
 
 (module
-  (example
-    type: (binary_expression
-      left: (parenthesized
-        (binary_expression
-          left: (true)
-          right: (true)))
-      right: (parenthesized
-        (binary_expression
-          left: (true)
-          right: (true))))
-    body: (by
-      (tactic_apply
-        tactic: (identifier)
-        arg: (projection
-          term: (identifier)
-          name: (identifier)))
-      (tactic_apply
-        tactic: (identifier)
-        arg: (identifier))
-      (tactic_apply
-        tactic: (identifier)
-        arg: (identifier))
-      (tactic_apply
-        tactic: (identifier)
-        arg: (identifier))
-      (tactic_apply
-        tactic: (identifier)
-        arg: (identifier)))))
+  (decorated_declaration
+    declaration: (example
+      type: (binary_expression
+        left: (parenthesized
+          (binary_expression
+            left: (true)
+            right: (true)))
+        right: (parenthesized
+          (binary_expression
+            left: (true)
+            right: (true))))
+      body: (by
+        (tactic_apply
+          tactic: (identifier)
+          arg: (projection
+            term: (identifier)
+            name: (identifier)))
+        (tactic_apply
+          tactic: (identifier)
+          arg: (identifier))
+        (tactic_apply
+          tactic: (identifier)
+          arg: (identifier))
+        (tactic_apply
+          tactic: (identifier)
+          arg: (identifier))
+        (tactic_apply
+          tactic: (identifier)
+          arg: (identifier))))))
 
 ==============
 Synthetic Hole
@@ -269,22 +276,23 @@ example {x : Nat} : x = x := by refine Eq.refl ?_
 ---
 
 (module
-  (example
-    (binders
-      (implicit_binder
+  (decorated_declaration
+    (example
+      (binders
+        (implicit_binder
+          (identifier)
+          (identifier)))
+      (binary_expression
         (identifier)
-        (identifier)))
-    (binary_expression
-      (identifier)
-      (identifier))
-    (by
-      (tactic_apply
-        (identifier)
-        (application
-          (projection
-            (identifier)
-            (identifier))
-          (synthetic_hole))))))
+        (identifier))
+      (by
+        (tactic_apply
+          (identifier)
+          (application
+            (projection
+              (identifier)
+              (identifier))
+            (synthetic_hole)))))))
 
 ================================
 Tactic Simp With Config List
@@ -296,20 +304,21 @@ theorem tacticConfig : 0 + 0 = 0 := by
 ---
 
 (module
-  (definition
-    name: (identifier)
-    type: (binary_expression
-      left: (binary_expression
-        left: (number)
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      type: (binary_expression
+        left: (binary_expression
+          left: (number)
+          right: (number))
         right: (number))
-      right: (number))
-    body: (by
-      (tactic_apply
-        tactic: (identifier)
-        arg: (tactic_config
-          (projection
-            term: (identifier)
-            name: (identifier)))))))
+      body: (by
+        (tactic_apply
+          tactic: (identifier)
+          arg: (tactic_config
+            (projection
+              term: (identifier)
+              name: (identifier))))))))
 
 ================
 Tactic By Cases

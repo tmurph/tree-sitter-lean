@@ -86,14 +86,16 @@ end Foo
 (module
   (namespace
     (identifier))
-  (definition
-    (identifier)
-    (identifier)
-    (sorry))
-  (definition
-    (identifier)
-    (identifier)
-    (sorry))
+  (decorated_declaration
+    (definition
+      (identifier)
+      (identifier)
+      (sorry)))
+  (decorated_declaration
+    (definition
+      (identifier)
+      (identifier)
+      (sorry)))
   (end
     (identifier)))
 
@@ -113,14 +115,16 @@ end Foo
 (module
   (section
     (identifier))
-  (definition
-    (identifier)
-    (identifier)
-    (sorry))
-  (definition
-    (identifier)
-    (identifier)
-    (sorry))
+  (decorated_declaration
+    (definition
+      (identifier)
+      (identifier)
+      (sorry)))
+  (decorated_declaration
+    (definition
+      (identifier)
+      (identifier)
+      (sorry)))
   (end
     (identifier)))
 
@@ -151,18 +155,20 @@ end Foo
     (identifier))
   (section
     (identifier))
-  (definition
-    (identifier)
-    (identifier)
-    (sorry))
+  (decorated_declaration
+    (definition
+      (identifier)
+      (identifier)
+      (sorry)))
   (end
     (identifier))
   (section
     (identifier))
-  (definition
-    (identifier)
-    (identifier)
-    (sorry))
+  (decorated_declaration
+    (definition
+      (identifier)
+      (identifier)
+      (sorry)))
   (end
     (identifier))
   (end

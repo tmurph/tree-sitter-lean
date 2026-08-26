@@ -132,19 +132,22 @@ example : Foo := ⟨⟩
 ---
 
 (module
-  (example
-    (identifier)
-    (anonymous_constructor
-      (number)
-      (number)
-      (number)))
-  (example
-    (identifier)
-    (anonymous_constructor
-      (number)))
-  (example
-    (identifier)
-    (anonymous_constructor)))
+  (decorated_declaration
+    (example
+      (identifier)
+      (anonymous_constructor
+        (number)
+        (number)
+        (number))))
+  (decorated_declaration
+    (example
+      (identifier)
+      (anonymous_constructor
+        (number))))
+  (decorated_declaration
+    (example
+      (identifier)
+      (anonymous_constructor))))
 
 =============================
 Invalid Inductive Constructor
@@ -249,9 +252,10 @@ theorem baz : (afweio)» := 12
 ---
 
 (module
-  (definition
-    name: (escaped_identifier)
-    body: (number)))
+  (decorated_declaration
+    declaration: (definition
+      name: (escaped_identifier)
+      body: (number))))
 
 ===========
 Quoted Name
