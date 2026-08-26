@@ -778,7 +778,7 @@ module.exports = grammar({
     by: $ => prec.right(seq(
       'by',
       $._layout_start,
-      $._tactic_seq,
+      optional($._tactic_seq),
       $._layout_end,
     )),
 

@@ -6,3 +6,4 @@ result
 .direnv/
 tree-sitter-lean.so
 .pre-commit-config.yaml
+libtree-sitter-lean.so
