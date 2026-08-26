@@ -1252,3 +1252,38 @@ example (n : Nat) : True := by
             patterns: (hole)
             (tactic_apply
               tactic: (identifier))))))))
+
+=====================
+Tactic Induction With
+=====================
+
+example (n : Nat) : True := by
+  induction n with
+  | zero => trivial
+  | succ n ih => trivial
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (example
+      binders: (binders
+        (explicit_binder
+          name: (identifier)
+          type: (identifier)))
+      type: (true)
+      body: (by
+        (tactic_induction
+          major: (identifier)
+          (cases_arm
+            pattern: (identifier)
+            (tactic_apply
+              tactic: (identifier)))
+          (cases_arm
+            pattern: (constructor_pattern
+              constructor: (identifier)
+              arg: (constructor_pattern
+                constructor: (identifier)
+                arg: (identifier)))
+            (tactic_apply
+              tactic: (identifier))))))))

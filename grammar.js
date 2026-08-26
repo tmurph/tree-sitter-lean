@@ -940,6 +940,7 @@ module.exports = grammar({
       $.tactic_case,
       $.tactic_cases,
       $.tactic_match,
+      $.tactic_induction,
       $.tactic_by_cases,
       $.tactic_choose,
       $.tactic_wlog,
@@ -1039,6 +1040,18 @@ module.exports = grammar({
       $._layout_start,
       $._tactic_seq,
       $._layout_end,
+    )),
+
+    // `induction e [using r] [generalizing x y ...] [with | ctor args => tac ...]`
+    // — see #43. `with`-arm-list reuses `cases_arm`: real Lean shares one
+    // `inductionAlts` syntax category between `induction`/`cases`/
+    // `fun_induction`/`fun_cases`.
+    tactic_induction: $ => prec.right(seq(
+      'induction',
+      field('major', $._expr_list),
+      optional(seq('using', field('using', $._expression))),
+      optional(seq('generalizing', repeat1(field('generalizing', $.identifier)))),
+      optional(seq('with', repeat1($.cases_arm))),
     )),
 
     // `choose U V hU hV hUV using H` — `using` optional, `choose!` variant
