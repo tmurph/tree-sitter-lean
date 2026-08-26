@@ -475,3 +475,86 @@ def unaryLift : IO Nat := do
               operand: (application
                 name: (identifier)
                 arguments: (number)))))))))
+
+=============================
+Pow Binds Tighter Than Unary
+=============================
+
+#eval -x ^ 2
+#eval f x ^ 2
+#eval x ^ 2 + 1
+
+---
+
+(module
+  (hash_command
+    (unary_expression
+      operand: (binary_expression
+        left: (identifier)
+        right: (number))))
+  (hash_command
+    (binary_expression
+      left: (application
+        name: (identifier)
+        arguments: (identifier))
+      right: (number)))
+  (hash_command
+    (binary_expression
+      left: (binary_expression
+        left: (identifier)
+        right: (number))
+      right: (number))))
+
+======================
+Subst Rewrite Operator
+======================
+
+#eval h ▸ p
+#eval h1 ▸ h2 ▸ p
+#eval h ▸ p + q
+#eval h ▸ p ^ 2
+#eval h ▸ -p
+#eval -h ▸ p
+#eval h ▸ p.foo
+
+---
+
+(module
+  (hash_command
+    (binary_expression
+      left: (identifier)
+      right: (identifier)))
+  (hash_command
+    (binary_expression
+      left: (identifier)
+      right: (binary_expression
+        left: (identifier)
+        right: (identifier))))
+  (hash_command
+    (binary_expression
+      left: (binary_expression
+        left: (identifier)
+        right: (identifier))
+      right: (identifier)))
+  (hash_command
+    (binary_expression
+      left: (identifier)
+      right: (binary_expression
+        left: (identifier)
+        right: (number))))
+  (hash_command
+    (binary_expression
+      left: (identifier)
+      right: (unary_expression
+        operand: (identifier))))
+  (hash_command
+    (binary_expression
+      left: (unary_expression
+        operand: (identifier))
+      right: (identifier)))
+  (hash_command
+    (binary_expression
+      left: (identifier)
+      right: (projection
+        term: (identifier)
+        name: (identifier)))))

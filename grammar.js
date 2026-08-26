@@ -17,7 +17,9 @@ const PREC = {
   compare: 40,      // == != < > <= >=
   add: 55,          // + - ++ :: × (merged: cons + add + product)
   mul: 60,          // * / %
+  subst: 65,        // ▸
   unary: 70,        // ! ¬ -
+  pow: 75,          // ^ ∘
   app: 80,          // function application
   proj: 90,         // .field
   atom: 100,        // literals, identifiers
@@ -697,11 +699,12 @@ module.exports = grammar({
         [PREC.app + 1, $._op_pipe],
       ];
 
-      // Right-associative: $, <|, ::, ^, ∘
+      // Right-associative: $, <|, ::, ▸, ^, ∘
       const rightAssoc = [
         [PREC.low, $._op_dollar],
         [PREC.add, $._op_cons],
-        [PREC.mul, $._op_pow],
+        [PREC.subst, $._op_subst],
+        [PREC.pow, $._op_pow],
         [PREC.app + 1, $._op_lpipe],
       ];
 
@@ -736,6 +739,7 @@ module.exports = grammar({
     _op_pipe: _ => choice('|>', '|>.'),
     _op_dollar: _ => '$',
     _op_cons: _ => '::',
+    _op_subst: _ => '▸',
     _op_pow: _ => choice('^', '∘'),
     _op_lpipe: _ => '<|',
 
