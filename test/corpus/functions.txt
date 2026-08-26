@@ -160,15 +160,16 @@ def matchFun := fun | 0 => true | _ => false
 ---
 
 (module
-  (definition
-    name: (identifier)
-    body: (fun
-      (match_arm
-        patterns: (number)
-        body: (true))
-      (match_arm
-        patterns: (hole)
-        body: (false)))))
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      body: (fun
+        (match_arm
+          patterns: (number)
+          body: (true))
+        (match_arm
+          patterns: (hole)
+          body: (false))))))
 
 ===========
 Quantifiers

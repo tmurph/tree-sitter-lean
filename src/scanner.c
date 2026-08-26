@@ -392,6 +392,15 @@ bool tree_sitter_lean_external_scanner_scan(
   /* 6. Same-line terminator — force-close one layout level. See #1. */
   if (valid_symbols[LAYOUT_END] && s->depth > 0) {
     int32_t c = lexer->lookahead;
+    if (c == '|') {
+      // Mirror of the depth==1 / `|` guard in steps 2 and 4 — see #20.
+      if (s->depth == 1 && top_kind(s) == KIND_LAYOUT) {
+        return false;
+      }
+      pop(s);
+      lexer->result_symbol = LAYOUT_END;
+      return true;
+    }
     if (c == ')' || c == ']' || c == '}' || c == ',') {
       pop(s);
       lexer->result_symbol = LAYOUT_END;
