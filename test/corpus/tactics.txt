@@ -51,6 +51,38 @@ theorem foo {m n : Nat} : 2 * m + 2 * n = 2 * (n + m) := by
                 arguments: (identifier)))
             name: (identifier)))))))
 
+======================
+Tactic Rewrite Bang At
+======================
+
+example (h : True = True) : True := by
+  rw! [h] at h
+  rewrite! [h] at h
+  sorry
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (example
+      binders: (binders
+        (explicit_binder
+          name: (identifier)
+          type: (binary_expression
+            left: (true)
+            right: (true))))
+      type: (true)
+      body: (by
+        (tactic_rewrite
+          (tactic_config
+            (identifier))
+          (identifier))
+        (tactic_rewrite
+          (tactic_config
+            (identifier))
+          (identifier))
+        (tactic_sorry)))))
+
 =================
 Tactic Expression
 =================
@@ -346,6 +378,35 @@ example (p q : Prop) : True := by
           name: (identifier)
           condition: (identifier))
         (tactic_by_cases
+          condition: (identifier))
+        (tactic_by_cases
+          condition: (identifier))
+        (tactic_apply
+          tactic: (identifier))))))
+
+====================
+Tactic By Cases Bang
+====================
+
+example (p q : Prop) : True := by
+  by_cases! hx : p
+  by_cases! : q
+  trivial
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (example
+      binders: (binders
+        (explicit_binder
+          name: (identifier)
+          name: (identifier)
+          type: (identifier)))
+      type: (true)
+      body: (by
+        (tactic_by_cases
+          name: (identifier)
           condition: (identifier))
         (tactic_by_cases
           condition: (identifier))

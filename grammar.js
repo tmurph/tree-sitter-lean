@@ -927,12 +927,13 @@ module.exports = grammar({
       optional(seq('with', repeat1($.cases_arm))),
     )),
 
-    // `by_cases h : p` / `by_cases : p` / `by_cases p` — see #14. The
-    // `name` alternative uses `$._by_cases_name_token` (external scanner)
-    // rather than plain `$.identifier` — state-merging otherwise collapses
-    // it with `parenthesized`'s `(e : T)` state and silently drops the name.
+    // `by_cases h : p` / `by_cases : p` / `by_cases p` — see #14. `by_cases!`
+    // (Mathlib's dependent-rewrite variant) — see #30. The `name`
+    // alternative uses `$._by_cases_name_token` (external scanner) rather
+    // than plain `$.identifier` — state-merging otherwise collapses it
+    // with `parenthesized`'s `(e : T)` state and silently drops the name.
     tactic_by_cases: $ => prec.right(seq(
-      'by_cases',
+      choice('by_cases', token('by_cases!')),
       choice(
         seq(field('name', alias($._by_cases_name_token, $.identifier)), ':', field('condition', $._expression)),
         seq(':', field('condition', $._expression)),
@@ -969,9 +970,11 @@ module.exports = grammar({
       repeat(seq(alias($._tactic_comma_token, ','), field('arg', $._expression))),
     )),
 
-    // `rw`/`rewrite` always take a config list, optionally with `at`
+    // `rw`/`rewrite` always take a config list, optionally with `at`.
+    // `rw!`/`rewrite!` (Mathlib's `DepRewrite`) share the same trailing
+    // grammar — see #30.
     tactic_rewrite: $ => prec.right(PREC.app, seq(
-      choice('rw', 'rewrite'),
+      choice('rw', token('rw!'), 'rewrite', token('rewrite!')),
       choice(
         $.tactic_config,
         repeat1(field('arg', $._expression)),
