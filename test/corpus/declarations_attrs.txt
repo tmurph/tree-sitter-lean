@@ -149,14 +149,20 @@ attribute [simp, -inline, -reducible] Foo
 ---
 
 (module
-  (attribute
-    name: (identifier)
-    term: (identifier))
-  (attribute
-    name: (identifier)
-    name: (identifier)
-    name: (identifier)
-    term: (identifier)))
+  (decorated_declaration
+    declaration: (attribute
+      (attribute_ref
+        name: (identifier))
+      (identifier)))
+  (decorated_declaration
+    declaration: (attribute
+      (attribute_ref
+        name: (identifier))
+      (attribute_ref
+        name: (identifier))
+      (attribute_ref
+        name: (identifier))
+      (identifier))))
 
 ====================================
 Empty Explicit Attribute Declaration
@@ -167,10 +173,9 @@ attribute [] f
 ---
 
 (module
-  (attribute
-    (identifier
-      (MISSING _identifier))
-    (identifier)))
+  (decorated_declaration
+    (attribute
+      (identifier))))
 
 ======================
 Partial With Attribute

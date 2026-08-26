@@ -250,12 +250,17 @@ module.exports = grammar({
     include: $ => seq('include', repeat1(field('name', $.identifier))),
     omit: $ => seq('omit', repeat1(field('name', $.identifier))),
 
-    // `attribute [simp] Nat.add_zero`
+    // `attribute [simp] Nat.add_zero`, `attribute [-reducible] f` — see #18.
     attribute: $ => prec.left(seq(
       'attribute',
-      '[', commaSep1($.identifier), ']',
+      '[', commaSep($.attribute_ref), ']',
       repeat1($._expression),
     )),
+
+    attribute_ref: $ => seq(
+      optional(field('remove', '-')),
+      field('name', $._name),
+    ),
 
     // `notation:10000 n "!" => factorial n`
     notation: $ => prec.left(seq(
