@@ -279,6 +279,20 @@ variable {x : α} [y : α]
       name: (identifier)
       type: (identifier))))
 
+========================
+Strict Implicit Variable
+========================
+
+variable ⦃x : Nat⦄
+
+---
+
+(module
+  (variable
+    (strict_implicit_binder
+      name: (identifier)
+      type: (identifier))))
+
 ===============
 Empty Variables
 ===============

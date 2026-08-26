@@ -211,6 +211,24 @@ Quantifiers
             right: (identifier))
           right: (identifier))))))
 
+===============================
+Quantifier With Strict Implicit
+===============================
+
+#check ∀ ⦃x : Nat⦄, x = x
+
+---
+
+(module
+  (hash_command
+    (quantifier
+      binders: (strict_implicit_binder
+        name: (identifier)
+        type: (identifier))
+      body: (binary_expression
+        left: (identifier)
+        right: (identifier)))))
+
 ===============
 Bounded Binders
 ===============

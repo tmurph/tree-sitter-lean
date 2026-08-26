@@ -481,6 +481,7 @@ module.exports = grammar({
       $.explicit_binder,
       $.implicit_binder,
       $.instance_binder,
+      $.strict_implicit_binder,
     ),
 
     explicit_binder: $ => seq(
@@ -496,6 +497,13 @@ module.exports = grammar({
       repeat1(field('name', $.identifier)),
       optional($._type_spec),
       '}',
+    ),
+
+    strict_implicit_binder: $ => seq(
+      '⦃',
+      repeat1(field('name', $.identifier)),
+      optional($._type_spec),
+      '⦄',
     ),
 
     instance_binder: $ => seq(

@@ -142,6 +142,32 @@ def foo [Bar x] [y : Baz] : x := 1
       type: (identifier)
       body: (number))))
 
+=========================
+Strict Implicit Arguments
+=========================
+
+def foo ⦃x : Nat⦄ (h : x > 0) : x ≠ 0 := sorry
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      binders: (binders
+        (strict_implicit_binder
+          name: (identifier)
+          type: (identifier))
+        (explicit_binder
+          name: (identifier)
+          type: (binary_expression
+            left: (identifier)
+            right: (number))))
+      type: (binary_expression
+        left: (identifier)
+        right: (number))
+      body: (sorry))))
+
 ====================
 First Class Function
 ====================
