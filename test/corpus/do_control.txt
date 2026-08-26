@@ -263,3 +263,88 @@ def multiFor (xs ys : List Nat) : IO Unit := do
             (application
               name: (identifier)
               arguments: (parenthesized))))))))
+
+====================================
+Do If Then Else With Multiple Statements
+====================================
+
+def branches (b : Bool) : IO Unit := do
+  if b then
+    IO.println 1
+    IO.println 2
+  else
+    IO.println 3
+    IO.println 4
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      binders: (binders
+        (explicit_binder
+          name: (identifier)
+          type: (identifier)))
+      type: (application
+        name: (identifier)
+        arguments: (identifier))
+      body: (do
+        (do_if
+          condition: (identifier)
+          then: (application
+            name: (projection
+              term: (identifier)
+              name: (identifier))
+            arguments: (number))
+          then: (application
+            name: (projection
+              term: (identifier)
+              name: (identifier))
+            arguments: (number))
+          else: (application
+            name: (projection
+              term: (identifier)
+              name: (identifier))
+            arguments: (number))
+          else: (application
+            name: (projection
+              term: (identifier)
+              name: (identifier))
+            arguments: (number)))))))
+
+====================================
+Do If Without Else
+====================================
+
+def bareIf (b : Bool) : IO Unit := do
+  if b then
+    IO.println 1
+  IO.println 2
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      binders: (binders
+        (explicit_binder
+          name: (identifier)
+          type: (identifier)))
+      type: (application
+        name: (identifier)
+        arguments: (identifier))
+      body: (do
+        (do_if
+          condition: (identifier)
+          then: (application
+            name: (projection
+              term: (identifier)
+              name: (identifier))
+            arguments: (number)))
+        (application
+          name: (projection
+            term: (identifier)
+            name: (identifier))
+          arguments: (number))))))

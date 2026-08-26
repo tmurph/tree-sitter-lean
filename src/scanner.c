@@ -229,8 +229,18 @@ static bool starts_with_pipe(TSLexer *lexer) {
   return lexer->lookahead == '|';
 }
 
+/* Word-boundary peek for `else` — see #44. */
+static bool starts_with_else(TSLexer *lexer) {
+  static const char kw[] = "else";
+  for (size_t i = 0; i < 4; i++) {
+    if (lexer->lookahead != kw[i]) return false;
+    lexer->advance(lexer, false);
+  }
+  return !is_ident_continue(lexer->lookahead);
+}
+
 static bool should_suppress_semicolon(TSLexer *lexer) {
-  return starts_with_pipe(lexer);
+  return starts_with_pipe(lexer) || starts_with_else(lexer);
 }
 
 /**
@@ -457,13 +467,15 @@ bool tree_sitter_lean_external_scanner_scan(
       }
       // Flush-left continuation, cascade step (second+ nested level) — see #21.
       lexer->mark_end(lexer);
-      if (valid_symbols[LAYOUT_END] && peek_command_keyword(lexer)) {
+      // Suppress-check must run before peek_command_keyword() — see #44.
+      bool suppress = should_suppress_semicolon(lexer);
+      if (!suppress && valid_symbols[LAYOUT_END] && peek_command_keyword(lexer)) {
         pop(s);
         lexer->result_symbol = LAYOUT_END;
         return true;
       }
       if (valid_symbols[LAYOUT_SEMICOLON]) {
-        if (should_suppress_semicolon(lexer)) {
+        if (suppress) {
           s->queued_indent = NO_QUEUED;
           return false;
         }
@@ -504,16 +516,18 @@ bool tree_sitter_lean_external_scanner_scan(
     }
     if (next == ci) {
       // Flush-left continuation (body at the same column as its opening
-      // line, so the dedent above never fires) — see #21.
-      if (valid_symbols[LAYOUT_END] && peek_command_keyword(lexer)) {
+      // line, so the dedent above never fires) — see #21. Suppress-check
+      // must run before peek_command_keyword() — see #44.
+      bool suppress = should_suppress_semicolon(lexer);
+      if (!suppress && valid_symbols[LAYOUT_END] && peek_command_keyword(lexer)) {
         pop(s);
         s->queued_indent = next;
         lexer->result_symbol = LAYOUT_END;
         return true;
       }
       if (valid_symbols[LAYOUT_SEMICOLON]) {
-        // Suppress semicolon before `|`
-        if (should_suppress_semicolon(lexer)) {
+        // Suppress semicolon before `|` or `else`
+        if (suppress) {
           s->queued_indent = NO_QUEUED;
           return false;
         }
