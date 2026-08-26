@@ -485,9 +485,15 @@ module.exports = grammar({
       $.strict_implicit_binder,
     ),
 
+    // A binder/catch-variable name: usually an identifier, but `_` (a
+    // hole) is also valid wherever Lean lets you bind a value you never
+    // reference. Shared across all four bracketed binders plus `try`'s
+    // `catch` variable — five call sites of the same choice.
+    _binder_name: $ => choice($.identifier, $.hole),
+
     explicit_binder: $ => seq(
       '(',
-      repeat1(field('name', choice($.identifier, $.hole))),
+      repeat1(field('name', $._binder_name)),
       optional($._type_spec),
       optional(seq(':=', field('default', $._expression))),
       ')',
@@ -495,21 +501,21 @@ module.exports = grammar({
 
     implicit_binder: $ => seq(
       '{',
-      repeat1(field('name', choice($.identifier, $.hole))),
+      repeat1(field('name', $._binder_name)),
       optional($._type_spec),
       '}',
     ),
 
     strict_implicit_binder: $ => seq(
       '⦃',
-      repeat1(field('name', choice($.identifier, $.hole))),
+      repeat1(field('name', $._binder_name)),
       optional($._type_spec),
       '⦄',
     ),
 
     instance_binder: $ => seq(
       '[',
-      optional(seq(field('name', choice($.identifier, $.hole)), ':')),
+      optional(seq(field('name', $._binder_name), ':')),
       field('type', $._expression),
       ']',
     ),
@@ -578,7 +584,7 @@ module.exports = grammar({
       field('body', $._do_seq),
       $._layout_end,
       'catch',
-      optional(field('var', choice($.identifier, $.hole))),
+      optional(field('var', $._binder_name)),
       arrow(),
       $._layout_start,
       field('handler', $._do_seq),
