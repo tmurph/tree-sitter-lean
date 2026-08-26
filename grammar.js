@@ -311,10 +311,9 @@ module.exports = grammar({
       )),
     ),
 
-    // `@[simp, inline]`, `@[extern "foo"]`, `@[command_elab assertCheckCmd]`,
-    // `@[default_instance prio]`, etc. Each comma-separated entry is a name
-    // followed by an optional sequence of atomic arguments (idents/strings/
-    // numbers).
+    // `@[simp, inline]`, `@[extern "foo"]`, `@[scoped simp]`, etc. — see
+    // #17 for the comma-boundary ambiguity `arg`'s restriction avoids, and
+    // for the `scoped`/`local` qualifier.
     //
     // `@[` is one token, not `'@', '['` — see #1.
     attributes: $ => seq(
@@ -324,8 +323,9 @@ module.exports = grammar({
     ),
 
     attribute_entry: $ => seq(
+      optional(field('kind', choice('scoped', 'local'))),
       field('name', $._name),
-      repeat(field('arg', choice($.identifier, $.escaped_identifier, $.string, $.number))),
+      repeat(field('arg', choice($.string, $.number))),
     ),
 
     // def/theorem/lemma/abbrev — name is required, no ambiguity with binders.

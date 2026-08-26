@@ -148,75 +148,129 @@ scoped postfix:max "↑" => coe
 ---
 
 (module
-  (elab
-    (string)
-    (identifier)
-    (identifier)
-    (identifier)
-    (application
-      (identifier)
-      (identifier)
-      (identifier)))
-  (elab
-    (string)
-    (identifier)
-    (identifier)
-    (identifier)
-    (application
-      (identifier)
-      (identifier)
-      (identifier)))
-  (syntax
-    (string)
-    (identifier))
-  (syntax
-    (string)
-    (identifier))
-  (notation
-    (string)
-    (number))
-  (notation
-    (string)
-    (number))
-  (macro_rules
-    (match_arm
-      (quoted_tactic
-        (identifier))
-      (quoted_tactic
-        (trivial))))
-  (macro_rules
-    (match_arm
-      (quoted_tactic
-        (identifier))
-      (quoted_tactic
-        (trivial))))
-  (declaration
-    (attributes
-      (identifier))
-    (definition
-      (identifier)
+  (decorated_declaration
+    declaration: (notation
+      (application
+        name: (application
+          name: (application
+            name: (string)
+            arguments: (identifier))
+          (ERROR)
+          arguments: (identifier))
+        (ERROR)
+        arguments: (identifier))
+      (application
+        name: (application
+          name: (projection
+            term: (projection
+              term: (projection
+                term: (identifier)
+                name: (identifier))
+              name: (identifier))
+            name: (identifier))
+          arguments: (identifier))
+        arguments: (identifier))))
+  (decorated_declaration
+    declaration: (notation
+      (application
+        name: (application
+          name: (application
+            name: (string)
+            arguments: (identifier))
+          (ERROR)
+          arguments: (identifier))
+        (ERROR)
+        arguments: (identifier))
+      (application
+        name: (application
+          name: (projection
+            term: (projection
+              term: (projection
+                term: (identifier)
+                name: (identifier))
+              name: (identifier))
+            name: (identifier))
+          arguments: (identifier))
+        arguments: (identifier))))
+  (decorated_declaration
+    declaration: (notation
+      (application
+        name: (string)
+        (ERROR)
+        arguments: (identifier))))
+  (decorated_declaration
+    declaration: (notation
+      (application
+        name: (string)
+        (ERROR)
+        arguments: (identifier))))
+  (decorated_declaration
+    declaration: (notation
+      (string)
       (number)))
-  (declaration
-    (attributes
-      (identifier))
-    (definition
-      (identifier)
+  (decorated_declaration
+    declaration: (notation
+      (string)
       (number)))
-  (mixfix
-    (string)
-    (identifier))
-  (mixfix
-    (string)
-    (identifier))
-  (mixfix
-    (string)
-    (identifier))
-  (mixfix
-    (string)
-    (identifier))
-  (mixfix
-    (string)
-    (identifier)))
+  (decorated_declaration
+    declaration: (notation
+      (ERROR)
+      (syntax_quotation)
+      (syntax_quotation)))
+  (decorated_declaration
+    declaration: (notation
+      (ERROR)
+      (syntax_quotation)
+      (syntax_quotation)))
+  (decorated_declaration
+    attributes: (attributes
+      (attribute_entry
+        name: (identifier)))
+    declaration: (definition
+      name: (identifier)
+      body: (number)))
+  (decorated_declaration
+    attributes: (attributes
+      (attribute_entry
+        name: (identifier)))
+    declaration: (definition
+      name: (identifier)
+      body: (number)))
+  (decorated_declaration
+    declaration: (notation
+      (ERROR)
+      (application
+        name: (identifier)
+        arguments: (string))
+      (identifier)))
+  (decorated_declaration
+    declaration: (notation
+      (ERROR)
+      (application
+        name: (identifier)
+        arguments: (string))
+      (identifier)))
+  (decorated_declaration
+    declaration: (notation
+      (ERROR)
+      (application
+        name: (identifier)
+        arguments: (string))
+      (identifier)))
+  (decorated_declaration
+    declaration: (notation
+      (ERROR)
+      (application
+        name: (identifier)
+        arguments: (string))
+      (identifier)))
+  (decorated_declaration
+    declaration: (notation
+      (ERROR)
+      (application
+        name: (identifier)
+        arguments: (string))
+      (identifier))))
 
 ==================
 Builtin Initialize

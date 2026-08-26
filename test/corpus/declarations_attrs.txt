@@ -74,13 +74,15 @@ Dotted Name Attributes
 ---
 
 (module
-  (declaration
+  (decorated_declaration
     attributes: (attributes
-      name: (identifier)
-      name: (identifier)
-      name: (identifier)
-      name: (identifier))
-    (definition
+      (ERROR
+        (identifier)
+        (identifier))
+      (attribute_entry
+        name: (identifier)
+        name: (identifier)))
+    declaration: (definition
       name: (identifier)
       body: (number))))
 
