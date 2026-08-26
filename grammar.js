@@ -716,8 +716,10 @@ module.exports = grammar({
       field('codomain', $._expression),
     )),
 
-    // Binary operators with table-driven precedence.
-    // One hidden operator-class rule per precedence level (see `_op_*` below) — see #1.
+    // Binary operators with table-driven precedence. One hidden
+    // operator-class rule per precedence level (see `_op_*` below) — see
+    // #1. Most levels are folded into a single `token(choice(...))`
+    // terminal to reclaim generate memory — see #32.
     binary_expression: $ => {
       const leftAssoc = [
         [PREC.low, $._op_or],
@@ -755,21 +757,25 @@ module.exports = grammar({
       );
     },
 
-    // Operator classes: one hidden rule per precedence level. Kept as
-    // separate literals rather than one folded terminal per level (cheaper,
-    // but erases individual symbols from node-types.json) — see #1.
-    _op_or: _ => choice('||', '∨', '<|>', '<$>', '<*>', '*>', '<*'),
-    _op_and: _ => choice('&&', '∧'),
+    // Operator classes: one hidden rule per precedence level. Most fold
+    // into a single `token(choice(...))` terminal to reclaim generate
+    // memory — see #32. Aliased to `operator` so queries keep a generic
+    // bucket even where the individual symbol is no longer its own node.
+    _op_or: _ => token(choice('||', '∨', '<|>', '<$>', '<*>', '*>', '<*')),
+    _op_and: _ => token(choice('&&', '∧')),
     // Membership/subset relations — see #8.
-    _op_cmp: _ => choice('==', '!=', '=', '<', '>', '<=', '>=', '≤', '≥', '≠',
-                         '∣', '↔', '⊢', '∈', '∉', '⊆', '⊂', '⊇', '⊃'),
-    _op_add: _ => choice('+', '-', '++', '∪', '∩', '×', '\\'),
-    _op_mul: _ => choice('*', '/', '%'),
-    _op_pipe: _ => choice('|>', '|>.'),
+    _op_cmp: _ => token(choice('==', '!=', '=', '<', '>', '<=', '>=', '≤', '≥', '≠',
+                         '∣', '↔', '⊢', '∈', '∉', '⊆', '⊂', '⊇', '⊃')),
+    // `-` stays out of the merged token — also unary_expression's
+    // prefix-minus literal; folding it in reopens the unary/binary minus
+    // ambiguity that rule's comment warns about — see #32.
+    _op_add: _ => choice('-', token(choice('+', '++', '∪', '∩', '×', '\\'))),
+    _op_mul: _ => token(choice('*', '/', '%')),
+    _op_pipe: _ => token(choice('|>', '|>.')),
     _op_dollar: _ => '$',
     _op_cons: _ => '::',
     _op_subst: _ => '▸',
-    _op_pow: _ => choice('^', '∘'),
+    _op_pow: _ => token(choice('^', '∘')),
     _op_lpipe: _ => '<|',
 
     // Prefix operators (includes monadic lift ← for do-blocks).

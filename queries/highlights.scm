@@ -356,28 +356,19 @@
 
 ; ── Operators ────────────────────────────────────────────────
 
-; `"operator"` is the alias every binary operator carries — see #1.
+; `"operator"` is the alias every binary operator carries — see #1, #32
+; (most levels no longer have individual node types after the #32 fold).
 [
   "operator"
   "!"  "¬"
-  "+"  "-"  "*"  "/"  "%"
-  "++"  "∘"
+  "+"  "-"  "*"
   "::"
-  "×"  "∪"  "∩"
-  "&&"  "∧"
-  "||"  "∨"
-  "="  "=="  "!="  "≠"  "∣"
-  "<"  ">"  "<="  ">="  "≤"  "≥"
-  "∈"  "∉"  "⊆"  "⊂"  "⊇"  "⊃"
-  "|>"  "<|"  "|>."  "$"
-  "<|>"
+  "<|"  "$"
   "<;>"  "<;"
   "->"  "→"
   "<-"  "←"
   ":="
   "=>"
-  "↔"  "⊢"
-  "^"
 ] @operator
 
 ; ── Literals ─────────────────────────────────────────────────
