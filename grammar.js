@@ -1293,7 +1293,8 @@ module.exports = grammar({
 
     // Identifier with optional dot-separated parts: `Foo.Bar.baz`
     // Simple identifier without dots - projection handles qualified access
-    identifier: _ => /[_a-zA-Zα-ωΑ-Ωℕℤℚℝℂ∇][_a-zA-Z0-9'α-ωΑ-Ωℕℤℚℝℂ∇?!]*/,
+    // Continuation class includes Unicode subscripts — see #6.
+    identifier: _ => /[_a-zA-Zα-ωΑ-Ωℕℤℚℝℂ∇][_a-zA-Z0-9'α-ωΑ-Ωℕℤℚℝℂ∇?!₀-₉ₐ-ₜᵢ-ᵪⱼ]*/,
 
     // Escaped identifier: `«name with spaces»`
     escaped_identifier: _ => /«[^»]*»/,
