@@ -35,13 +35,15 @@ enum TokenType {
   BRACE_FIELD_SEP,        // newline-as-separator inside `{ … }` struct instance
   BY_CASES_NAME,          // identifier immediately (mod spaces) followed by `:`
   TACTIC_COMMA,           // `,` between `tactic_use` arguments (see step 6)
+  CALC_LAYOUT_START,      // like LAYOUT_START, but for `calc`'s step chain (see KIND_CALC_PENDING)
 };
 
 #define MAX_DEPTH 64
 #define NO_QUEUED UINT32_MAX
 
-/* Why a layout level was opened — see #1. */
-enum LayoutKind { KIND_LAYOUT = 0, KIND_MATCH_BODY = 1 };
+/* Why a layout level was opened — see #1. KIND_CALC_PENDING: a
+   tactic_calc level whose anchor is still provisional — see #40. */
+enum LayoutKind { KIND_LAYOUT = 0, KIND_MATCH_BODY = 1, KIND_CALC_PENDING = 2 };
 
 typedef struct {
   uint32_t indents[MAX_DEPTH];
@@ -246,6 +248,39 @@ static void push_layout_indent(Scanner *s, TSLexer *lexer, uint8_t kind) {
   s->queued_indent = NO_QUEUED;
 }
 
+/* Push indent for `_calc_layout_start` — see #40. Tags the level
+   KIND_CALC_PENDING when the first step shares `calc`'s own line (anchor
+   is only a guess then); otherwise an ordinary KIND_LAYOUT push. */
+static void push_calc_layout_indent(Scanner *s, TSLexer *lexer) {
+  skip_spaces(lexer);
+  if (is_nl(lexer->lookahead)) {
+    uint32_t indent = measure_indent(lexer);
+    push(s, indent, KIND_LAYOUT);
+  } else {
+    push(s, lexer->get_column(lexer), KIND_CALC_PENDING);
+  }
+  s->queued_indent = NO_QUEUED;
+}
+
+/* Attempt to resolve a KIND_CALC_PENDING level's provisional anchor — see
+   #40. Called from both dedent-handling sites when the innermost level is
+   still pending. Fires only if the candidate column is deeper than the
+   enclosing level, the line starts with `_` (the calc-step placeholder),
+   and LAYOUT_SEMICOLON is valid; one-shot (flips to plain KIND_LAYOUT). */
+static bool try_finalize_calc_anchor(Scanner *s, TSLexer *lexer,
+                                      uint32_t candidate,
+                                      const bool *valid_symbols) {
+  if (s->depth == 0 || top_kind(s) != KIND_CALC_PENDING) return false;
+  if (candidate <= penultimate_indent(s)) return false;
+  if (lexer->lookahead != '_') return false;
+  if (!valid_symbols[LAYOUT_SEMICOLON]) return false;
+  s->indents[s->depth - 1] = candidate;
+  s->kinds[s->depth - 1] = KIND_LAYOUT;
+  s->queued_indent = NO_QUEUED;
+  lexer->result_symbol = LAYOUT_SEMICOLON;
+  return true;
+}
+
 /* ── main scan ─────────────────────────────────────────────────── */
 
 bool tree_sitter_lean_external_scanner_scan(
@@ -363,6 +398,13 @@ bool tree_sitter_lean_external_scanner_scan(
     return true;
   }
 
+  /* 1c. CALC_LAYOUT_START — see #40. */
+  if (valid_symbols[CALC_LAYOUT_START]) {
+    push_calc_layout_indent(s, lexer);
+    lexer->result_symbol = CALC_LAYOUT_START;
+    return true;
+  }
+
   /* 2. Process queued indent from a previous newline.
         Each call pops at most one layout level (LAYOUT_END) or emits
         LAYOUT_SEMICOLON, then returns so tree-sitter can re-enter. */
@@ -388,6 +430,15 @@ bool tree_sitter_lean_external_scanner_scan(
           s->queued_indent = NO_QUEUED;
           return false;
         }
+      } else if (top_kind(s) == KIND_CALC_PENDING) {
+        // Peek past blank lines for try_finalize_calc_anchor — see #40.
+        lexer->mark_end(lexer);
+        skip_spaces(lexer);
+        while (is_nl(lexer->lookahead)) {
+          lexer->advance(lexer, true);
+          skip_spaces(lexer);
+        }
+        if (try_finalize_calc_anchor(s, lexer, qi, valid_symbols)) return true;
       }
       pop(s);
       lexer->result_symbol = LAYOUT_END;
@@ -439,6 +490,7 @@ bool tree_sitter_lean_external_scanner_scan(
     }
 
     if (next < ci && valid_symbols[LAYOUT_END]) {
+      if (try_finalize_calc_anchor(s, lexer, next, valid_symbols)) return true;
       // Mirror of the depth==1 / `|` guard in step 2.
       if (s->depth == 1 && top_kind(s) == KIND_LAYOUT && starts_with_pipe(lexer)) {
         return false;

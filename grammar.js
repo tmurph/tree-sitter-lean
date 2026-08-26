@@ -59,6 +59,7 @@ module.exports = grammar({
     $._brace_field_sep,         // Newline as field separator inside `{ … }`
     $._by_cases_name_token,     // Identifier immediately followed by `:` — see #14
     $._tactic_comma_token,      // `,` between `tactic_use` arguments — see #29
+    $._calc_layout_start,       // Like _layout_start but for `calc`'s step chain — see #40
   ],
 
   // Keyword extraction improves error detection and compile time
@@ -1094,17 +1095,18 @@ module.exports = grammar({
     // `show T`
     tactic_show: $ => seq('show', $._expression),
 
-    // `calc` block with steps — see #35. Steps are layout-block siblings
-    // separated by `$._layout_semicolon`, like `_do_seq`/`_tactic_seq`.
-    // `_layout_start` anchors right after `calc`, not after the first
-    // step's expression (that broke single-line `calc 1 = 1 := rfl`
-    // entirely — see #35 for why). Known gap: doesn't yet accept a
-    // same-line first term with continuations below `calc` itself rather
-    // than below the term — needs parser-level knowledge of where
-    // `calc_first_step` ends, out of scope here.
+    // `calc` block with steps — see #35, #40. Steps are layout-block
+    // siblings separated by `$._layout_semicolon`, like `_do_seq`/
+    // `_tactic_seq`. `$._calc_layout_start` (distinct from the generic
+    // `$._layout_start`) anchors right after `calc` and lets the scanner
+    // tag the pushed level `KIND_CALC_PENDING` when the first step shares
+    // `calc`'s own line, so a less-indented `_`-continuation can later
+    // correct the anchor — see #40 for why a plain layout token can't
+    // solve this (moving it after the first step breaks single-line
+    // `calc` entirely).
     tactic_calc: $ => prec.right(seq(
       'calc',
-      $._layout_start,
+      $._calc_layout_start,
       $.calc_first_step,
       repeat(seq($._layout_semicolon, $.calc_step)),
       $._layout_end,

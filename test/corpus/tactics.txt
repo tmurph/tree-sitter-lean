@@ -954,3 +954,101 @@ example (a b c : Nat) (h1 : a = b) (h2 : b = c) : a = c := by
               left: (hole)
               right: (identifier))
             (identifier)))))))
+
+================================
+Tactic Calc Same-Line First Term
+================================
+
+example (a b c : Nat) (h : a * b = c) : a * b = c := by
+  calc a * b
+    _ = c := h
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (example
+      binders: (binders
+        (explicit_binder
+          name: (identifier)
+          name: (identifier)
+          name: (identifier)
+          type: (identifier))
+        (explicit_binder
+          name: (identifier)
+          type: (binary_expression
+            left: (binary_expression
+              left: (identifier)
+              right: (identifier))
+            right: (identifier))))
+      type: (binary_expression
+        left: (binary_expression
+          left: (identifier)
+          right: (identifier))
+        right: (identifier))
+      body: (by
+        (tactic_calc
+          (calc_first_step
+            (binary_expression
+              left: (identifier)
+              right: (identifier)))
+          (calc_step
+            (binary_expression
+              left: (hole)
+              right: (identifier))
+            (identifier)))))))
+
+===========================================
+Tactic Calc Same-Line First Term Multi-Step
+===========================================
+
+example (a b c d : Nat) (h1 : a * b = c) (h2 : c = d) : a * b = d := by
+  calc a * b
+    _ = c := h1
+    _ = d := h2
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (example
+      binders: (binders
+        (explicit_binder
+          name: (identifier)
+          name: (identifier)
+          name: (identifier)
+          name: (identifier)
+          type: (identifier))
+        (explicit_binder
+          name: (identifier)
+          type: (binary_expression
+            left: (binary_expression
+              left: (identifier)
+              right: (identifier))
+            right: (identifier)))
+        (explicit_binder
+          name: (identifier)
+          type: (binary_expression
+            left: (identifier)
+            right: (identifier))))
+      type: (binary_expression
+        left: (binary_expression
+          left: (identifier)
+          right: (identifier))
+        right: (identifier))
+      body: (by
+        (tactic_calc
+          (calc_first_step
+            (binary_expression
+              left: (identifier)
+              right: (identifier)))
+          (calc_step
+            (binary_expression
+              left: (hole)
+              right: (identifier))
+            (identifier))
+          (calc_step
+            (binary_expression
+              left: (hole)
+              right: (identifier))
+            (identifier)))))))
