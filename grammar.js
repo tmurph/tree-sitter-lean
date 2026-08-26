@@ -819,6 +819,7 @@ module.exports = grammar({
       $.tactic_apply,
       $.tactic_focus,
       $.tactic_case,
+      $.tactic_cases,
       $.tactic_rewrite,
       $.tactic_have,
       $.tactic_let,
@@ -857,6 +858,22 @@ module.exports = grammar({
     tactic_case: $ => prec.right(seq(
       choice('case', 'next'),
       repeat($.identifier),
+      arrow(),
+      $._layout_start,
+      $._tactic_seq,
+      $._layout_end,
+    )),
+
+    // `cases e` or `cases e with | ctor args => tac | ...` — see #13.
+    tactic_cases: $ => prec.right(seq(
+      'cases',
+      field('major', $._expression),
+      optional(seq('with', repeat1($.cases_arm))),
+    )),
+
+    cases_arm: $ => prec.right(seq(
+      '|',
+      field('pattern', $._pattern),
       arrow(),
       $._layout_start,
       $._tactic_seq,
