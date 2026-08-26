@@ -805,6 +805,8 @@ module.exports = grammar({
       $.tactic_let,
       $.tactic_show,
       $.tactic_calc,
+      $.tactic_sorry,
+      $.tactic_done,
     ),
 
     // Most tactics: `intro n`, `simp [lemma]`, `apply foo`, `exact bar`, `omega`
@@ -881,6 +883,11 @@ module.exports = grammar({
       ':=',
       $._expression,
     )),
+
+    // Goal-closing tactics get their own nodes — see #3.
+    tactic_sorry: _ => prec(1, 'sorry'),
+
+    tactic_done: _ => prec(1, 'done'),
 
     // Let binding: modeled after Lean's letDecl.
     // Lean tries letIdDecl first (identifier + optional binders), then letPatDecl.

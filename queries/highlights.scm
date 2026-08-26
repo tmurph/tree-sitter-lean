@@ -165,6 +165,11 @@
 (tactic_rewrite
   "rewrite" @function.builtin)
 
+; See #3.
+(tactic_sorry) @keyword.control.exception
+
+(tactic_done) @function.builtin
+
 (hash_command) @keyword.directive
 
 ; ── Keywords ─────────────────────────────────────────────────
