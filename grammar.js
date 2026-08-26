@@ -1076,14 +1076,14 @@ module.exports = grammar({
     // match's later arms.
     match: $ => prec.right(seq(
       'match',
-      field('scrutinees', commaSep1($._expression)),
+      field('scrutinees', $._expr_list),
       'with',
       repeat1($.match_arm),
     )),
 
     match_arm: $ => prec.right(seq(
       '|',
-      field('patterns', commaSep1($._expression)),
+      field('patterns', $._expr_list),
       arrow(),
       $._match_body_start,
       field('body', $._expression),
@@ -1227,7 +1227,7 @@ module.exports = grammar({
     // before `|` so that _do_seq doesn't consume it.
     do_match: $ => prec.left(1, seq(
       'match',
-      field('scrutinees', commaSep1($._expression)),
+      field('scrutinees', $._expr_list),
       'with',
       repeat1($.do_match_arm),
     )),
@@ -1236,7 +1236,7 @@ module.exports = grammar({
     // The `|` at the start of the next arm triggers layout_end for the current arm body.
     do_match_arm: $ => prec.right(seq(
       '|',
-      field('patterns', commaSep1($._expression)),
+      field('patterns', $._expr_list),
       arrow(),
       $._layout_start,
       field('body', $._do_seq),
