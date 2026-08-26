@@ -165,9 +165,14 @@ static bool is_ident_continue(int32_t c) {
 }
 
 /* Peeks whether the lookahead is a COMMAND_KEYWORDS entry at a word
-   boundary. Pure lookahead (never mark_end()) — see #21 for why callers
-   must mark_end() first if they want the peek to stay zero-width. */
+   boundary, or a hash_command (`#eval`, `#check`, ...). Pure lookahead
+   (never mark_end()) — see #21. */
 static bool peek_command_keyword(TSLexer *lexer) {
+  if (lexer->lookahead == '#') {
+    lexer->advance(lexer, false);
+    int32_t c = lexer->lookahead;
+    return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
+  }
   if (!is_ident_start(lexer->lookahead)) return false;
   char buf[24];
   uint32_t len = 0;
@@ -478,7 +483,7 @@ bool tree_sitter_lean_external_scanner_scan(
       }
       return false;
     }
-    if (is_ident_start(c)) {
+    if (is_ident_start(c) || c == '#') {
       // Flush-left continuation, same-line variant — see #21.
       lexer->mark_end(lexer);
       if (peek_command_keyword(lexer)) {
