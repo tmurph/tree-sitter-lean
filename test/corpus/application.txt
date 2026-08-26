@@ -328,3 +328,75 @@ def foo := t'.preimage Extends.original (fun _ _ _ _ => Extends.original.inj)
                 term: (identifier)
                 name: (identifier))
               name: (identifier))))))))
+
+============================
+Complement As Plain Argument
+============================
+
+def foo := f xᶜ
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      body: (application
+        name: (identifier)
+        arguments: (complement
+          term: (identifier))))))
+
+=========================
+Inverse As Plain Argument
+=========================
+
+def foo := f x⁻¹
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      body: (application
+        name: (identifier)
+        arguments: (inverse
+          term: (identifier))))))
+
+==============================
+Chained Complement As Argument
+==============================
+
+def foo := f xᶜᶜ
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      body: (application
+        name: (identifier)
+        arguments: (complement
+          term: (complement
+            term: (identifier)))))))
+
+====================================================
+Mixed Dotted Identifier And Complement/Inverse Chain
+====================================================
+
+def foo := f x.fooᶜ⁻¹
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      body: (application
+        name: (identifier)
+        arguments: (inverse
+          term: (complement
+            term: (projection
+              term: (identifier)
+              name: (identifier))))))))

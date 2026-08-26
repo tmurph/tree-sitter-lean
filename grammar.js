@@ -658,8 +658,18 @@ module.exports = grammar({
     // `$._atom` instead of full `$._expression` — application arguments,
     // `explicit`'s operand, `as_pattern`'s `pattern` field — see #15, #24.
     // Renamed from `_arg_projection`: no longer application-argument-only.
+    // Operand also allows `_tight_complement`/`_tight_inverse` (not just
+    // self), so `.field`/`ᶜ`/`⁻¹` chains compose in any order — see #37.
+    // The repeated 4-way choice stays inlined at all three call sites
+    // rather than extracted to a shared rule: that reintroduces the exact
+    // `_atom`/`_tight_projection` ambiguity this rule exists to avoid.
     _tight_projection: $ => prec.left(PREC.proj, seq(
-      field('term', choice($._atom, alias($._tight_projection, $.projection))),
+      field('term', choice(
+        $._atom,
+        alias($._tight_projection, $.projection),
+        alias($._tight_complement, $.complement),
+        alias($._tight_inverse, $.inverse),
+      )),
       choice(token.immediate('.'), '.'),
       field('name', choice($.identifier, $.escaped_identifier, $.number)),
     )),
@@ -694,14 +704,24 @@ module.exports = grammar({
     )),
 
     // Tight complement/inverse, for use as an application argument — see
-    // #37. Mirrors `_tight_projection` above.
+    // #37. Mirrors `_tight_projection` above, same 4-way operand choice.
     _tight_complement: $ => prec.left(PREC.proj, seq(
-      field('term', choice($._atom, alias($._tight_complement, $.complement))),
+      field('term', choice(
+        $._atom,
+        alias($._tight_projection, $.projection),
+        alias($._tight_complement, $.complement),
+        alias($._tight_inverse, $.inverse),
+      )),
       token.immediate('ᶜ'),
     )),
 
     _tight_inverse: $ => prec.left(PREC.proj, seq(
-      field('term', choice($._atom, alias($._tight_inverse, $.inverse))),
+      field('term', choice(
+        $._atom,
+        alias($._tight_projection, $.projection),
+        alias($._tight_complement, $.complement),
+        alias($._tight_inverse, $.inverse),
+      )),
       token.immediate('⁻¹'),
     )),
 
