@@ -758,7 +758,7 @@ module.exports = grammar({
       choice('fun', 'λ'),
       choice(
         seq(
-          field('binders', repeat1(choice($._pattern, $._bracketed_binder))),
+          field('binders', repeat1(choice($._fun_binder_pattern, $._bracketed_binder))),
           arrow(),
           $._layout_start,
           field('body', $._expression),
@@ -767,6 +767,17 @@ module.exports = grammar({
         repeat1($.match_arm),
       ),
     )),
+
+    // `_pattern` minus `constructor_pattern`, for `fun`'s binder list only
+    // — same shift-always-wins dead end as `tactic_have`/`tactic_let`
+    // below, same fix — see #23.
+    _fun_binder_pattern: $ => choice(
+      $.identifier,
+      $.hole,
+      $.tuple_pattern,
+      $.syntax_quotation,
+      $.anonymous_constructor_pattern,
+    ),
 
     // Universal/existential quantifier: `∀ x, P x` or `∃ x, P x`
     quantifier: $ => prec.right(seq(

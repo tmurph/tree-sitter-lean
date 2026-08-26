@@ -39,16 +39,15 @@ Anonymous Function With Destructuring Bind
 (module
   (hash_command
     (fun
-      (parameters
-        (anonymous_constructor
-          (identifier))
-        name: (identifier)
-        (anonymous_constructor
-          (identifier)
-          (identifier)
-          (identifier))
-        name: (identifier))
-      (identifier))))
+      binders: (anonymous_constructor_pattern
+        (identifier))
+      binders: (identifier)
+      binders: (anonymous_constructor_pattern
+        (identifier)
+        (identifier)
+        (identifier))
+      binders: (identifier)
+      body: (identifier))))
 
 ==============================
 Anonymous Function Application
