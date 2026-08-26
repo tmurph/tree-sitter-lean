@@ -11,33 +11,34 @@ structure Point (α : Type u) where
 ---
 
 (module
-  (structure
-    name: (identifier)
-    binders: (binders
-      (explicit_binder
+  (decorated_declaration
+    declaration: (structure
+      name: (identifier)
+      binders: (binders
+        (explicit_binder
+          name: (identifier)
+          type: (application
+            name: (identifier)
+            arguments: (identifier))))
+      fields: (structure_field
+        name: (identifier)
+        type: (identifier)
+        default: (string))
+      fields: (structure_field
+        name: (identifier)
+        type: (identifier))
+      fields: (structure_field
         name: (identifier)
         type: (application
-          name: (identifier)
-          arguments: (identifier))))
-    fields: (structure_field
-      name: (identifier)
-      type: (identifier)
-      default: (string))
-    fields: (structure_field
-      name: (identifier)
-      type: (identifier))
-    fields: (structure_field
-      name: (identifier)
-      type: (application
-        name: (application
           name: (application
-            name: (identifier)
+            name: (application
+              name: (identifier)
+              arguments: (identifier))
             arguments: (identifier))
-          arguments: (identifier))
-        arguments: (identifier)))
-    fields: (structure_field
-      name: (identifier)
-      default: (number))))
+          arguments: (identifier)))
+      fields: (structure_field
+        name: (identifier)
+        default: (number)))))
 
 =================
 Structure Extends
@@ -110,32 +111,33 @@ class Quux (a : Type) where
 ---
 
 (module
-  (structure
-    name: (identifier)
-    binders: (binders
-      (explicit_binder
+  (decorated_declaration
+    declaration: (structure
+      name: (identifier)
+      binders: (binders
+        (explicit_binder
+          name: (identifier)
+          type: (identifier)))
+      fields: (structure_field
         name: (identifier)
-        type: (identifier)))
-    fields: (structure_field
-      name: (identifier)
-      type: (identifier)
-      default: (string))
-    fields: (structure_field
-      name: (identifier)
-      type: (arrow
-        domain: (identifier)
-        codomain: (arrow
+        type: (identifier)
+        default: (string))
+      fields: (structure_field
+        name: (identifier)
+        type: (arrow
           domain: (identifier)
-          codomain: (identifier))))
-    fields: (structure_field
-      name: (identifier)
-      default: (number))
-    fields: (structure_field
-      name: (identifier)
-      (implicit_binder
+          codomain: (arrow
+            domain: (identifier)
+            codomain: (identifier))))
+      fields: (structure_field
         name: (identifier)
-        type: (identifier))
-      type: (identifier))))
+        default: (number))
+      fields: (structure_field
+        name: (identifier)
+        (implicit_binder
+          name: (identifier)
+          type: (identifier))
+        type: (identifier)))))
 
 ===============
 Class No Fields

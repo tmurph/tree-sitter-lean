@@ -130,28 +130,29 @@ def foo (xs : Array Nat) : Unit := do
 ---
 
 (module
-  (definition
-    name: (identifier)
-    binders: (binders
-      (explicit_binder
-        name: (identifier)
-        type: (application
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      binders: (binders
+        (explicit_binder
           name: (identifier)
-          arguments: (identifier))))
-    type: (identifier)
-    body: (do
-      (let_mut
-        name: (identifier)
-        value: (number))
-      (for_in
-        var: (identifier)
-        iterable: (identifier)
-        body: (do
-          (reassign
+          type: (application
             name: (identifier)
-            value: (binary_expression
-              left: (identifier)
-              right: (identifier))))))))
+            arguments: (identifier))))
+      type: (identifier)
+      body: (do
+        (let_mut
+          name: (identifier)
+          value: (number))
+        (for_in
+          var: (identifier)
+          iterable: (identifier)
+          body: (do
+            (reassign
+              name: (identifier)
+              value: (binary_expression
+                left: (identifier)
+                right: (identifier)))))))))
 
 ================================
 For Loop With Destructuring Bind

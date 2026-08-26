@@ -55,32 +55,33 @@ def sumList (xs : List Nat) : IO Nat := do
 ---
 
 (module
-  (definition
-    name: (identifier)
-    binders: (binders
-      (explicit_binder
-        name: (identifier)
-        type: (application
-          name: (identifier)
-          arguments: (identifier))))
-    type: (application
+  (decorated_declaration
+    declaration: (definition
       name: (identifier)
-      arguments: (identifier))
-    body: (do
-      (let_mut
-        name: (identifier)
-        value: (number))
-      (for_in
-        var: (identifier)
-        iterable: (identifier)
-        body: (do
-          (reassign
+      binders: (binders
+        (explicit_binder
+          name: (identifier)
+          type: (application
             name: (identifier)
-            value: (binary_expression
-              left: (identifier)
-              right: (identifier)))))
-      (return
-        value: (identifier)))))
+            arguments: (identifier))))
+      type: (application
+        name: (identifier)
+        arguments: (identifier))
+      body: (do
+        (let_mut
+          name: (identifier)
+          value: (number))
+        (for_in
+          var: (identifier)
+          iterable: (identifier)
+          body: (do
+            (reassign
+              name: (identifier)
+              value: (binary_expression
+                left: (identifier)
+                right: (identifier)))))
+        (return
+          value: (identifier))))))
 
 =====================================
 Do with if-let in loop
@@ -96,47 +97,47 @@ def processOptions (xs : List (Option Nat)) : IO (List Nat) := do
 ---
 
 (module
-  (definition
-    name: (identifier)
-    binders: (binders
-      (explicit_binder
-        name: (identifier)
-        type: (application
-          name: (identifier)
-          arguments: (parenthesized
-            (application
-              name: (identifier)
-              arguments: (identifier))))))
-    type: (application
+  (decorated_declaration
+    declaration: (definition
       name: (identifier)
-      arguments: (parenthesized
-        (application
+      binders: (binders
+        (explicit_binder
           name: (identifier)
-          arguments: (identifier))))
-    body: (do
-      (let_mut
+          type: (application
+            name: (identifier)
+            arguments: (parenthesized
+              (application
+                name: (identifier)
+                arguments: (identifier))))))
+      type: (application
         name: (identifier)
-        type: (application
+        arguments: (parenthesized
+          (application
+            name: (identifier)
+            arguments: (identifier))))
+      body: (do
+        (let_mut
           name: (identifier)
-          arguments: (identifier))
-        value: (list))
-      (for_in
-        var: (identifier)
-        iterable: (identifier)
-        body: (do
-          (do_if
-            condition: (let
-              name: (identifier)
-              parameters: (parameters
-                (identifier))
-              value: (identifier))
-            then: (reassign
-              name: (identifier)
-              value: (binary_expression
-                left: (identifier)
-                right: (identifier))))))
-      (return
-        value: (identifier)))))
+          type: (application
+            name: (identifier)
+            arguments: (identifier))
+          value: (list))
+        (for_in
+          var: (identifier)
+          iterable: (identifier)
+          body: (do
+            (do_if_let
+              pattern: (constructor_pattern
+                constructor: (identifier)
+                arg: (identifier))
+              value: (identifier)
+              then: (reassign
+                name: (identifier)
+                value: (binary_expression
+                  left: (identifier)
+                  right: (identifier))))))
+        (return
+          value: (identifier))))))
 
 =====================================
 Nested do blocks
@@ -237,36 +238,37 @@ def buildArray : Array Nat := Id.run do
 ---
 
 (module
-  (definition
-    name: (identifier)
-    type: (application
+  (decorated_declaration
+    declaration: (definition
       name: (identifier)
-      arguments: (identifier))
-    body: (application
-      name: (projection
-        term: (identifier)
-        name: (identifier))
-      arguments: (do
-        (let_mut
-          name: (identifier)
-          type: (application
+      type: (application
+        name: (identifier)
+        arguments: (identifier))
+      body: (application
+        name: (projection
+          term: (identifier)
+          name: (identifier))
+        arguments: (do
+          (let_mut
             name: (identifier)
-            arguments: (identifier))
-          value: (array))
-        (for_in
-          var: (identifier)
-          iterable: (application
-            name: (projection
-              term: (identifier)
-              name: (identifier))
-            arguments: (number))
-          body: (do
-            (reassign
+            type: (application
               name: (identifier)
-              value: (application
-                name: (projection
-                  term: (identifier)
-                  name: (identifier))
-                arguments: (identifier)))))
-        (return
-          value: (identifier))))))
+              arguments: (identifier))
+            value: (array))
+          (for_in
+            var: (identifier)
+            iterable: (application
+              name: (projection
+                term: (identifier)
+                name: (identifier))
+              arguments: (number))
+            body: (do
+              (reassign
+                name: (identifier)
+                value: (application
+                  name: (projection
+                    term: (identifier)
+                    name: (identifier))
+                  arguments: (identifier)))))
+          (return
+            value: (identifier)))))))
