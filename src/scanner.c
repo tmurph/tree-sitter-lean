@@ -318,8 +318,10 @@ bool tree_sitter_lean_external_scanner_scan(
     }
   }
 
-  /* 0c. TACTIC_COMMA — a `,` between `tactic_use` arguments, always
-         preferred over LAYOUT_END where valid — see #29. */
+  /* 0c. TACTIC_COMMA — a `,` between comma-separated tactic arguments
+         where everything after the first item is optional (`tactic_use`'s
+         witness list, `tactic_induction`'s target list), always preferred
+         over LAYOUT_END where valid — see #29, #43. */
   if (valid_symbols[TACTIC_COMMA] && lexer->lookahead == ',') {
     lexer->advance(lexer, false);
     lexer->mark_end(lexer);

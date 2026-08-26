@@ -1045,10 +1045,13 @@ module.exports = grammar({
     // `induction e [using r] [generalizing x y ...] [with | ctor args => tac ...]`
     // — see #43. `with`-arm-list reuses `cases_arm`: real Lean shares one
     // `inductionAlts` syntax category between `induction`/`cases`/
-    // `fun_induction`/`fun_cases`.
+    // `fun_induction`/`fun_cases`. Multi-target `major` uses
+    // `$._tactic_comma_token` between targets, mirroring `tactic_use`'s
+    // fix for the same same-line-comma-vs-LAYOUT_END ambiguity.
     tactic_induction: $ => prec.right(seq(
       'induction',
-      field('major', $._expr_list),
+      field('major', $._expression),
+      repeat(seq(alias($._tactic_comma_token, ','), field('major', $._expression))),
       optional(seq('using', field('using', $._expression))),
       optional(seq('generalizing', repeat1(field('generalizing', $.identifier)))),
       optional(seq('with', repeat1($.cases_arm))),
