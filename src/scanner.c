@@ -33,6 +33,7 @@ enum TokenType {
   MATCH_BODY_START,
   SYNTAX_QUOTATION_BODY,  // content inside `` `( ... ) `` up to matching `)`
   BRACE_FIELD_SEP,        // newline-as-separator inside `{ … }` struct instance
+  BY_CASES_NAME,          // identifier immediately (mod spaces) followed by `:`
 };
 
 #define MAX_DEPTH 64
@@ -123,6 +124,31 @@ static void skip_spaces(TSLexer *lexer) {
 
 static bool is_nl(int32_t c) { return c == '\n' || c == '\r'; }
 
+/* Character classes mirroring grammar.js's `identifier` regex — kept in
+   sync by hand since the external scanner can't share the JS regex. Only
+   used by BY_CASES_NAME's lookahead below; any mismatch just means that
+   token fails to fire and the input falls back to the plain `identifier`
+   token, so imprecision here is safe, not silently-wrong. */
+static bool is_ident_start(int32_t c) {
+  if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_') return true;
+  if (c >= 0x03B1 && c <= 0x03C9) return true; // α-ω
+  if (c >= 0x0391 && c <= 0x03A9) return true; // Α-Ω
+  if (c == 0x2115 || c == 0x2124 || c == 0x211A || c == 0x211D || c == 0x2102) return true; // ℕℤℚℝℂ
+  if (c == 0x2207) return true; // ∇
+  return false;
+}
+
+static bool is_ident_continue(int32_t c) {
+  if (is_ident_start(c)) return true;
+  if (c >= '0' && c <= '9') return true;
+  if (c == '\'' || c == '?' || c == '!') return true;
+  if (c >= 0x2080 && c <= 0x2089) return true; // ₀-₉
+  if (c >= 0x2090 && c <= 0x209C) return true; // ₐ-ₜ
+  if (c >= 0x1D62 && c <= 0x1D6A) return true; // ᵢ-ᵪ
+  if (c == 0x2C7C) return true; // ⱼ
+  return false;
+}
+
 /**
  * Skip newlines + leading whitespace, return column of first non-blank char.
  * If EOF is reached, return 0 (dedent everything).
@@ -178,6 +204,28 @@ bool tree_sitter_lean_external_scanner_scan(
   if (valid_symbols[LAYOUT_START] &&
       valid_symbols[LAYOUT_SEMICOLON] &&
       valid_symbols[LAYOUT_END]) {
+    return false;
+  }
+
+  /* 0b. BY_CASES_NAME — disambiguates by_cases's optional name from its
+         bare condition, see #14. */
+  if (valid_symbols[BY_CASES_NAME]) {
+    while (lexer->lookahead == ' ' || lexer->lookahead == '\t') lexer->advance(lexer, true);
+  }
+  if (valid_symbols[BY_CASES_NAME] && is_ident_start(lexer->lookahead)) {
+    lexer->advance(lexer, false);
+    while (is_ident_continue(lexer->lookahead)) lexer->advance(lexer, false);
+    // mark_end before peeking further — a skip-mode advance() after
+    // mark_end retroactively collapses the boundary to zero-width.
+    lexer->mark_end(lexer);
+    while (lexer->lookahead == ' ' || lexer->lookahead == '\t') lexer->advance(lexer, false);
+    if (lexer->lookahead == ':') {
+      lexer->advance(lexer, false);
+      if (lexer->lookahead != '=') {
+        lexer->result_symbol = BY_CASES_NAME;
+        return true;
+      }
+    }
     return false;
   }
 

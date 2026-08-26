@@ -55,6 +55,7 @@ module.exports = grammar({
     $._match_body_start,        // Like _layout_start but only for match arm bodies
     $._syntax_quotation_body,   // Inner content of `` `( ... ) `` (balanced)
     $._brace_field_sep,         // Newline as field separator inside `{ … }`
+    $._by_cases_name_token,     // Identifier immediately followed by `:` — see #14
   ],
 
   // Keyword extraction improves error detection and compile time
@@ -820,6 +821,7 @@ module.exports = grammar({
       $.tactic_focus,
       $.tactic_case,
       $.tactic_cases,
+      $.tactic_by_cases,
       $.tactic_rewrite,
       $.tactic_have,
       $.tactic_let,
@@ -870,6 +872,21 @@ module.exports = grammar({
       field('major', $._expression),
       optional(seq('with', repeat1($.cases_arm))),
     )),
+
+    // `by_cases h : p` / `by_cases : p` / `by_cases p` — see #14. The
+    // `name` alternative uses `$._by_cases_name` (external scanner) rather
+    // than plain `$.identifier` — state-merging otherwise collapses it
+    // with `parenthesized`'s `(e : T)` state and silently drops the name.
+    tactic_by_cases: $ => prec.right(seq(
+      'by_cases',
+      choice(
+        seq(field('name', $._by_cases_name), ':', field('condition', $._expression)),
+        seq(':', field('condition', $._expression)),
+        field('condition', $._expression),
+      ),
+    )),
+
+    _by_cases_name: $ => alias($._by_cases_name_token, $.identifier),
 
     cases_arm: $ => prec.right(seq(
       '|',
