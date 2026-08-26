@@ -1027,12 +1027,13 @@ module.exports = grammar({
     )),
 
     // `wlog h : P [generalizing x y ...] [with H]` (bare form only,
-    // `wlog!` out of scope) — see #42. `name` reuses
-    // `$._by_cases_name_token`, same state-merging collision as
-    // `tactic_by_cases`'s `name` field.
+    // `wlog!` out of scope) — see #42. Unlike `tactic_by_cases`, `name`
+    // is a plain `$.identifier`: `wlog` has no bare-condition alternative
+    // to collide with `parenthesized`'s `(e : T)` state, so the external
+    // token isn't needed here.
     tactic_wlog: $ => prec.right(seq(
       'wlog',
-      field('name', alias($._by_cases_name_token, $.identifier)),
+      field('name', $.identifier),
       ':',
       field('condition', $._expression),
       optional(seq('generalizing', repeat1(field('generalizing', $.identifier)))),
