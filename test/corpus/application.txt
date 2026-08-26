@@ -259,9 +259,9 @@ Application Across Multiple Lines
         arguments: (number))
       arguments: (number))))
 
-=======================================
+===================================
 Dotted Identifier As Plain Argument
-=======================================
+===================================
 
 def foo := f a.b
 
@@ -277,9 +277,9 @@ def foo := f a.b
           term: (identifier)
           name: (identifier))))))
 
-===============================================
+==========================================
 Nested Dotted Identifier As Plain Argument
-===============================================
+==========================================
 
 def foo := f a.b.c
 
@@ -297,9 +297,9 @@ def foo := f a.b.c
             name: (identifier))
           name: (identifier))))))
 
-=========================================================
+========================================================
 Dotted Identifier Argument Followed By Further Arguments
-=========================================================
+========================================================
 
 def foo := t'.preimage Extends.original (fun _ _ _ _ => Extends.original.inj)
 
