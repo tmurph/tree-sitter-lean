@@ -64,6 +64,9 @@ module.exports = grammar({
   supertypes: $ => [
     $._expression,
     $._declaration,
+    // See #5.
+    $._tactic,
+    $._closing_tactic,
   ],
 
   // Inline rules to reduce tree depth
@@ -805,6 +808,11 @@ module.exports = grammar({
       $.tactic_let,
       $.tactic_show,
       $.tactic_calc,
+      $._closing_tactic,
+    ),
+
+    // See #5.
+    _closing_tactic: $ => choice(
       $.tactic_sorry,
       $.tactic_done,
     ),
