@@ -175,6 +175,99 @@ example : 2 = 2 := by simp [foo, bar]
             (identifier)
             (identifier)))))))
 
+==========
+Simp Trace
+==========
+
+example : 2 = 2 := by simp?
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (example
+      type: (binary_expression
+        left: (number)
+        right: (number))
+      body: (by
+        (tactic_apply
+          tactic: (identifier))))))
+
+===========
+Dsimp Trace
+===========
+
+example : 2 = 2 := by dsimp?
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (example
+      type: (binary_expression
+        left: (number)
+        right: (number))
+      body: (by
+        (tactic_apply
+          tactic: (identifier))))))
+
+==============
+Simp All Trace
+==============
+
+example : 2 = 2 := by simp_all?
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (example
+      type: (binary_expression
+        left: (number)
+        right: (number))
+      body: (by
+        (tactic_apply
+          tactic: (identifier))))))
+
+===============
+Simp Trace Bang
+===============
+
+example : 2 = 2 := by simp?!
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (example
+      type: (binary_expression
+        left: (number)
+        right: (number))
+      body: (by
+        (tactic_apply
+          tactic: (identifier))))))
+
+===============================
+Simp Trace With Extra Theorems
+===============================
+
+example : 2 = 2 := by simp? [foo, bar]
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (example
+      type: (binary_expression
+        left: (number)
+        right: (number))
+      body: (by
+        (tactic_apply
+          tactic: (identifier)
+          arg: (tactic_config
+            (identifier)
+            (identifier)))))))
+
 =====
 Intro
 =====
