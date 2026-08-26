@@ -76,9 +76,6 @@ module.exports = grammar({
     [$.subtype, $.field_assignment],
     [$.let, $._pattern],
     [$.parameters, $._pattern],
-    // Fragment mode conflicts: tactics and expressions overlap when both
-    // are valid top-level alternatives.  GLR resolves at runtime.
-    [$.have, $._pattern],
     // `public`/`meta` can prefix either an `import` (only in the module header)
     // or a declaration via `_modifier`. GLR resolves at runtime by lookahead
     // for `import` vs a declaration keyword. This mirrors lean4's `atomic`
@@ -874,22 +871,53 @@ module.exports = grammar({
       optional(seq('at', repeat1(choice($.identifier, '*')))),
     )),
 
-    // `have h : T := proof` in tactic mode
-    tactic_have: $ => prec.right(seq(
-      choice('have', 'obtain', 'suffices'),
-      optional(field('name', $._pattern)),
-      optional($._type_spec),
-      ':=',
-      field('value', $._expression),
-    )),
+    // `have h : T := proof` in tactic mode. `parameters` covers the
+    // function-declaration-style form `have f (x : T) : T2 := ...`, split
+    // out the same way term-level `let` splits identifier vs pattern forms,
+    // and scoped to `have` only (not `obtain`/`suffices`) — see #11.
+    tactic_have: $ => choice(
+      prec.right(seq(
+        'have',
+        field('name', $.identifier),
+        optional(field('parameters', $.parameters)),
+        optional($._type_spec),
+        ':=',
+        field('value', $._expression),
+      )),
+      prec.right(seq(
+        'have',
+        optional(field('name', choice($.hole, $.tuple_pattern, $.syntax_quotation))),
+        optional($._type_spec),
+        ':=',
+        field('value', $._expression),
+      )),
+      prec.right(seq(
+        choice('obtain', 'suffices'),
+        optional(field('name', $._pattern)),
+        optional($._type_spec),
+        ':=',
+        field('value', $._expression),
+      )),
+    ),
 
-    // `let x := e` in tactic mode
-    tactic_let: $ => prec(1, seq(
-      'let',
-      field('pattern', $._pattern),
-      optional($._type_spec),
-      ':=',
-      field('value', $._expression),
+    // `let x := e` in tactic mode — same identifier/pattern split as
+    // tactic_have above, see #11.
+    tactic_let: $ => prec(1, choice(
+      seq(
+        'let',
+        field('name', $.identifier),
+        optional(field('parameters', $.parameters)),
+        optional($._type_spec),
+        ':=',
+        field('value', $._expression),
+      ),
+      seq(
+        'let',
+        field('pattern', choice($.hole, $.tuple_pattern, $.syntax_quotation)),
+        optional($._type_spec),
+        ':=',
+        field('value', $._expression),
+      ),
     )),
 
     // `show T`
