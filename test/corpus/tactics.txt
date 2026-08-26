@@ -247,9 +247,9 @@ example : 2 = 2 := by simp?!
         (tactic_apply
           tactic: (identifier))))))
 
-===============================
+==============================
 Simp Trace With Extra Theorems
-===============================
+==============================
 
 example : 2 = 2 := by simp? [foo, bar]
 
