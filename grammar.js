@@ -873,6 +873,7 @@ module.exports = grammar({
       $.tactic_case,
       $.tactic_cases,
       $.tactic_by_cases,
+      $.tactic_choose,
       $.tactic_rewrite,
       $.tactic_have,
       $.tactic_let,
@@ -944,6 +945,15 @@ module.exports = grammar({
       $._layout_start,
       $._tactic_seq,
       $._layout_end,
+    )),
+
+    // `choose U V hU hV hUV using H` — `using` optional, `choose!` variant
+    // — see #28. Dedicated keyword-headed rule for the same
+    // exclusivity reason as `tactic_cases`.
+    tactic_choose: $ => prec.right(seq(
+      choice('choose', token('choose!')),
+      repeat1(field('binder', $.identifier)),
+      optional(seq('using', field('using', $._expression))),
     )),
 
     // `rw`/`rewrite` always take a config list, optionally with `at`

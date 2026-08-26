@@ -351,3 +351,65 @@ example (p q : Prop) : True := by
           condition: (identifier))
         (tactic_apply
           tactic: (identifier))))))
+
+===================
+Tactic Choose Using
+===================
+
+example : True := by
+  choose U V hU hV hqU hpV hUV using H
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (example
+      type: (true)
+      body: (by
+        (tactic_choose
+          binder: (identifier)
+          binder: (identifier)
+          binder: (identifier)
+          binder: (identifier)
+          binder: (identifier)
+          binder: (identifier)
+          binder: (identifier)
+          using: (identifier))))))
+
+======================
+Tactic Choose No Using
+======================
+
+example : True := by
+  choose U V hU
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (example
+      type: (true)
+      body: (by
+        (tactic_choose
+          binder: (identifier)
+          binder: (identifier)
+          binder: (identifier))))))
+
+==================
+Tactic Choose Bang
+==================
+
+example : True := by
+  choose! U V hU
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (example
+      type: (true)
+      body: (by
+        (tactic_choose
+          binder: (identifier)
+          binder: (identifier)
+          binder: (identifier))))))
