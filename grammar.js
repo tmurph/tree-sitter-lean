@@ -701,8 +701,9 @@ module.exports = grammar({
     // but erases individual symbols from node-types.json) — see #1.
     _op_or: _ => choice('||', '∨', '<|>', '<$>', '<*>', '*>', '<*'),
     _op_and: _ => choice('&&', '∧'),
+    // Membership/subset relations — see #8.
     _op_cmp: _ => choice('==', '!=', '=', '<', '>', '<=', '>=', '≤', '≥', '≠',
-                         '∣', '↔', '⊢'),
+                         '∣', '↔', '⊢', '∈', '∉', '⊆', '⊂', '⊇', '⊃'),
     _op_add: _ => choice('+', '-', '++', '∪', '∩', '×', '\\'),
     _op_mul: _ => choice('*', '/', '%'),
     _op_pipe: _ => choice('|>', '|>.'),
