@@ -476,9 +476,9 @@ def unaryLift : IO Nat := do
                 name: (identifier)
                 arguments: (number)))))))))
 
-=============================
+============================
 Pow Binds Tighter Than Unary
-=============================
+============================
 
 #eval -x ^ 2
 #eval f x ^ 2

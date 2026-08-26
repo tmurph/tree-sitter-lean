@@ -11,7 +11,7 @@
 // Centralized precedence levels (higher = binds tighter)
 // Based on Lean 4's actual precedence: https://leanprover.github.io/lean4/doc/operators.html
 const PREC = {
-  // Expression precedences (6 binary levels + unary/app/proj/atom)
+  // Expression precedences (8 binary levels + unary/app/proj/atom)
   low: 25,          // $ || ∨ (merged: or + $)
   and: 35,          // &&
   compare: 40,      // == != < > <= >=
