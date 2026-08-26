@@ -605,12 +605,24 @@ module.exports = grammar({
       field('name', $._expression),
       field('arguments', choice(
         $._atom,
+        alias($._arg_projection, $.projection),
         $.fun,
         $.if,
         $.match,
         $.do,
         $.by,
       )),
+    )),
+
+    // Dotted argument `x.foo`, used only as an application argument — see
+    // #15. `term` restricted to `$._atom`/itself (not full `$._expression`,
+    // which would make this reachable two ways for the same span from
+    // `_atom`). Self-reference stays aliased to `$.projection` so `a.b.c`
+    // nests instead of flattening.
+    _arg_projection: $ => prec.left(PREC.proj, seq(
+      field('term', choice($._atom, alias($._arg_projection, $.projection))),
+      choice(token.immediate('.'), '.'),
+      field('name', choice($.identifier, $.escaped_identifier, $.number)),
     )),
 
     // Array/list subscript: `arr[i]` or `arr[i]!` or `arr[i]?`

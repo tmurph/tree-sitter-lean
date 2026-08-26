@@ -258,3 +258,73 @@ Application Across Multiple Lines
           arguments: (number))
         arguments: (number))
       arguments: (number))))
+
+=======================================
+Dotted Identifier As Plain Argument
+=======================================
+
+def foo := f a.b
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      body: (application
+        name: (identifier)
+        arguments: (projection
+          term: (identifier)
+          name: (identifier))))))
+
+===============================================
+Nested Dotted Identifier As Plain Argument
+===============================================
+
+def foo := f a.b.c
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      body: (application
+        name: (identifier)
+        arguments: (projection
+          term: (projection
+            term: (identifier)
+            name: (identifier))
+          name: (identifier))))))
+
+=========================================================
+Dotted Identifier Argument Followed By Further Arguments
+=========================================================
+
+def foo := t'.preimage Extends.original (fun _ _ _ _ => Extends.original.inj)
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      body: (application
+        name: (application
+          name: (projection
+            term: (identifier)
+            name: (identifier))
+          arguments: (projection
+            term: (identifier)
+            name: (identifier)))
+        arguments: (parenthesized
+          (fun
+            binders: (hole)
+            binders: (hole)
+            binders: (hole)
+            binders: (hole)
+            body: (projection
+              term: (projection
+                term: (identifier)
+                name: (identifier))
+              name: (identifier))))))))
