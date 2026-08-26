@@ -757,10 +757,10 @@ module.exports = grammar({
       );
     },
 
-    // Operator classes: one hidden rule per precedence level. Most fold
-    // into a single `token(choice(...))` terminal to reclaim generate
-    // memory — see #32. Aliased to `operator` so queries keep a generic
-    // bucket even where the individual symbol is no longer its own node.
+    // Operator classes: one hidden rule per precedence level, each aliased
+    // to `operator` so queries keep a generic bucket even where the fold
+    // (see the comment above `binary_expression`) erases the individual
+    // symbol as its own node.
     _op_or: _ => token(choice('||', '∨', '<|>', '<$>', '<*>', '*>', '<*')),
     _op_and: _ => token(choice('&&', '∧')),
     // Membership/subset relations — see #8. ≈/≃/≅ equivalence relations
