@@ -29,6 +29,7 @@
   (let)
   (have)
   (try)
+  (calc)
 
   ; Do-block elements
   (do_unless)

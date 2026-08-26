@@ -27,6 +27,7 @@
   (have)
   (try)
   (quantifier)
+  (calc)
 
   (do_unless)
   (do_while)

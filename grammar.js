@@ -93,6 +93,10 @@ module.exports = grammar({
     [$.inductive],
     [$.class_inductive],
     [$.return, $.do_return],
+    // See #41. A static `prec` here (tried first) silently broke
+    // term-position `calc` — declaring the conflict keeps both branches
+    // live for GLR to resolve per-context, same as the entry above.
+    [$.calc, $.tactic_calc],
   ],
 
   rules: {
@@ -554,6 +558,7 @@ module.exports = grammar({
       $.as_pattern,
       $.show,
       $.suffices,
+      $.calc,
     ),
 
     // `show T from proof` / `show T by tactic` — explicit type ascription with proof.
@@ -1095,22 +1100,25 @@ module.exports = grammar({
     // `show T`
     tactic_show: $ => seq('show', $._expression),
 
-    // `calc` block with steps — see #35, #40. Steps are layout-block
-    // siblings separated by `$._layout_semicolon`, like `_do_seq`/
-    // `_tactic_seq`. `$._calc_layout_start` (distinct from the generic
-    // `$._layout_start`) anchors right after `calc` and lets the scanner
-    // tag the pushed level `KIND_CALC_PENDING` when the first step shares
-    // `calc`'s own line, so a less-indented `_`-continuation can later
-    // correct the anchor — see #40 for why a plain layout token can't
-    // solve this (moving it after the first step breaks single-line
-    // `calc` entirely).
-    tactic_calc: $ => prec.right(seq(
+    // Shared step-chain body for tactic- and term-position `calc` — see
+    // #35, #40, #41. Real Lean's `calcTactic`/`Term.calc` wrap the
+    // identical production, and the scanner machinery (`_calc_layout_start`,
+    // `KIND_CALC_PENDING`, `try_finalize_calc_anchor`) is context-free, so
+    // both reuse this rather than duplicating it. Kept as two distinct
+    // node types so each stays separately queryable — matches
+    // `show`/`tactic_show`, `let`/`tactic_let`.
+    _calc_body: $ => seq(
       'calc',
       $._calc_layout_start,
       $.calc_first_step,
       repeat(seq($._layout_semicolon, $.calc_step)),
       $._layout_end,
-    )),
+    ),
+
+    tactic_calc: $ => prec.right($._calc_body),
+
+    // Term-position `calc` — see #41. See `_calc_body` above.
+    calc: $ => prec.right($._calc_body),
 
     calc_first_step: $ => prec.right(seq(
       $._expression,
