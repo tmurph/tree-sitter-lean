@@ -941,6 +941,7 @@ module.exports = grammar({
       $.tactic_cases,
       $.tactic_by_cases,
       $.tactic_choose,
+      $.tactic_wlog,
       $.tactic_use,
       $.tactic_rewrite,
       $.tactic_have,
@@ -1023,6 +1024,19 @@ module.exports = grammar({
       choice('choose', token('choose!')),
       repeat1(field('binder', $.identifier)),
       optional(seq('using', field('using', $._expression))),
+    )),
+
+    // `wlog h : P [generalizing x y ...] [with H]` (bare form only,
+    // `wlog!` out of scope) — see #42. `name` reuses
+    // `$._by_cases_name_token`, same state-merging collision as
+    // `tactic_by_cases`'s `name` field.
+    tactic_wlog: $ => prec.right(seq(
+      'wlog',
+      field('name', alias($._by_cases_name_token, $.identifier)),
+      ':',
+      field('condition', $._expression),
+      optional(seq('generalizing', repeat1(field('generalizing', $.identifier)))),
+      optional(seq('with', field('with', $.identifier))),
     )),
 
     // `use e1, e2, ...` — see #29. Comma between arguments uses

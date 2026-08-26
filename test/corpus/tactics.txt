@@ -1052,3 +1052,76 @@ example (a b c d : Nat) (h1 : a * b = c) (h2 : c = d) : a * b = d := by
               left: (hole)
               right: (identifier))
             (identifier)))))))
+
+===========
+Tactic Wlog
+===========
+
+example (a b : Nat) : a ≤ b ∨ b ≤ a := by
+  wlog h : a ≤ b generalizing a b with H
+  exact h
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (example
+      binders: (binders
+        (explicit_binder
+          name: (identifier)
+          name: (identifier)
+          type: (identifier)))
+      type: (binary_expression
+        left: (binary_expression
+          left: (identifier)
+          right: (identifier))
+        right: (binary_expression
+          left: (identifier)
+          right: (identifier)))
+      body: (by
+        (tactic_wlog
+          name: (identifier)
+          condition: (binary_expression
+            left: (identifier)
+            right: (identifier))
+          generalizing: (identifier)
+          generalizing: (identifier)
+          with: (identifier))
+        (tactic_apply
+          tactic: (identifier)
+          arg: (identifier))))))
+
+================
+Tactic Wlog Bare
+================
+
+example (a b : Nat) : a ≤ b ∨ b ≤ a := by
+  wlog h : a ≤ b
+  exact h
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (example
+      binders: (binders
+        (explicit_binder
+          name: (identifier)
+          name: (identifier)
+          type: (identifier)))
+      type: (binary_expression
+        left: (binary_expression
+          left: (identifier)
+          right: (identifier))
+        right: (binary_expression
+          left: (identifier)
+          right: (identifier)))
+      body: (by
+        (tactic_wlog
+          name: (identifier)
+          condition: (binary_expression
+            left: (identifier)
+            right: (identifier)))
+        (tactic_apply
+          tactic: (identifier)
+          arg: (identifier))))))
