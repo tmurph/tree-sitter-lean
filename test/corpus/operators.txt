@@ -399,6 +399,30 @@ Comparison
       (number))))
 
 =====================
+Equivalence Relations
+=====================
+
+#check a ≈ b
+#check f ≃ g
+#check X ≅ Y
+
+---
+
+(module
+  (hash_command
+    (binary_expression
+      (identifier)
+      (identifier)))
+  (hash_command
+    (binary_expression
+      (identifier)
+      (identifier)))
+  (hash_command
+    (binary_expression
+      (identifier)
+      (identifier))))
+
+=====================
 Comparison Precedence
 =====================
 

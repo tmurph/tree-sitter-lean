@@ -763,9 +763,10 @@ module.exports = grammar({
     // bucket even where the individual symbol is no longer its own node.
     _op_or: _ => token(choice('||', '∨', '<|>', '<$>', '<*>', '*>', '<*')),
     _op_and: _ => token(choice('&&', '∧')),
-    // Membership/subset relations — see #8.
+    // Membership/subset relations — see #8. ≈/≃/≅ equivalence relations
+    // — see #33.
     _op_cmp: _ => token(choice('==', '!=', '=', '<', '>', '<=', '>=', '≤', '≥', '≠',
-                         '∣', '↔', '⊢', '∈', '∉', '⊆', '⊂', '⊇', '⊃')),
+                         '∣', '↔', '⊢', '∈', '∉', '⊆', '⊂', '⊇', '⊃', '≈', '≃', '≅')),
     // `-` stays out of the merged token — also unary_expression's
     // prefix-minus literal; folding it in reopens the unary/binary minus
     // ambiguity that rule's comment warns about — see #32.
