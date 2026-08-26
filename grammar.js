@@ -487,7 +487,7 @@ module.exports = grammar({
 
     explicit_binder: $ => seq(
       '(',
-      repeat1(field('name', $.identifier)),
+      repeat1(field('name', choice($.identifier, $.hole))),
       optional($._type_spec),
       optional(seq(':=', field('default', $._expression))),
       ')',
@@ -495,21 +495,21 @@ module.exports = grammar({
 
     implicit_binder: $ => seq(
       '{',
-      repeat1(field('name', $.identifier)),
+      repeat1(field('name', choice($.identifier, $.hole))),
       optional($._type_spec),
       '}',
     ),
 
     strict_implicit_binder: $ => seq(
       '⦃',
-      repeat1(field('name', $.identifier)),
+      repeat1(field('name', choice($.identifier, $.hole))),
       optional($._type_spec),
       '⦄',
     ),
 
     instance_binder: $ => seq(
       '[',
-      optional(seq(field('name', $.identifier), ':')),
+      optional(seq(field('name', choice($.identifier, $.hole)), ':')),
       field('type', $._expression),
       ']',
     ),

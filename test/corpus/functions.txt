@@ -331,3 +331,54 @@ Type Ascription
       type: (application
         name: (identifier)
         arguments: (identifier)))))
+
+============================
+Named And Hole Binders Mixed
+============================
+
+#check fun q (_ : q ∈ t) ↦ q
+
+---
+
+(module
+  (hash_command
+    (fun
+      binders: (identifier)
+      binders: (explicit_binder
+        name: (hole)
+        type: (binary_expression
+          left: (identifier)
+          right: (identifier)))
+      body: (identifier))))
+
+=======================
+Hole As Explicit Binder
+=======================
+
+#check fun (_ : Nat) => 1
+
+---
+
+(module
+  (hash_command
+    (fun
+      binders: (explicit_binder
+        name: (hole)
+        type: (identifier))
+      body: (number))))
+
+=======================
+Hole As Implicit Binder
+=======================
+
+#check fun {_ : Nat} => 1
+
+---
+
+(module
+  (hash_command
+    (fun
+      binders: (implicit_binder
+        name: (hole)
+        type: (identifier))
+      body: (number))))
