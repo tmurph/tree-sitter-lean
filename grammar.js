@@ -32,6 +32,11 @@ function commaSep(rule) {
   return optional(commaSep1(rule));
 }
 
+// `=>` and `↦` are interchangeable in Lean 4 — see #2.
+function arrow() {
+  return choice('=>', '↦');
+}
+
 module.exports = grammar({
   name: 'lean',
 
@@ -254,7 +259,7 @@ module.exports = grammar({
       choice('notation', 'macro_rules', 'syntax', 'macro', 'elab',
              'prefix', 'infix', 'infixl', 'infixr', 'postfix'),
       optional(seq(':', $.number)),  // priority
-      repeat(choice($._expression, '=>', ':=')),
+      repeat(choice($._expression, arrow(), ':=')),
     )),
 
     // `#check`, `#eval`, `#print`, etc.
@@ -543,7 +548,7 @@ module.exports = grammar({
       $._layout_end,
       'catch',
       optional(field('var', choice($.identifier, $.hole))),
-      '=>',
+      arrow(),
       $._layout_start,
       field('handler', $._do_seq),
       $._layout_end,
@@ -723,7 +728,7 @@ module.exports = grammar({
       choice(
         seq(
           field('binders', repeat1(choice($._pattern, $._bracketed_binder))),
-          '=>',
+          arrow(),
           $._layout_start,
           field('body', $._expression),
           $._layout_end,
@@ -826,7 +831,7 @@ module.exports = grammar({
     tactic_case: $ => prec.right(seq(
       choice('case', 'next'),
       repeat($.identifier),
-      '=>',
+      arrow(),
       $._layout_start,
       $._tactic_seq,
       $._layout_end,
@@ -969,7 +974,7 @@ module.exports = grammar({
     match_arm: $ => prec.right(seq(
       '|',
       field('patterns', commaSep1($._expression)),
-      '=>',
+      arrow(),
       $._match_body_start,
       field('body', $._expression),
       $._layout_end,
@@ -1122,7 +1127,7 @@ module.exports = grammar({
     do_match_arm: $ => prec.right(seq(
       '|',
       field('patterns', commaSep1($._expression)),
-      '=>',
+      arrow(),
       $._layout_start,
       field('body', $._do_seq),
       $._layout_end,
@@ -1174,7 +1179,7 @@ module.exports = grammar({
     do_catch: $ => prec.right(seq(
       'catch',
       optional(field('var', $.identifier)),
-      '=>',
+      arrow(),
       field('handler', $._expression),
     )),
 
