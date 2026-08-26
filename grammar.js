@@ -499,6 +499,7 @@ module.exports = grammar({
       $._atom,
       $.application,
       $.subscript,
+      $.complement,
       $.binary_expression,
       $.unary_expression,
       $.explicit,
@@ -624,6 +625,13 @@ module.exports = grammar({
       ),
       ']',
       optional(field('modifier', choice('!', '?'))),
+    )),
+
+    // Set complement `sᶜ` — see #9. NOTE: `f xᶜ` parses as `(f x)ᶜ`, not
+    // `f (xᶜ)` (see the issue for why, and whether that's been revisited).
+    complement: $ => prec.left(PREC.proj, seq(
+      field('term', $._expression),
+      token.immediate('ᶜ'),
     )),
 
     // `start:stop`, `:stop`, `start:`, `:` — the slice half of a subscript.
