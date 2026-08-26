@@ -238,6 +238,72 @@ Sorry
   (hash_command
     (sorry)))
 
+============================================
+Nullary Atoms: Empty Set, Top, Bot, Infinity
+============================================
+
+def e := ∅
+
+def t := ⊤
+
+def b := ⊥
+
+def i := ∞
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      body: (empty_set)))
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      body: (top)))
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      body: (bot)))
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      body: (infinity))))
+
+=======
+Inverse
+=======
+
+def e1 := f⁻¹
+
+def e2 := (f * g)⁻¹
+
+def e3 := f⁻¹.symm
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      body: (inverse
+        term: (identifier))))
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      body: (inverse
+        term: (parenthesized
+          (binary_expression
+            left: (identifier)
+            right: (identifier))))))
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      body: (projection
+        term: (inverse
+          term: (identifier))
+        name: (identifier)))))
+
 ==================
 Escaped Identifier
 ==================

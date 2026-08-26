@@ -261,6 +261,47 @@ Bounded Binders
       left: (identifier)
       right: (identifier))))
 
+======================
+Sum and Product Binder
+======================
+
+#check ∑ i, f i
+#check ∑ i ∈ s, f i
+#check ∏ i, f i
+#check ∏ i ∈ s, f i
+
+---
+
+(module
+  (hash_command
+    (big_operator
+      binders: (identifier)
+      body: (application
+        name: (identifier)
+        arguments: (identifier))))
+  (hash_command
+    (big_operator
+      binders: (bounded_binder
+        name: (identifier)
+        bound: (identifier))
+      body: (application
+        name: (identifier)
+        arguments: (identifier))))
+  (hash_command
+    (big_operator
+      binders: (identifier)
+      body: (application
+        name: (identifier)
+        arguments: (identifier))))
+  (hash_command
+    (big_operator
+      binders: (bounded_binder
+        name: (identifier)
+        bound: (identifier))
+      body: (application
+        name: (identifier)
+        arguments: (identifier)))))
+
 ===============
 Type Ascription
 ===============

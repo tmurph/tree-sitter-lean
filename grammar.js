@@ -525,6 +525,7 @@ module.exports = grammar({
       $.application,
       $.subscript,
       $.complement,
+      $.inverse,
       $.binary_expression,
       $.unary_expression,
       $.explicit,
@@ -624,6 +625,10 @@ module.exports = grammar({
       $._boolean,
       $.cdot,
       $.subtype,
+      $.empty_set,
+      $.top,
+      $.bot,
+      $.infinity,
     ),
 
     // Function application: `f x y z`
@@ -671,6 +676,12 @@ module.exports = grammar({
     complement: $ => prec.left(PREC.proj, seq(
       field('term', $._expression),
       token.immediate('ᶜ'),
+    )),
+
+    // Inverse `f⁻¹` — see #31. Mirrors `complement` just above.
+    inverse: $ => prec.left(PREC.proj, seq(
+      field('term', $._expression),
+      token.immediate('⁻¹'),
     )),
 
     // `start:stop`, `:stop`, `start:`, `:` — the slice half of a subscript.
@@ -816,9 +827,10 @@ module.exports = grammar({
       field('body', $._expression),
     ),
 
-    // Indexed big-union/intersection/sup/inf notation — see #10.
+    // Indexed big-union/intersection/sup/inf/sum/product notation — see
+    // #10, #31 (∑/∏ added in #31, same bounded-binder shape).
     big_operator: $ => prec.right(seq(
-      field('operator', choice('⋃', '⋂', '⨆', '⨅')),
+      field('operator', choice('⋃', '⋂', '⨆', '⨅', '∑', '∏')),
       $._quantifier_tail,
     )),
 
@@ -1534,6 +1546,13 @@ module.exports = grammar({
     ellipsis: _ => '..',
 
     sorry: _ => 'sorry',
+
+    // Nullary term atoms ∅/⊤/⊥/∞ — see #31. Can't fold into `identifier`
+    // (outside isLetterLike's range) — dedicated atoms, mirroring `cdot`/`sorry`.
+    empty_set: _ => '∅',
+    top: _ => '⊤',
+    bot: _ => '⊥',
+    infinity: _ => '∞',
 
     _boolean: $ => choice($.true, $.false),
     true: _ => choice('true', 'True'),
