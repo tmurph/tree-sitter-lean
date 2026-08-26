@@ -464,8 +464,17 @@ module.exports = grammar({
     // Quantifier binders: `x y : Nat` or `(x : Nat) {y : Nat}`
     // Bare identifiers can have a trailing `: Type` annotation
     _quantifier_binders: $ => seq(
-      repeat1(choice($.identifier, $._bracketed_binder)),
+      repeat1(choice($.identifier, $._bracketed_binder, $.bounded_binder)),
       optional($._type_spec),
+    ),
+
+    // Bounded binders `i ∈ t`, `i ⊆ t`, etc. — see #26. Deliberately more
+    // permissive than real Lean (allows mixing free and bounded binders
+    // in one list) — considered and rejected tightening this back down.
+    bounded_binder: $ => seq(
+      field('name', $.identifier),
+      field('relation', $._op_cmp),
+      field('bound', $._expression),
     ),
 
     _bracketed_binder: $ => choice(

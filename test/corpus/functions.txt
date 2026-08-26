@@ -212,6 +212,38 @@ Quantifiers
           right: (identifier))))))
 
 ===============
+Bounded Binders
+===============
+
+#check ⋃ i ∈ t, U i
+#check ∀ i ∈ t, P i
+#check a ∈ b
+
+---
+
+(module
+  (hash_command
+    (big_operator
+      binders: (bounded_binder
+        name: (identifier)
+        bound: (identifier))
+      body: (application
+        name: (identifier)
+        arguments: (identifier))))
+  (hash_command
+    (quantifier
+      binders: (bounded_binder
+        name: (identifier)
+        bound: (identifier))
+      body: (application
+        name: (identifier)
+        arguments: (identifier))))
+  (hash_command
+    (binary_expression
+      left: (identifier)
+      right: (identifier))))
+
+===============
 Type Ascription
 ===============
 
