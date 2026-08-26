@@ -134,21 +134,24 @@ Explicit Function
 (module
   (hash_command
     (explicit
-      (identifier)))
+      term: (identifier)))
   (hash_command
     (application
-      (explicit
-        (identifier))
-      (identifier)))
+      name: (explicit
+        term: (identifier))
+      arguments: (identifier)))
   (hash_command
     (application
-      (explicit
-        (identifier))
-      (identifier)
-      (true)))
+      name: (application
+        name: (explicit
+          term: (identifier))
+        arguments: (identifier))
+      arguments: (true)))
   (hash_command
     (explicit
-      (identifier))))
+      term: (projection
+        term: (identifier)
+        name: (identifier)))))
 
 ===============
 Match Style Fun

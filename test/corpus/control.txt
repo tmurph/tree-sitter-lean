@@ -208,3 +208,27 @@ def f (x : Option Nat) : Nat :=
         (match_arm
           patterns: (identifier)
           body: (number))))))
+
+===========================
+As-Pattern With Dotted Name
+===========================
+
+def f : Nat → Nat
+  | x@foo.bar => x
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      type: (arrow
+        domain: (identifier)
+        codomain: (identifier))
+      (match_arm
+        patterns: (as_pattern
+          binder: (identifier)
+          pattern: (projection
+            term: (identifier)
+            name: (identifier)))
+        body: (identifier)))))

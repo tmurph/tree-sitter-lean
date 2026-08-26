@@ -567,11 +567,13 @@ module.exports = grammar({
     // `return [expr]` — term-mode return.
     return: $ => prec.right(seq('return', optional(field('value', $._expression)))),
 
-    // As-pattern: `name@pattern` (no space). Mirrors lean4's match-pattern bind.
+    // As-pattern: `name@pattern` (no space). Mirrors lean4's match-pattern
+    // bind. `pattern` includes a dotted-name tail via `_tight_projection`
+    // — see #24.
     as_pattern: $ => seq(
       field('binder', $.identifier),
       token.immediate('@'),
-      field('pattern', $._atom),
+      field('pattern', choice($._atom, alias($._tight_projection, $.projection))),
     ),
 
     // Atoms: self-delimiting expressions that can appear as function arguments
@@ -610,7 +612,7 @@ module.exports = grammar({
       field('name', $._expression),
       field('arguments', choice(
         $._atom,
-        alias($._arg_projection, $.projection),
+        alias($._tight_projection, $.projection),
         $.fun,
         $.if,
         $.match,
@@ -619,13 +621,12 @@ module.exports = grammar({
       )),
     )),
 
-    // Dotted argument `x.foo`, used only as an application argument — see
-    // #15. `term` restricted to `$._atom`/itself (not full `$._expression`,
-    // which would make this reachable two ways for the same span from
-    // `_atom`). Self-reference stays aliased to `$.projection` so `a.b.c`
-    // nests instead of flattening.
-    _arg_projection: $ => prec.left(PREC.proj, seq(
-      field('term', choice($._atom, alias($._arg_projection, $.projection))),
+    // Dotted name usable wherever the grammar restricts a field to
+    // `$._atom` instead of full `$._expression` — application arguments,
+    // `explicit`'s operand, `as_pattern`'s `pattern` field — see #15, #24.
+    // Renamed from `_arg_projection`: no longer application-argument-only.
+    _tight_projection: $ => prec.left(PREC.proj, seq(
+      field('term', choice($._atom, alias($._tight_projection, $.projection))),
       choice(token.immediate('.'), '.'),
       field('name', choice($.identifier, $.escaped_identifier, $.number)),
     )),
@@ -745,8 +746,9 @@ module.exports = grammar({
       field('operand', $._expression),
     )),
 
-    // Explicit: `@ident` — suppresses implicit arguments
-    explicit: $ => seq('@', $._atom),
+    // Explicit: `@ident` — suppresses implicit arguments. `term` includes
+    // a dotted-name tail via `_tight_projection` — see #24.
+    explicit: $ => seq('@', field('term', choice($._atom, alias($._tight_projection, $.projection)))),
 
     // Note: postfix `!` and `?` are handled by:
     // - subscript modifier: `arr[i]!`, `arr[i]?`
