@@ -185,10 +185,19 @@ Identifiers
 #eval foo!
 #eval foo?
 #eval 𝒞
+#eval ℵ
+#eval ℓ
+#eval Ā
 
 ---
 
 (module
+  (hash_command
+    (identifier))
+  (hash_command
+    (identifier))
+  (hash_command
+    (identifier))
   (hash_command
     (identifier))
   (hash_command

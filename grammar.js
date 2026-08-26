@@ -1526,8 +1526,12 @@ module.exports = grammar({
 
     // Identifier with optional dot-separated parts: `Foo.Bar.baz`
     // Simple identifier without dots - projection handles qualified access
-    // Continuation class includes Unicode subscripts — see #6.
-    identifier: _ => /[_a-zA-Zα-ωΑ-Ωℕℤℚℝℂ∇][_a-zA-Z0-9'α-ωΑ-Ωℕℤℚℝℂ∇?!₀-₉ₐ-ₜᵢ-ᵪⱼ]*/,
+    // Continuation class includes Unicode subscripts — see #6. Character
+    // set mirrors real Lean's `isLetterLike`/`isIdFirst`/`isIdRest`
+    // (Init/Meta/Defs.lean) — see #38 (widened from a hand-picked subset;
+    // subscript ranges stay narrow to avoid swallowing `⁻¹`'s codepoints).
+    identifier: _ =>
+      /[_a-zA-Z\u{3b1}-\u{3ba}\u{3bc}-\u{3c9}\u{391}-\u{39f}\u{3a1}-\u{3a2}\u{3a4}-\u{3a9}\u{3ca}-\u{3fb}\u{1f00}-\u{1ffe}\u{2100}-\u{214f}\u{1d49c}-\u{1d59f}\u{c0}-\u{d6}\u{d8}-\u{f6}\u{f8}-\u{ff}\u{100}-\u{17f}\u{2207}][_a-zA-Z0-9'!?\u{3b1}-\u{3ba}\u{3bc}-\u{3c9}\u{391}-\u{39f}\u{3a1}-\u{3a2}\u{3a4}-\u{3a9}\u{3ca}-\u{3fb}\u{1f00}-\u{1ffe}\u{2100}-\u{214f}\u{1d49c}-\u{1d59f}\u{c0}-\u{d6}\u{d8}-\u{f6}\u{f8}-\u{ff}\u{100}-\u{17f}\u{2207}\u{2080}-\u{2089}\u{2090}-\u{209c}\u{1d62}-\u{1d6a}\u{2c7c}]*/u,
 
     // Escaped identifier: `«name with spaces»`
     escaped_identifier: _ => /«[^»]*»/,

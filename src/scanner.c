@@ -141,15 +141,26 @@ static const char *const COMMAND_KEYWORDS[] = {
 };
 #define NUM_COMMAND_KEYWORDS (sizeof(COMMAND_KEYWORDS) / sizeof(COMMAND_KEYWORDS[0]))
 
-/* Character classes mirroring grammar.js's `identifier` regex — kept in
-   sync by hand, used by BY_CASES_NAME and peek_command_keyword. Any
-   mismatch just falls back to a plain `identifier` token — safe, not
+/* Character classes mirroring grammar.js's `identifier` regex (see #38
+   for the derivation from real Lean's isLetterLike) — kept in sync by
+   hand, used by BY_CASES_NAME and peek_command_keyword. Any mismatch
+   just falls back to a plain `identifier` token — safe, not
    silently-wrong. */
 static bool is_ident_start(int32_t c) {
   if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_') return true;
-  if (c >= 0x03B1 && c <= 0x03C9) return true; // α-ω
-  if (c >= 0x0391 && c <= 0x03A9) return true; // Α-Ω
-  if (c == 0x2115 || c == 0x2124 || c == 0x211A || c == 0x211D || c == 0x2102) return true; // ℕℤℚℝℂ
+  if (c >= 0x03B1 && c <= 0x03BA) return true; // lower greek, but λ (0x3BB)
+  if (c >= 0x03BC && c <= 0x03C9) return true;
+  if (c >= 0x0391 && c <= 0x039F) return true; // upper greek, but Π (0x3A0) and Σ (0x3A3)
+  if (c >= 0x03A1 && c <= 0x03A2) return true;
+  if (c >= 0x03A4 && c <= 0x03A9) return true;
+  if (c >= 0x03CA && c <= 0x03FB) return true; // Coptic letters
+  if (c >= 0x1F00 && c <= 0x1FFE) return true; // Polytonic Greek Extended
+  if (c >= 0x2100 && c <= 0x214F) return true; // Letter-like Symbols (incl. ℕℤℚℝℂℵℓ℘)
+  if (c >= 0x1D49C && c <= 0x1D59F) return true; // Script/Double-struck/Fraktur letters
+  if (c >= 0x00C0 && c <= 0x00D6) return true; // Latin-1 supplement letters, but × (0xD7)
+  if (c >= 0x00D8 && c <= 0x00F6) return true;
+  if (c >= 0x00F8 && c <= 0x00FF) return true; // ..., but ÷ (0xF7)
+  if (c >= 0x0100 && c <= 0x017F) return true; // Latin Extended-A
   if (c == 0x2207) return true; // ∇
   return false;
 }
@@ -158,6 +169,8 @@ static bool is_ident_continue(int32_t c) {
   if (is_ident_start(c)) return true;
   if (c >= '0' && c <= '9') return true;
   if (c == '\'' || c == '?' || c == '!') return true;
+  // Narrow subscript ranges only — the wider 0x2070-0x209F block also has
+  // ⁻ (0x207B), the `inverse` token's superscript minus — see #38.
   if (c >= 0x2080 && c <= 0x2089) return true; // ₀-₉
   if (c >= 0x2090 && c <= 0x209C) return true; // ₐ-ₜ
   if (c >= 0x1D62 && c <= 0x1D6A) return true; // ᵢ-ᵪ
