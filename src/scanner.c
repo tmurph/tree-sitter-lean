@@ -124,11 +124,26 @@ static void skip_spaces(TSLexer *lexer) {
 
 static bool is_nl(int32_t c) { return c == '\n' || c == '\r'; }
 
+/* Reserved words that can only ever open a brand-new top-level command,
+   never continue an expression/tactic/mid-construct position — see #21. */
+static const char *const COMMAND_KEYWORDS[] = {
+  "def", "theorem", "lemma", "abbrev",
+  "instance", "structure", "class", "inductive",
+  "namespace", "section", "end",
+  "open", "export", "variable",
+  "universe", "universes",
+  "syntax", "set_option", "include", "omit",
+  "constant", "opaque", "axiom", "example",
+  "attribute", "initialize", "builtin_initialize",
+  "notation", "macro_rules", "macro", "elab",
+  "prefix", "infix", "infixl", "infixr", "postfix",
+};
+#define NUM_COMMAND_KEYWORDS (sizeof(COMMAND_KEYWORDS) / sizeof(COMMAND_KEYWORDS[0]))
+
 /* Character classes mirroring grammar.js's `identifier` regex — kept in
-   sync by hand since the external scanner can't share the JS regex. Only
-   used by BY_CASES_NAME's lookahead below; any mismatch just means that
-   token fails to fire and the input falls back to the plain `identifier`
-   token, so imprecision here is safe, not silently-wrong. */
+   sync by hand, used by BY_CASES_NAME and peek_command_keyword. Any
+   mismatch just falls back to a plain `identifier` token — safe, not
+   silently-wrong. */
 static bool is_ident_start(int32_t c) {
   if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_') return true;
   if (c >= 0x03B1 && c <= 0x03C9) return true; // α-ω
@@ -146,6 +161,26 @@ static bool is_ident_continue(int32_t c) {
   if (c >= 0x2090 && c <= 0x209C) return true; // ₐ-ₜ
   if (c >= 0x1D62 && c <= 0x1D6A) return true; // ᵢ-ᵪ
   if (c == 0x2C7C) return true; // ⱼ
+  return false;
+}
+
+/* Peeks whether the lookahead is a COMMAND_KEYWORDS entry at a word
+   boundary. Pure lookahead (never mark_end()) — see #21 for why callers
+   must mark_end() first if they want the peek to stay zero-width. */
+static bool peek_command_keyword(TSLexer *lexer) {
+  if (!is_ident_start(lexer->lookahead)) return false;
+  char buf[24];
+  uint32_t len = 0;
+  int32_t ch = lexer->lookahead;
+  while (is_ident_continue(ch) && len < sizeof(buf) - 1) {
+    buf[len++] = (ch >= 0 && ch < 128) ? (char)ch : '\x7f';
+    lexer->advance(lexer, false);
+    ch = lexer->lookahead;
+  }
+  for (size_t i = 0; i < NUM_COMMAND_KEYWORDS; i++) {
+    size_t kwlen = strlen(COMMAND_KEYWORDS[i]);
+    if (len == kwlen && memcmp(buf, COMMAND_KEYWORDS[i], len) == 0) return true;
+  }
   return false;
 }
 
@@ -330,7 +365,7 @@ bool tree_sitter_lean_external_scanner_scan(
       lexer->result_symbol = LAYOUT_END;
       return true;
     }
-    if (qi == ci && valid_symbols[LAYOUT_SEMICOLON]) {
+    if (qi == ci && (valid_symbols[LAYOUT_SEMICOLON] || valid_symbols[LAYOUT_END])) {
       // Peek ahead past newlines+whitespace to see the actual next token.
       // Don't emit semicolon before `|` — match arms are delimited
       // by `|` tokens, not by layout semicolons.
@@ -339,13 +374,22 @@ bool tree_sitter_lean_external_scanner_scan(
         lexer->advance(lexer, true);
         skip_spaces(lexer);
       }
-      if (should_suppress_semicolon(lexer)) {
-        s->queued_indent = NO_QUEUED;
-        return false;
+      // Flush-left continuation, cascade step (second+ nested level) — see #21.
+      lexer->mark_end(lexer);
+      if (valid_symbols[LAYOUT_END] && peek_command_keyword(lexer)) {
+        pop(s);
+        lexer->result_symbol = LAYOUT_END;
+        return true;
       }
-      s->queued_indent = NO_QUEUED;
-      lexer->result_symbol = LAYOUT_SEMICOLON;
-      return true;
+      if (valid_symbols[LAYOUT_SEMICOLON]) {
+        if (should_suppress_semicolon(lexer)) {
+          s->queued_indent = NO_QUEUED;
+          return false;
+        }
+        s->queued_indent = NO_QUEUED;
+        lexer->result_symbol = LAYOUT_SEMICOLON;
+        return true;
+      }
     }
     s->queued_indent = NO_QUEUED;
   }
@@ -359,6 +403,13 @@ bool tree_sitter_lean_external_scanner_scan(
     uint32_t next = measure_indent(lexer);
     uint32_t ci   = top_indent(s);
 
+    // True EOF, not just a coincidentally-column-0 next line — see #21.
+    if (lexer->eof(lexer) && valid_symbols[LAYOUT_END]) {
+      pop(s);
+      lexer->result_symbol = LAYOUT_END;
+      return true;
+    }
+
     if (next < ci && valid_symbols[LAYOUT_END]) {
       // Mirror of the depth==1 / `|` guard in step 2.
       if (s->depth == 1 && top_kind(s) == KIND_LAYOUT && starts_with_pipe(lexer)) {
@@ -369,15 +420,25 @@ bool tree_sitter_lean_external_scanner_scan(
       lexer->result_symbol = LAYOUT_END;
       return true;
     }
-    if (next == ci && valid_symbols[LAYOUT_SEMICOLON]) {
-      // Suppress semicolon before `|`
-      if (should_suppress_semicolon(lexer)) {
-        s->queued_indent = NO_QUEUED;
-        return false;
+    if (next == ci) {
+      // Flush-left continuation (body at the same column as its opening
+      // line, so the dedent above never fires) — see #21.
+      if (valid_symbols[LAYOUT_END] && peek_command_keyword(lexer)) {
+        pop(s);
+        s->queued_indent = next;
+        lexer->result_symbol = LAYOUT_END;
+        return true;
       }
-      s->queued_indent = NO_QUEUED;
-      lexer->result_symbol = LAYOUT_SEMICOLON;
-      return true;
+      if (valid_symbols[LAYOUT_SEMICOLON]) {
+        // Suppress semicolon before `|`
+        if (should_suppress_semicolon(lexer)) {
+          s->queued_indent = NO_QUEUED;
+          return false;
+        }
+        s->queued_indent = NO_QUEUED;
+        lexer->result_symbol = LAYOUT_SEMICOLON;
+        return true;
+      }
     }
     return false;
   }
@@ -411,6 +472,16 @@ bool tree_sitter_lean_external_scanner_scan(
       lexer->mark_end(lexer);
       lexer->advance(lexer, false);
       if (lexer->lookahead != '=' && lexer->lookahead != ':') {
+        pop(s);
+        lexer->result_symbol = LAYOUT_END;
+        return true;
+      }
+      return false;
+    }
+    if (is_ident_start(c)) {
+      // Flush-left continuation, same-line variant — see #21.
+      lexer->mark_end(lexer);
+      if (peek_command_keyword(lexer)) {
         pop(s);
         lexer->result_symbol = LAYOUT_END;
         return true;

@@ -272,3 +272,57 @@ def buildArray : Array Nat := Id.run do
                   arguments: (identifier)))))
           (return
             value: (identifier)))))))
+
+=====================================
+Flush-left match arm with nested flush-left do blocks
+=====================================
+
+def typeToCharP (t : Nat) : Nat :=
+match t with
+| 0 => 0
+| _ => if t > 100 then 0 else do
+let x := 1
+withNewMCtxDepth do
+let y := 2
+y
+
+def sampleAfter := 1
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      binders: (binders
+        (explicit_binder
+          name: (identifier)
+          type: (identifier)))
+      type: (identifier)
+      body: (match
+        scrutinees: (identifier)
+        (match_arm
+          patterns: (number)
+          body: (number))
+        (match_arm
+          patterns: (hole)
+          body: (if
+            condition: (binary_expression
+              left: (identifier)
+              right: (number))
+            then: (number)
+            else: (do
+              (let
+                name: (identifier)
+                value: (number)
+                body: (application
+                  name: (identifier)
+                  arguments: (do
+                    (let
+                      name: (identifier)
+                      value: (number)
+                      body: (identifier)))))))))))
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      body: (number))))
