@@ -942,6 +942,7 @@ module.exports = grammar({
       $.tactic_by_cases,
       $.tactic_choose,
       $.tactic_wlog,
+      $.tactic_set,
       $.tactic_use,
       $.tactic_rewrite,
       $.tactic_have,
@@ -1038,6 +1039,20 @@ module.exports = grammar({
       field('condition', $._expression),
       optional(seq('generalizing', repeat1(field('generalizing', $.identifier)))),
       optional(seq('with', field('with', $.identifier))),
+    )),
+
+    // `set a [: T] := e [with [←] h]` (bare form only, `set!` out of
+    // scope) — see #42. Shaped like `tactic_have`'s identifier
+    // alternative rather than `tactic_by_cases`'s: the mandatory `:=`
+    // after the optional type keeps the state distinct from
+    // `parenthesized`'s `(e : T)` without needing an external token.
+    tactic_set: $ => prec.right(seq(
+      'set',
+      field('name', $.identifier),
+      optional($._type_spec),
+      ':=',
+      field('value', $._expression),
+      optional(seq('with', optional(choice('←', '<-')), field('with', $.identifier))),
     )),
 
     // `use e1, e2, ...` — see #29. Comma between arguments uses

@@ -1125,3 +1125,99 @@ example (a b : Nat) : a ≤ b ∨ b ≤ a := by
         (tactic_apply
           tactic: (identifier)
           arg: (identifier))))))
+
+==========
+Tactic Set
+==========
+
+example (x : Nat) (h : x + x - x = 3) : x + x - x = 3 := by
+  set y := x with h2
+  sorry
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (example
+      binders: (binders
+        (explicit_binder
+          name: (identifier)
+          type: (identifier))
+        (explicit_binder
+          name: (identifier)
+          type: (binary_expression
+            left: (binary_expression
+              left: (binary_expression
+                left: (identifier)
+                right: (identifier))
+              right: (identifier))
+            right: (number))))
+      type: (binary_expression
+        left: (binary_expression
+          left: (binary_expression
+            left: (identifier)
+            right: (identifier))
+          right: (identifier))
+        right: (number))
+      body: (by
+        (tactic_set
+          name: (identifier)
+          value: (identifier)
+          with: (identifier))
+        (tactic_sorry)))))
+
+====================
+Tactic Set With Type
+====================
+
+example (x : Nat) : x = x := by
+  set y : Nat := x with ← h2
+  rfl
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (example
+      binders: (binders
+        (explicit_binder
+          name: (identifier)
+          type: (identifier)))
+      type: (binary_expression
+        left: (identifier)
+        right: (identifier))
+      body: (by
+        (tactic_set
+          name: (identifier)
+          type: (identifier)
+          value: (identifier)
+          with: (identifier))
+        (tactic_apply
+          tactic: (identifier))))))
+
+===============
+Tactic Set Bare
+===============
+
+example (x : Nat) : x = x := by
+  set y := x
+  rfl
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (example
+      binders: (binders
+        (explicit_binder
+          name: (identifier)
+          type: (identifier)))
+      type: (binary_expression
+        left: (identifier)
+        right: (identifier))
+      body: (by
+        (tactic_set
+          name: (identifier)
+          value: (identifier))
+        (tactic_apply
+          tactic: (identifier))))))
