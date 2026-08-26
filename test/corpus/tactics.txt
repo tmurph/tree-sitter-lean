@@ -580,3 +580,284 @@ example : Nat × Nat := ⟨by exact foo, 2⟩
             tactic: (identifier)
             arg: (identifier)))
         (number)))))
+
+==================
+Tactic Calc Single
+==================
+
+example : True := by
+  calc 1 = 1 := rfl
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (example
+      type: (true)
+      body: (by
+        (tactic_calc
+          (calc_first_step
+            (binary_expression
+              left: (number)
+              right: (number))
+            (identifier)))))))
+
+=====================
+Tactic Calc Two Steps
+=====================
+
+example (a b c : Nat) (h1 : a = b) (h2 : b = c) : a = c := by
+  calc
+    a = b := h1
+    _ = c := h2
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (example
+      binders: (binders
+        (explicit_binder
+          name: (identifier)
+          name: (identifier)
+          name: (identifier)
+          type: (identifier))
+        (explicit_binder
+          name: (identifier)
+          type: (binary_expression
+            left: (identifier)
+            right: (identifier)))
+        (explicit_binder
+          name: (identifier)
+          type: (binary_expression
+            left: (identifier)
+            right: (identifier))))
+      type: (binary_expression
+        left: (identifier)
+        right: (identifier))
+      body: (by
+        (tactic_calc
+          (calc_first_step
+            (binary_expression
+              left: (identifier)
+              right: (identifier))
+            (identifier))
+          (calc_step
+            (binary_expression
+              left: (hole)
+              right: (identifier))
+            (identifier)))))))
+
+============================
+Tactic Calc Three Step Chain
+============================
+
+example (a b c d : Nat) (h1 : a = b) (h2 : b = c) (h3 : c = d) : a = d := by
+  calc
+    a = b := h1
+    _ = c := h2
+    _ = d := h3
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (example
+      binders: (binders
+        (explicit_binder
+          name: (identifier)
+          name: (identifier)
+          name: (identifier)
+          name: (identifier)
+          type: (identifier))
+        (explicit_binder
+          name: (identifier)
+          type: (binary_expression
+            left: (identifier)
+            right: (identifier)))
+        (explicit_binder
+          name: (identifier)
+          type: (binary_expression
+            left: (identifier)
+            right: (identifier)))
+        (explicit_binder
+          name: (identifier)
+          type: (binary_expression
+            left: (identifier)
+            right: (identifier))))
+      type: (binary_expression
+        left: (identifier)
+        right: (identifier))
+      body: (by
+        (tactic_calc
+          (calc_first_step
+            (binary_expression
+              left: (identifier)
+              right: (identifier))
+            (identifier))
+          (calc_step
+            (binary_expression
+              left: (hole)
+              right: (identifier))
+            (identifier))
+          (calc_step
+            (binary_expression
+              left: (hole)
+              right: (identifier))
+            (identifier)))))))
+
+========================
+Tactic Calc Step With By
+========================
+
+example (a b c : Nat) (h1 : a = b) (h2 : b = c) : a = c := by
+  calc
+    a = b := h1
+    _ = c := by exact h2
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (example
+      binders: (binders
+        (explicit_binder
+          name: (identifier)
+          name: (identifier)
+          name: (identifier)
+          type: (identifier))
+        (explicit_binder
+          name: (identifier)
+          type: (binary_expression
+            left: (identifier)
+            right: (identifier)))
+        (explicit_binder
+          name: (identifier)
+          type: (binary_expression
+            left: (identifier)
+            right: (identifier))))
+      type: (binary_expression
+        left: (identifier)
+        right: (identifier))
+      body: (by
+        (tactic_calc
+          (calc_first_step
+            (binary_expression
+              left: (identifier)
+              right: (identifier))
+            (identifier))
+          (calc_step
+            (binary_expression
+              left: (hole)
+              right: (identifier))
+            (by
+              (tactic_apply
+                tactic: (identifier)
+                arg: (identifier)))))))))
+
+===========================
+Tactic Calc Mixed Relations
+===========================
+
+example (a b c d : Nat) (h1 : a ≤ b) (h2 : b < c) (h3 : c = d) : a < d := by
+  calc
+    a ≤ b := h1
+    _ < c := h2
+    _ = d := h3
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (example
+      binders: (binders
+        (explicit_binder
+          name: (identifier)
+          name: (identifier)
+          name: (identifier)
+          name: (identifier)
+          type: (identifier))
+        (explicit_binder
+          name: (identifier)
+          type: (binary_expression
+            left: (identifier)
+            right: (identifier)))
+        (explicit_binder
+          name: (identifier)
+          type: (binary_expression
+            left: (identifier)
+            right: (identifier)))
+        (explicit_binder
+          name: (identifier)
+          type: (binary_expression
+            left: (identifier)
+            right: (identifier))))
+      type: (binary_expression
+        left: (identifier)
+        right: (identifier))
+      body: (by
+        (tactic_calc
+          (calc_first_step
+            (binary_expression
+              left: (identifier)
+              right: (identifier))
+            (identifier))
+          (calc_step
+            (binary_expression
+              left: (hole)
+              right: (identifier))
+            (identifier))
+          (calc_step
+            (binary_expression
+              left: (hole)
+              right: (identifier))
+            (identifier)))))))
+
+===========================
+Tactic Calc Bare First Term
+===========================
+
+example (a b c : Nat) (h1 : a = b) (h2 : b = c) : a = c := by
+  calc
+    a
+    _ = b := h1
+    _ = c := h2
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (example
+      binders: (binders
+        (explicit_binder
+          name: (identifier)
+          name: (identifier)
+          name: (identifier)
+          type: (identifier))
+        (explicit_binder
+          name: (identifier)
+          type: (binary_expression
+            left: (identifier)
+            right: (identifier)))
+        (explicit_binder
+          name: (identifier)
+          type: (binary_expression
+            left: (identifier)
+            right: (identifier))))
+      type: (binary_expression
+        left: (identifier)
+        right: (identifier))
+      body: (by
+        (tactic_calc
+          (calc_first_step
+            (identifier))
+          (calc_step
+            (binary_expression
+              left: (hole)
+              right: (identifier))
+            (identifier))
+          (calc_step
+            (binary_expression
+              left: (hole)
+              right: (identifier))
+            (identifier)))))))

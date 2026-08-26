@@ -1059,12 +1059,25 @@ module.exports = grammar({
     // `show T`
     tactic_show: $ => seq('show', $._expression),
 
-    // `calc` block with steps
+    // `calc` block with steps — see #35. Steps are layout-block siblings
+    // separated by `$._layout_semicolon`, like `_do_seq`/`_tactic_seq`.
+    // `_layout_start` anchors right after `calc`, not after the first
+    // step's expression (that broke single-line `calc 1 = 1 := rfl`
+    // entirely — see #35 for why). Known gap: doesn't yet accept a
+    // same-line first term with continuations below `calc` itself rather
+    // than below the term — needs parser-level knowledge of where
+    // `calc_first_step` ends, out of scope here.
     tactic_calc: $ => prec.right(seq(
       'calc',
       $._layout_start,
-      repeat1($.calc_step),
+      $.calc_first_step,
+      repeat(seq($._layout_semicolon, $.calc_step)),
       $._layout_end,
+    )),
+
+    calc_first_step: $ => prec.right(seq(
+      $._expression,
+      optional(seq(':=', $._expression)),
     )),
 
     calc_step: $ => prec.right(seq(
