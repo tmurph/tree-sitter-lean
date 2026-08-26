@@ -69,6 +69,8 @@
 (structure_field
   type: (_) @entry.inside) @entry.around
 
+(calc_first_step) @entry.around
+
 (calc_step) @entry.around
 
 ; Focused tactic subgoals `· tactic` and case splits `case h => tactic`
