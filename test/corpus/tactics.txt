@@ -1221,3 +1221,34 @@ example (x : Nat) : x = x := by
           value: (identifier))
         (tactic_apply
           tactic: (identifier))))))
+
+=================
+Tactic Match With
+=================
+
+example (n : Nat) : True := by
+  match n with
+  | 0 => trivial
+  | _ => trivial
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (example
+      binders: (binders
+        (explicit_binder
+          name: (identifier)
+          type: (identifier)))
+      type: (true)
+      body: (by
+        (tactic_match
+          scrutinees: (identifier)
+          (tactic_match_arm
+            patterns: (number)
+            (tactic_apply
+              tactic: (identifier)))
+          (tactic_match_arm
+            patterns: (hole)
+            (tactic_apply
+              tactic: (identifier))))))))

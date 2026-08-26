@@ -939,6 +939,7 @@ module.exports = grammar({
       $.tactic_focus,
       $.tactic_case,
       $.tactic_cases,
+      $.tactic_match,
       $.tactic_by_cases,
       $.tactic_choose,
       $.tactic_wlog,
@@ -1012,6 +1013,28 @@ module.exports = grammar({
     cases_arm: $ => prec.right(seq(
       '|',
       field('pattern', $._pattern),
+      arrow(),
+      $._layout_start,
+      $._tactic_seq,
+      $._layout_end,
+    )),
+
+    // `match e with | pat => tac | ...` — tactic-position `match` — see
+    // #43. Mirrors term-level `match`/`match_arm` (same head, same
+    // `_expr_list` patterns field) but, like `cases_arm` vs. `match_arm`,
+    // arm bodies are tactic sequences, so `tactic_match_arm` reuses
+    // `cases_arm`'s plain layout machinery instead of `match_arm`'s
+    // `_match_body_start`.
+    tactic_match: $ => prec.right(seq(
+      'match',
+      field('scrutinees', $._expr_list),
+      'with',
+      repeat1($.tactic_match_arm),
+    )),
+
+    tactic_match_arm: $ => prec.right(seq(
+      '|',
+      field('patterns', $._expr_list),
       arrow(),
       $._layout_start,
       $._tactic_seq,
