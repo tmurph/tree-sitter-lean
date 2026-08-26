@@ -310,3 +310,35 @@ theorem tacticConfig : 0 + 0 = 0 := by
           (projection
             term: (identifier)
             name: (identifier)))))))
+
+================
+Tactic By Cases
+================
+
+example (p q : Prop) : True := by
+  by_cases hx : p
+  by_cases : q
+  by_cases p
+  trivial
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (example
+      binders: (binders
+        (explicit_binder
+          name: (identifier)
+          name: (identifier)
+          type: (identifier)))
+      type: (true)
+      body: (by
+        (tactic_by_cases
+          name: (identifier)
+          condition: (identifier))
+        (tactic_by_cases
+          condition: (identifier))
+        (tactic_by_cases
+          condition: (identifier))
+        (tactic_apply
+          tactic: (identifier))))))

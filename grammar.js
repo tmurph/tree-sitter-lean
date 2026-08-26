@@ -874,19 +874,17 @@ module.exports = grammar({
     )),
 
     // `by_cases h : p` / `by_cases : p` / `by_cases p` — see #14. The
-    // `name` alternative uses `$._by_cases_name` (external scanner) rather
-    // than plain `$.identifier` — state-merging otherwise collapses it
-    // with `parenthesized`'s `(e : T)` state and silently drops the name.
+    // `name` alternative uses `$._by_cases_name_token` (external scanner)
+    // rather than plain `$.identifier` — state-merging otherwise collapses
+    // it with `parenthesized`'s `(e : T)` state and silently drops the name.
     tactic_by_cases: $ => prec.right(seq(
       'by_cases',
       choice(
-        seq(field('name', $._by_cases_name), ':', field('condition', $._expression)),
+        seq(field('name', alias($._by_cases_name_token, $.identifier)), ':', field('condition', $._expression)),
         seq(':', field('condition', $._expression)),
         field('condition', $._expression),
       ),
     )),
-
-    _by_cases_name: $ => alias($._by_cases_name_token, $.identifier),
 
     cases_arm: $ => prec.right(seq(
       '|',

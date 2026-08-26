@@ -211,22 +211,22 @@ bool tree_sitter_lean_external_scanner_scan(
          bare condition, see #14. */
   if (valid_symbols[BY_CASES_NAME]) {
     while (lexer->lookahead == ' ' || lexer->lookahead == '\t') lexer->advance(lexer, true);
-  }
-  if (valid_symbols[BY_CASES_NAME] && is_ident_start(lexer->lookahead)) {
-    lexer->advance(lexer, false);
-    while (is_ident_continue(lexer->lookahead)) lexer->advance(lexer, false);
-    // mark_end before peeking further — a skip-mode advance() after
-    // mark_end retroactively collapses the boundary to zero-width.
-    lexer->mark_end(lexer);
-    while (lexer->lookahead == ' ' || lexer->lookahead == '\t') lexer->advance(lexer, false);
-    if (lexer->lookahead == ':') {
+    if (is_ident_start(lexer->lookahead)) {
       lexer->advance(lexer, false);
-      if (lexer->lookahead != '=') {
-        lexer->result_symbol = BY_CASES_NAME;
-        return true;
+      while (is_ident_continue(lexer->lookahead)) lexer->advance(lexer, false);
+      // mark_end before peeking further — a skip-mode advance() after
+      // mark_end retroactively collapses the boundary to zero-width.
+      lexer->mark_end(lexer);
+      while (lexer->lookahead == ' ' || lexer->lookahead == '\t') lexer->advance(lexer, false);
+      if (lexer->lookahead == ':') {
+        lexer->advance(lexer, false);
+        if (lexer->lookahead != '=') {
+          lexer->result_symbol = BY_CASES_NAME;
+          return true;
+        }
       }
+      return false;
     }
-    return false;
   }
 
   /* 1y. BRACE_FIELD_SEP — inside `{ … }`, a newline acts as a field
