@@ -44,7 +44,9 @@ module.exports = grammar({
   externals: $ => [
     $._layout_start,            // Start a layout block (after `do`, `where`, etc.)
     $._layout_semicolon,        // Virtual semicolon between elements at same indent
-    $._layout_end,              // End of layout block (indent decreased)
+    // End of layout block. Required everywhere except do/_do_then_else,
+    // which still need `optional()` — see #1.
+    $._layout_end,
     $._match_body_start,        // Like _layout_start but only for match arm bodies
     $._syntax_quotation_body,   // Inner content of `` `( ... ) `` (balanced)
     $._brace_field_sep,         // Newline as field separator inside `{ … }`
@@ -63,15 +65,12 @@ module.exports = grammar({
   inline: $ => [],
 
   conflicts: $ => [
-    [$.where_decl],
     [$.subtype, $.field_assignment],
     [$.let, $._pattern],
     [$.parameters, $._pattern],
     // Fragment mode conflicts: tactics and expressions overlap when both
     // are valid top-level alternatives.  GLR resolves at runtime.
     [$.have, $._pattern],
-    [$._atom, $._name],
-    [$._binding_body, $.tactic_have],
     // `public`/`meta` can prefix either an `import` (only in the module header)
     // or a declaration via `_modifier`. GLR resolves at runtime by lookahead
     // for `import` vs a declaration keyword. This mirrors lean4's `atomic`
@@ -80,7 +79,6 @@ module.exports = grammar({
     [$._syntax_atom, $._atom],
     [$._atom, $._pattern],
     [$.inductive],
-    [$.structure],
     [$.class_inductive],
     [$.return, $.do_return],
   ],
@@ -309,8 +307,10 @@ module.exports = grammar({
     // `@[default_instance prio]`, etc. Each comma-separated entry is a name
     // followed by an optional sequence of atomic arguments (idents/strings/
     // numbers).
+    //
+    // `@[` is one token, not `'@', '['` — see #1.
     attributes: $ => seq(
-      '@', '[',
+      token('@['),
       commaSep1($.attribute_entry),
       ']',
     ),
@@ -333,8 +333,8 @@ module.exports = grammar({
     // Shared body production for definition and instance — factored out
     // to let the parser reuse states across both declaration forms.
     _declaration_body: $ => choice(
-      seq(':=', $._layout_start, field('body', $._expression), optional($._layout_end)),
-      seq('where', $._layout_start, repeat1(seq(field('body', $.where_decl), optional($._layout_semicolon))), optional($._layout_end)),
+      seq(':=', $._layout_start, field('body', $._expression), $._layout_end),
+      seq('where', $._layout_start, repeat1(seq(field('body', $.where_decl), optional($._layout_semicolon))), $._layout_end),
       repeat1($.match_arm),
     ),
 
@@ -354,7 +354,7 @@ module.exports = grammar({
       repeat(field('binders', choice($.identifier, $._bracketed_binder))),
       optional($._type_spec),
       choice(
-        seq(':=', $._layout_start, field('body', $._expression), optional($._layout_end)),
+        seq(':=', $._layout_start, field('body', $._expression), $._layout_end),
         // Match-equation style: `toString | .style => "style" | ...`
         repeat1($.match_arm),
       ),
@@ -394,7 +394,7 @@ module.exports = grammar({
         choice(':=', 'where'),
         $._layout_start,
         repeat(seq(field('fields', choice($.structure_field, $._bracketed_binder)), optional($._layout_semicolon))),
-        optional($._layout_end),
+        $._layout_end,
       )),
       optional(seq('deriving', commaSep1(field('deriving', $.identifier)))),
     ),
@@ -540,13 +540,13 @@ module.exports = grammar({
       'try',
       $._layout_start,
       field('body', $._do_seq),
-      optional($._layout_end),
+      $._layout_end,
       'catch',
       optional(field('var', choice($.identifier, $.hole))),
       '=>',
       $._layout_start,
       field('handler', $._do_seq),
-      optional($._layout_end),
+      $._layout_end,
     )),
 
     // `return [expr]` — term-mode return.
@@ -603,15 +603,26 @@ module.exports = grammar({
     )),
 
     // Array/list subscript: `arr[i]` or `arr[i]!` or `arr[i]?`
-    // Also handles subarray slice: `arr[start:stop]`
+    // Also handles subarray slice: `arr[start:stop]`.
+    //
+    // Index/slice as separate alternatives rather than nested `optional()`s — see #1.
     subscript: $ => prec.left(PREC.proj, seq(
       field('object', $._expression),
       token.immediate('['),
-      optional(field('index', $._expression)),
-      optional(seq(':', optional(field('stop', $._expression)))),
+      choice(
+        field('index', $._expression),
+        $._slice_spec,
+      ),
       ']',
       optional(field('modifier', choice('!', '?'))),
     )),
+
+    // `start:stop`, `:stop`, `start:`, `:` — the slice half of a subscript.
+    _slice_spec: $ => seq(
+      optional(field('index', $._expression)),
+      ':',
+      optional(field('stop', $._expression)),
+    ),
 
     // Qualified name: `foo` or `Foo.Bar.baz` - used for declarations and references.
     // prec.right so the longest dotted run wins (set_option/import disambiguation).
@@ -620,7 +631,8 @@ module.exports = grammar({
       repeat(seq(token.immediate('.'), choice($.identifier, $.escaped_identifier))),
     )),
 
-    // Projection: `x.foo` or `x.1` or `x.«name»` or `.field` (leading dot)
+    // Projection: `x.foo` or `x.1` or `x.«name»` or `.field` (leading dot).
+    // Splitting the leading-dot form into its own rule costs more states, not fewer — see #1.
     projection: $ => prec.left(PREC.proj, seq(
       optional(field('term', $._expression)),
       choice(
@@ -637,47 +649,61 @@ module.exports = grammar({
       field('codomain', $._expression),
     )),
 
-    // Binary operators with table-driven precedence
+    // Binary operators with table-driven precedence.
+    // One hidden operator-class rule per precedence level (see `_op_*` below) — see #1.
     binary_expression: $ => {
-      // 6 levels (reduced from 9) to minimize parser states.
-      // Merged: or+$ → low, cons+add+product → add.
       const leftAssoc = [
-        [PREC.low, choice('||', '∨', '<|>', '<$>', '<*>', '*>', '<*')],
-        [PREC.and, choice('&&', '∧')],
-        [PREC.compare, choice('==', '!=', '=', '<', '>', '<=', '>=', '≤', '≥', '≠',
-                               '∣', '↔', '⊢')],
-        [PREC.add, choice('+', '-', '++', '∪', '∩', '×', '\\')],
-        [PREC.mul, choice('*', '/', '%')],
-        [PREC.app + 1, choice('|>', '|>.')],
+        [PREC.low, $._op_or],
+        [PREC.and, $._op_and],
+        [PREC.compare, $._op_cmp],
+        [PREC.add, $._op_add],
+        [PREC.mul, $._op_mul],
+        [PREC.app + 1, $._op_pipe],
       ];
 
       // Right-associative: $, <|, ::, ^, ∘
       const rightAssoc = [
-        [PREC.low, '$'],
-        [PREC.add, '::'],
-        [PREC.mul, choice('^', '∘')],
-        [PREC.app + 1, '<|'],
+        [PREC.low, $._op_dollar],
+        [PREC.add, $._op_cons],
+        [PREC.mul, $._op_pow],
+        [PREC.app + 1, $._op_lpipe],
       ];
 
       return choice(
         ...leftAssoc.map(([precedence, operator]) =>
           prec.left(precedence, seq(
             field('left', $._expression),
-            field('operator', operator),
+            field('operator', alias(operator, 'operator')),
             field('right', $._expression),
           )),
         ),
         ...rightAssoc.map(([precedence, operator]) =>
           prec.right(precedence, seq(
             field('left', $._expression),
-            field('operator', operator),
+            field('operator', alias(operator, 'operator')),
             field('right', $._expression),
           )),
         ),
       );
     },
 
-    // Prefix operators (includes monadic lift ← for do-blocks)
+    // Operator classes: one hidden rule per precedence level. Kept as
+    // separate literals rather than one folded terminal per level (cheaper,
+    // but erases individual symbols from node-types.json) — see #1.
+    _op_or: _ => choice('||', '∨', '<|>', '<$>', '<*>', '*>', '<*'),
+    _op_and: _ => choice('&&', '∧'),
+    _op_cmp: _ => choice('==', '!=', '=', '<', '>', '<=', '>=', '≤', '≥', '≠',
+                         '∣', '↔', '⊢'),
+    _op_add: _ => choice('+', '-', '++', '∪', '∩', '×', '\\'),
+    _op_mul: _ => choice('*', '/', '%'),
+    _op_pipe: _ => choice('|>', '|>.'),
+    _op_dollar: _ => '$',
+    _op_cons: _ => '::',
+    _op_pow: _ => choice('^', '∘'),
+    _op_lpipe: _ => '<|',
+
+    // Prefix operators (includes monadic lift ← for do-blocks).
+    // Plain `prec`, not `prec.right` — see #1.
     unary_expression: $ => prec(PREC.unary, seq(
       field('operator', choice('!', '¬', '-', '←', '<-')),
       field('operand', $._expression),
@@ -700,7 +726,7 @@ module.exports = grammar({
           '=>',
           $._layout_start,
           field('body', $._expression),
-          optional($._layout_end),
+          $._layout_end,
         ),
         repeat1($.match_arm),
       ),
@@ -727,15 +753,14 @@ module.exports = grammar({
       $._binding_body,
     )),
 
-    // Shared `:= value [; body]` tail for `let` and `have` — extracted
-    // so the parser reuses states across both forms.
+    // Shared `:= value ; body` tail for `let` and `have` — extracted so the
+    // parser reuses states across both forms. Body is required, not
+    // `optional()` — see #1.
     _binding_body: $ => prec.right(seq(
       ':=',
       field('value', $._expression),
-      optional(seq(
-        choice(';', $._layout_semicolon),
-        field('body', $._expression),
-      )),
+      choice(';', $._layout_semicolon),
+      field('body', $._expression),
     )),
 
     // ============================================================
@@ -749,7 +774,7 @@ module.exports = grammar({
       'by',
       $._layout_start,
       $._tactic_seq,
-      optional($._layout_end),
+      $._layout_end,
     )),
 
     // Tactics separated by `;`, `<;>` (broadcast), or newlines
@@ -787,16 +812,14 @@ module.exports = grammar({
 
     // Configuration list: `[lemma1, ←lemma2, *]`
     // The ← before lemmas is handled by unary_expression.
-    tactic_config: $ => prec(1, seq(
-      '[', commaSep($._expression), ']',
-    )),
+    tactic_config: $ => prec(1, seq('[', optional($._expr_list), ']')),
 
     // Focus: `· tactic1; tactic2`
     tactic_focus: $ => prec.right(seq(
       '·',
       $._layout_start,
       $._tactic_seq,
-      optional($._layout_end),
+      $._layout_end,
     )),
 
     // Case split: `case name => ...` or `next => ...`
@@ -806,7 +829,7 @@ module.exports = grammar({
       '=>',
       $._layout_start,
       $._tactic_seq,
-      optional($._layout_end),
+      $._layout_end,
     )),
 
     // `rw`/`rewrite` always take a config list, optionally with `at`
@@ -845,7 +868,7 @@ module.exports = grammar({
       'calc',
       $._layout_start,
       repeat1($.calc_step),
-      optional($._layout_end),
+      $._layout_end,
     )),
 
     calc_step: $ => prec.right(seq(
@@ -949,7 +972,7 @@ module.exports = grammar({
       '=>',
       $._match_body_start,
       field('body', $._expression),
-      optional($._layout_end),
+      $._layout_end,
     )),
 
     // Do notation with layout-sensitive parsing
@@ -1102,7 +1125,7 @@ module.exports = grammar({
       '=>',
       $._layout_start,
       field('body', $._do_seq),
-      optional($._layout_end),
+      $._layout_end,
     )),
 
     // While loop in do-block: `while cond do body`. The condition's `do`
@@ -1144,7 +1167,7 @@ module.exports = grammar({
       'try',
       $._layout_start,
       field('body', $._do_seq),
-      optional($._layout_end),
+      $._layout_end,
     )),
 
     // Catch handler: `catch e => expr`
@@ -1177,15 +1200,13 @@ module.exports = grammar({
       ')',
     ),
 
-    tuple: $ => seq(
-      '(',
-      $._expression,
-      ',',
-      commaSep1($._expression),
-      ')',
-    ),
+    tuple: $ => seq('(', $._expression, ',', $._expr_list, ')'),
 
-    anonymous_constructor: $ => seq('⟨', commaSep($._expression), '⟩'),
+    // Shared comma-separated expression list for every bracketed form that
+    // takes one — see #1.
+    _expr_list: $ => commaSep1($._expression),
+
+    anonymous_constructor: $ => seq('⟨', optional($._expr_list), '⟩'),
 
     // Subtype: `{x // P}` or `{x : T // P}`
     subtype: $ => seq(
@@ -1230,9 +1251,9 @@ module.exports = grammar({
       field('name', $.identifier),
     ),
 
-    array: $ => seq('#[', commaSep($._expression), ']'),
+    array: $ => seq('#[', optional($._expr_list), ']'),
 
-    list: $ => seq('[', commaSep($._expression), ']'),
+    list: $ => seq('[', optional($._expr_list), ']'),
 
     // Range syntax: `[:n]`, `[start:end]`, `[start:end:step]`
     range: $ => seq('[', $._range_spec, ']'),

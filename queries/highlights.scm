@@ -49,8 +49,10 @@
 
 ; ── Attributes ──────────────────────────────────────────────────
 
+; `@[` is a single token now — see #1.
 (attributes
-  "@" @punctuation.special)
+  "@[" @punctuation.special
+  "]" @punctuation.special)
 
 (attribute_entry
   name: (identifier) @attribute)
@@ -349,7 +351,9 @@
 
 ; ── Operators ────────────────────────────────────────────────
 
+; `"operator"` is the alias every binary operator carries — see #1.
 [
+  "operator"
   "!"  "¬"
   "+"  "-"  "*"  "/"  "%"
   "++"  "∘"

@@ -38,8 +38,12 @@ enum TokenType {
 #define MAX_DEPTH 64
 #define NO_QUEUED UINT32_MAX
 
+/* Why a layout level was opened — see #1. */
+enum LayoutKind { KIND_LAYOUT = 0, KIND_MATCH_BODY = 1 };
+
 typedef struct {
   uint32_t indents[MAX_DEPTH];
+  uint8_t  kinds[MAX_DEPTH];
   uint8_t  depth;
   uint32_t queued_indent; // indent of next non-blank line, or NO_QUEUED
 } Scanner;
@@ -64,6 +68,7 @@ unsigned tree_sitter_lean_external_scanner_serialize(void *payload, char *buffer
   memcpy(buffer + pos, &s->queued_indent, sizeof(s->queued_indent)); pos += sizeof(s->queued_indent);
   unsigned indent_bytes = s->depth * sizeof(uint32_t);
   memcpy(buffer + pos, s->indents, indent_bytes);           pos += indent_bytes;
+  memcpy(buffer + pos, s->kinds, s->depth);                 pos += s->depth;
   return pos;
 }
 
@@ -79,6 +84,9 @@ void tree_sitter_lean_external_scanner_deserialize(void *payload, const char *bu
   memcpy(&s->queued_indent, buffer + pos, sizeof(s->queued_indent)); pos += sizeof(s->queued_indent);
   if (s->depth > MAX_DEPTH) { s->depth = 0; s->queued_indent = NO_QUEUED; return; }
   memcpy(s->indents, buffer + pos, s->depth * sizeof(uint32_t));
+  pos += s->depth * sizeof(uint32_t);
+  if (pos + s->depth <= length) memcpy(s->kinds, buffer + pos, s->depth);
+  else memset(s->kinds, KIND_LAYOUT, s->depth);
 }
 
 /* ── helpers ───────────────────────────────────────────────────── */
@@ -92,10 +100,16 @@ static inline uint32_t penultimate_indent(Scanner *s) {
   return s->depth > 1 ? s->indents[s->depth - 2] : 0;
 }
 
-static inline void push(Scanner *s, uint32_t indent) {
+static inline void push(Scanner *s, uint32_t indent, uint8_t kind) {
   if (s->depth < MAX_DEPTH) {
+    s->kinds[s->depth] = kind;
     s->indents[s->depth++] = indent;
   }
+}
+
+/* Kind of the innermost open layout level. */
+static inline uint8_t top_kind(Scanner *s) {
+  return s->depth > 0 ? s->kinds[s->depth - 1] : KIND_LAYOUT;
 }
 
 static inline void pop(Scanner *s) {
@@ -141,13 +155,13 @@ static bool should_suppress_semicolon(TSLexer *lexer) {
  * Push indent for a layout-start-like token (shared by LAYOUT_START
  * and MATCH_BODY_START).
  */
-static void push_layout_indent(Scanner *s, TSLexer *lexer) {
+static void push_layout_indent(Scanner *s, TSLexer *lexer, uint8_t kind) {
   skip_spaces(lexer);
   if (is_nl(lexer->lookahead)) {
     uint32_t indent = measure_indent(lexer);
-    push(s, indent);
+    push(s, indent, kind);
   } else {
-    push(s, lexer->get_column(lexer));
+    push(s, lexer->get_column(lexer), kind);
   }
   s->queued_indent = NO_QUEUED;
 }
@@ -222,7 +236,7 @@ bool tree_sitter_lean_external_scanner_scan(
   /* 1a. LAYOUT_START — grammar just saw `do`, `where`, `:=`, `=>`
          and wants to open a new layout block. */
   if (valid_symbols[LAYOUT_START]) {
-    push_layout_indent(s, lexer);
+    push_layout_indent(s, lexer, KIND_LAYOUT);
     lexer->result_symbol = LAYOUT_START;
     return true;
   }
@@ -233,7 +247,7 @@ bool tree_sitter_lean_external_scanner_scan(
          context from general layout (avoiding conflicts with
          _do_element).  Closed by the same LAYOUT_END mechanism. */
   if (valid_symbols[MATCH_BODY_START]) {
-    push_layout_indent(s, lexer);
+    push_layout_indent(s, lexer, KIND_MATCH_BODY);
     lexer->result_symbol = MATCH_BODY_START;
     return true;
   }
@@ -252,7 +266,7 @@ bool tree_sitter_lean_external_scanner_scan(
       // match prematurely. Deeper stacks pop normally so nested matches still
       // work — there an inner match needs LAYOUT_END to fire so the outer
       // match's arm at a lower column can fire.
-      if (s->depth == 1) {
+      if (s->depth == 1 && top_kind(s) == KIND_LAYOUT) {
         lexer->mark_end(lexer);
         skip_spaces(lexer);
         while (is_nl(lexer->lookahead)) {
@@ -299,7 +313,7 @@ bool tree_sitter_lean_external_scanner_scan(
 
     if (next < ci && valid_symbols[LAYOUT_END]) {
       // Mirror of the depth==1 / `|` guard in step 2.
-      if (s->depth == 1 && starts_with_pipe(lexer)) {
+      if (s->depth == 1 && top_kind(s) == KIND_LAYOUT && starts_with_pipe(lexer)) {
         return false;
       }
       pop(s);
@@ -327,10 +341,10 @@ bool tree_sitter_lean_external_scanner_scan(
     return true;
   }
 
-  /* 6. Closing bracket/paren/brace — force-close one layout level. */
+  /* 6. Same-line terminator — force-close one layout level. See #1. */
   if (valid_symbols[LAYOUT_END] && s->depth > 0) {
     int32_t c = lexer->lookahead;
-    if (c == ')' || c == ']' || c == '}') {
+    if (c == ')' || c == ']' || c == '}' || c == ',' || c == ':') {
       pop(s);
       lexer->result_symbol = LAYOUT_END;
       return true;
