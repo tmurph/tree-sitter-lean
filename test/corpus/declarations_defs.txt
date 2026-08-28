@@ -515,8 +515,8 @@ where
       type: (true)
       body: (by
         tactic: (tactic_apply
-          tactic: (identifier)
-          arg: (identifier)))
+          name: (identifier)
+          arguments: (identifier)))
       body: (where_decl
         name: (identifier)
         type: (true)
@@ -544,8 +544,8 @@ where
           name: (identifier)
           value: (identifier))
         tactic: (tactic_apply
-          tactic: (identifier)
-          arg: (identifier)))
+          name: (identifier)
+          arguments: (identifier)))
       body: (where_decl
         name: (identifier)
         type: (true)
@@ -570,8 +570,8 @@ where
       type: (true)
       body: (by
         tactic: (tactic_apply
-          tactic: (identifier)
-          arg: (identifier)))
+          name: (identifier)
+          arguments: (identifier)))
       body: (where_decl
         name: (identifier)
         type: (true)

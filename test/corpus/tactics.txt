@@ -37,8 +37,8 @@ theorem foo {m n : Nat} : 2 * m + 2 * n = 2 * (n + m) := by
             term: (identifier)
             name: (identifier)))
         tactic: (tactic_apply
-          tactic: (identifier)
-          arg: (projection
+          name: (identifier)
+          arguments: (projection
             term: (parenthesized
               (application
                 name: (application
@@ -108,8 +108,8 @@ variable {m n : Nat}
             term: (identifier)
             name: (identifier)))
         tactic: (tactic_apply
-          tactic: (identifier)
-          arg: (projection
+          name: (identifier)
+          arguments: (projection
             term: (parenthesized
               (application
                 name: (application
@@ -170,8 +170,8 @@ example : 2 = 2 := by simp [foo, bar]
         right: (number))
       body: (by
         tactic: (tactic_apply
-          tactic: (identifier)
-          arg: (tactic_config
+          name: (identifier)
+          arguments: (tactic_config
             (identifier)
             (identifier)))))))
 
@@ -191,7 +191,7 @@ example : 2 = 2 := by simp?
         right: (number))
       body: (by
         tactic: (tactic_apply
-          tactic: (identifier))))))
+          name: (identifier))))))
 
 ===========
 Dsimp Trace
@@ -209,7 +209,7 @@ example : 2 = 2 := by dsimp?
         right: (number))
       body: (by
         tactic: (tactic_apply
-          tactic: (identifier))))))
+          name: (identifier))))))
 
 ==============
 Simp All Trace
@@ -227,7 +227,7 @@ example : 2 = 2 := by simp_all?
         right: (number))
       body: (by
         tactic: (tactic_apply
-          tactic: (identifier))))))
+          name: (identifier))))))
 
 ===============
 Simp Trace Bang
@@ -245,7 +245,7 @@ example : 2 = 2 := by simp?!
         right: (number))
       body: (by
         tactic: (tactic_apply
-          tactic: (identifier))))))
+          name: (identifier))))))
 
 ==============================
 Simp Trace With Extra Theorems
@@ -263,8 +263,8 @@ example : 2 = 2 := by simp? [foo, bar]
         right: (number))
       body: (by
         tactic: (tactic_apply
-          tactic: (identifier)
-          arg: (tactic_config
+          name: (identifier)
+          arguments: (tactic_config
             (identifier)
             (identifier)))))))
 
@@ -375,22 +375,22 @@ example : (true ↔ true) ↔ (true ↔ true) := by
             right: (true))))
       body: (by
         tactic: (tactic_apply
-          tactic: (identifier)
-          arg: (projection
+          name: (identifier)
+          arguments: (projection
             term: (identifier)
             name: (identifier)))
         tactic: (tactic_apply
-          tactic: (identifier)
-          arg: (identifier))
+          name: (identifier)
+          arguments: (identifier))
         tactic: (tactic_apply
-          tactic: (identifier)
-          arg: (identifier))
+          name: (identifier)
+          arguments: (identifier))
         tactic: (tactic_apply
-          tactic: (identifier)
-          arg: (identifier))
+          name: (identifier)
+          arguments: (identifier))
         tactic: (tactic_apply
-          tactic: (identifier)
-          arg: (identifier))))))
+          name: (identifier)
+          arguments: (identifier))))))
 
 ==============
 Synthetic Hole
@@ -439,8 +439,8 @@ theorem tacticConfig : 0 + 0 = 0 := by
         right: (number))
       body: (by
         tactic: (tactic_apply
-          tactic: (identifier)
-          arg: (tactic_config
+          name: (identifier)
+          arguments: (tactic_config
             (projection
               term: (identifier)
               name: (identifier))))))))
@@ -475,7 +475,7 @@ example (p q : Prop) : True := by
         tactic: (tactic_by_cases
           condition: (identifier))
         tactic: (tactic_apply
-          tactic: (identifier))))))
+          name: (identifier))))))
 
 ====================
 Tactic By Cases Bang
@@ -504,7 +504,7 @@ example (p q : Prop) : True := by
         tactic: (tactic_by_cases
           condition: (identifier))
         tactic: (tactic_apply
-          tactic: (identifier))))))
+          name: (identifier))))))
 
 ===================
 Tactic Choose Using
@@ -670,8 +670,8 @@ example : Nat × Nat := ⟨by exact foo, 2⟩
       body: (anonymous_constructor
         (by
           tactic: (tactic_apply
-            tactic: (identifier)
-            arg: (identifier)))
+            name: (identifier)
+            arguments: (identifier)))
         (number)))))
 
 ==================
@@ -845,8 +845,8 @@ example (a b c : Nat) (h1 : a = b) (h2 : b = c) : a = c := by
               right: (identifier))
             (by
               tactic: (tactic_apply
-                tactic: (identifier)
-                arg: (identifier)))))))))
+                name: (identifier)
+                arguments: (identifier)))))))))
 
 ===========================
 Tactic Calc Mixed Relations
@@ -1088,8 +1088,8 @@ example (a b : Nat) : a ≤ b ∨ b ≤ a := by
           generalizing: (identifier)
           with: (identifier))
         tactic: (tactic_apply
-          tactic: (identifier)
-          arg: (identifier))))))
+          name: (identifier)
+          arguments: (identifier))))))
 
 ================
 Tactic Wlog Bare
@@ -1123,8 +1123,8 @@ example (a b : Nat) : a ≤ b ∨ b ≤ a := by
             left: (identifier)
             right: (identifier)))
         tactic: (tactic_apply
-          tactic: (identifier)
-          arg: (identifier))))))
+          name: (identifier)
+          arguments: (identifier))))))
 
 ==========
 Tactic Set
@@ -1193,7 +1193,7 @@ example (x : Nat) : x = x := by
           value: (identifier)
           with: (identifier))
         tactic: (tactic_apply
-          tactic: (identifier))))))
+          name: (identifier))))))
 
 ===============
 Tactic Set Bare
@@ -1220,7 +1220,7 @@ example (x : Nat) : x = x := by
           name: (identifier)
           value: (identifier))
         tactic: (tactic_apply
-          tactic: (identifier))))))
+          name: (identifier))))))
 
 =================
 Tactic Match With
@@ -1247,11 +1247,11 @@ example (n : Nat) : True := by
           (tactic_match_arm
             patterns: (number)
             tactic: (tactic_apply
-              tactic: (identifier)))
+              name: (identifier)))
           (tactic_match_arm
             patterns: (hole)
             tactic: (tactic_apply
-              tactic: (identifier))))))))
+              name: (identifier))))))))
 
 =====================
 Tactic Induction With
@@ -1278,7 +1278,7 @@ example (n : Nat) : True := by
           (cases_arm
             pattern: (identifier)
             tactic: (tactic_apply
-              tactic: (identifier)))
+              name: (identifier)))
           (cases_arm
             pattern: (constructor_pattern
               constructor: (identifier)
@@ -1286,7 +1286,7 @@ example (n : Nat) : True := by
                 constructor: (identifier)
                 arg: (identifier)))
             tactic: (tactic_apply
-              tactic: (identifier))))))))
+              name: (identifier))))))))
 
 =================================
 Tactic Induction Multiple Targets
@@ -1315,7 +1315,7 @@ example (a b : Nat) : True := by
           (cases_arm
             pattern: (identifier)
             tactic: (tactic_apply
-              tactic: (identifier)))
+              name: (identifier)))
           (cases_arm
             pattern: (constructor_pattern
               constructor: (identifier)
@@ -1323,4 +1323,4 @@ example (a b : Nat) : True := by
                 constructor: (identifier)
                 arg: (identifier)))
             tactic: (tactic_apply
-              tactic: (identifier))))))))
+              name: (identifier))))))))

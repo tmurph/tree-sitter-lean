@@ -972,9 +972,10 @@ module.exports = grammar({
     ),
 
     // Most tactics: `intro n`, `simp [lemma]`, `apply foo`, `exact bar`, `omega`
+    // Field names match `application`'s (`name`/`arguments`) — see #57.
     tactic_apply: $ => prec.right(PREC.app, seq(
-      field('tactic', $.identifier),
-      repeat(field('arg', choice(
+      field('name', $.identifier),
+      repeat(field('arguments', choice(
         $._expression, $.tactic_config,
       ))),
     )),

@@ -145,7 +145,7 @@
 ; ── Tactics ──────────────────────────────────────────────────
 
 (tactic_apply
-  tactic: (identifier) @function.builtin)
+  name: (identifier) @function.builtin)
 
 (tactic_have
   name: (identifier) @variable)
