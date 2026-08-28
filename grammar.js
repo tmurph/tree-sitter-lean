@@ -981,7 +981,7 @@ module.exports = grammar({
 
     // Configuration list: `[lemma1, ←lemma2, *]`
     // The ← before lemmas is handled by unary_expression.
-    tactic_config: $ => prec(1, seq('[', optional($._expr_list), ']')),
+    tactic_config: $ => prec(1, seq(field('open', '['), optional($._expr_list), field('close', ']'))),
 
     // Focus: `· tactic1; tactic2`
     tactic_focus: $ => prec.right(seq(
@@ -1277,19 +1277,19 @@ module.exports = grammar({
 
     // Tuple pattern: `(a, b)` or `(a, b, c)`
     tuple_pattern: $ => seq(
-      '(',
+      field('open', '('),
       $._pattern,
       ',',
       commaSep1($._pattern),
-      ')',
+      field('close', ')'),
     ),
 
     // rcases-style destructuring pattern used by `obtain` — see #12.
-    anonymous_constructor_pattern: $ => seq('⟨', commaSep($._pattern), '⟩'),
+    anonymous_constructor_pattern: $ => seq(field('open', '⟨'), commaSep($._pattern), field('close', '⟩')),
 
     // List pattern: `[x]`, `[x, y]` — only in do_let to avoid
     // GLR conflict with instance_binder in fun binders.
-    list_pattern: $ => seq('[', commaSep1($._pattern), ']'),
+    list_pattern: $ => seq(field('open', '['), commaSep1($._pattern), field('close', ']')),
 
     // Constructor pattern: `some x`, `none`, `Foo.bar x y`
     // An identifier alone is just an identifier, not a constructor_pattern
@@ -1526,45 +1526,45 @@ module.exports = grammar({
     // ============================================================
 
     parenthesized: $ => seq(
-      '(',
+      field('open', '('),
       optional(seq(
         $._expression,
         optional(seq(':', field('type', $._expression))),
       )),
-      ')',
+      field('close', ')'),
     ),
 
     // Named argument: `(name := value)`
     named_argument: $ => seq(
-      '(',
+      field('open', '('),
       field('name', $.identifier),
       ':=',
       field('value', $._expression),
-      ')',
+      field('close', ')'),
     ),
 
-    tuple: $ => seq('(', $._expression, ',', $._expr_list, ')'),
+    tuple: $ => seq(field('open', '('), $._expression, ',', $._expr_list, field('close', ')')),
 
     // Shared comma-separated expression list for every bracketed form that
     // takes one — see #1.
     _expr_list: $ => commaSep1($._expression),
 
-    anonymous_constructor: $ => seq('⟨', optional($._expr_list), '⟩'),
+    anonymous_constructor: $ => seq(field('open', '⟨'), optional($._expr_list), field('close', '⟩')),
 
     // Subtype: `{x // P}` or `{x : T // P}`
     subtype: $ => seq(
-      '{',
+      field('open', '{'),
       field('var', $.identifier),
       optional($._type_spec),
       '//',
       field('property', $._expression),
-      '}',
+      field('close', '}'),
     ),
 
     structure_instance: $ => seq(
-      '{',
+      field('open', '{'),
       optional($._structure_body),
-      '}',
+      field('close', '}'),
     ),
 
     // Extracted to reduce combinatorial explosion from 3 optionals
@@ -1594,12 +1594,12 @@ module.exports = grammar({
       field('name', $.identifier),
     ),
 
-    array: $ => seq('#[', optional($._expr_list), ']'),
+    array: $ => seq(field('open', '#['), optional($._expr_list), field('close', ']')),
 
-    list: $ => seq('[', optional($._expr_list), ']'),
+    list: $ => seq(field('open', '['), optional($._expr_list), field('close', ']')),
 
     // Range syntax: `[:n]`, `[start:end]`, `[start:end:step]`
-    range: $ => seq('[', $._range_spec, ']'),
+    range: $ => seq(field('open', '['), $._range_spec, field('close', ']')),
 
     // Extracted range internals to separate the 3 optional expression
     // slots from the surrounding brackets.
