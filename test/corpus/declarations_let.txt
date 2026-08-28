@@ -54,7 +54,7 @@ def foo : Nat :=
       type: (identifier)
       body: (let
         name: (identifier)
-        parameters: (parameters
+        parameters: (binders
           (explicit_binder
             name: (identifier)
             name: (identifier)
@@ -85,7 +85,7 @@ f true false
       name: (identifier)
       body: (let
         name: (identifier)
-        parameters: (parameters
+        parameters: (binders
           (identifier)
           (identifier))
         value: (number)
@@ -209,7 +209,7 @@ def foo :=
       name: (identifier)
       body: (let
         name: (identifier)
-        parameters: (parameters
+        parameters: (binders
           (identifier))
         value: (number)
         body: (identifier)))))

@@ -80,7 +80,7 @@ module.exports = grammar({
   conflicts: $ => [
     [$.subtype, $.field_assignment],
     [$.let, $._pattern],
-    [$.parameters, $._pattern],
+    [$.binders, $._pattern],
     // `public`/`meta` can prefix either an `import` (only in the module header)
     // or a declaration via `_modifier`. GLR resolves at runtime by lookahead
     // for `import` vs a declaration keyword. This mirrors lean4's `atomic`
@@ -383,7 +383,7 @@ module.exports = grammar({
     // A single method/field definition inside a `where` block
     where_decl: $ => seq(
       field('name', $.identifier),
-      repeat(field('binders', choice($.identifier, $._bracketed_binder))),
+      optional(field('binders', $.binders)),
       optional($._type_spec),
       choice(
         seq(':=', $._layout_start, field('body', $._expression), $._layout_end),
@@ -1136,7 +1136,7 @@ module.exports = grammar({
       prec.right(seq(
         'have',
         field('name', $.identifier),
-        optional(field('parameters', $.parameters)),
+        optional(field('parameters', $.binders)),
         optional($._type_spec),
         ':=',
         field('value', $._expression),
@@ -1163,7 +1163,7 @@ module.exports = grammar({
       seq(
         'let',
         field('name', $.identifier),
-        optional(field('parameters', $.parameters)),
+        optional(field('parameters', $.binders)),
         optional($._type_spec),
         ':=',
         field('value', $._expression),
@@ -1225,16 +1225,13 @@ module.exports = grammar({
       // Identifier form: always wins for bare identifiers.
       // Subsumes function form (with binders) and simple form (without).
       seq('let', field('name', $.identifier),
-          optional(field('parameters', $.parameters)),
+          optional(field('parameters', $.binders)),
           optional($._type_spec), $._binding_body),
       // Pattern form: tuple destructuring and holes only.
       // Constructor patterns in `let` require qualified names, parsed differently.
       seq('let', field('pattern', choice($.tuple_pattern, $.hole)),
           optional($._type_spec), $._binding_body),
     )),
-
-    // Lean's letIdBinder: binderIdent | bracketedBinder
-    parameters: $ => repeat1(choice($.identifier, $._bracketed_binder)),
 
     // If expression: `if cond then t else e`
     // Also handles `if h : cond then t else e` (dependent if with hypothesis)

@@ -17,9 +17,10 @@ instance : do return ToString Nat where
             arguments: (identifier))))
       body: (where_decl
         name: (identifier)
-        binders: (explicit_binder
-          name: (identifier)
-          type: (identifier))
+        binders: (binders
+          (explicit_binder
+            name: (identifier)
+            type: (identifier)))
         type: (identifier)
         body: (string)))))
 

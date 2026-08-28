@@ -173,9 +173,10 @@ instance : ToString Foo where
         arguments: (identifier))
       body: (where_decl
         name: (identifier)
-        binders: (explicit_binder
-          name: (identifier)
-          type: (identifier))
+        binders: (binders
+          (explicit_binder
+            name: (identifier)
+            type: (identifier)))
         type: (identifier)
         body: (string)))))
 
@@ -197,9 +198,10 @@ instance toStringFoo : ToString Foo where
         arguments: (identifier))
       body: (where_decl
         name: (identifier)
-        binders: (explicit_binder
-          name: (identifier)
-          type: (identifier))
+        binders: (binders
+          (explicit_binder
+            name: (identifier)
+            type: (identifier)))
         type: (identifier)
         body: (string)))))
 
@@ -333,7 +335,8 @@ instance : ToString Foo where
         arguments: (identifier))
       body: (where_decl
         name: (identifier)
-        binders: (identifier)
+        binders: (binders
+          (identifier))
         body: (string)))))
 
 ================================
