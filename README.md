@@ -121,3 +121,11 @@ This will report any errors such as incorrect node names in the query file.
 Based on <https://github.com/Julian/lean.nvim>. Grammar was completely rewritten to be simpler.
 
 MIT
+
+## TODO
+
+- [ ] No CHANGELOG.md exists yet.
+- [ ] No git tags.
+- [ ] No CI (GitHub Actions).
+- [ ] README.md still has two `wvhulle` references.
+- [ ] Authors list still lists Julian Berman/Willem Vanhulle, not Trevor.
