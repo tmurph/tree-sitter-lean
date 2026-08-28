@@ -32,11 +32,11 @@ theorem foo {m n : Nat} : 2 * m + 2 * n = 2 * (n + m) := by
               left: (identifier)
               right: (identifier)))))
       body: (by
-        (tactic_rewrite
+        tactic: (tactic_rewrite
           arg: (projection
             term: (identifier)
             name: (identifier)))
-        (tactic_apply
+        tactic: (tactic_apply
           tactic: (identifier)
           arg: (projection
             term: (parenthesized
@@ -73,15 +73,15 @@ example (h : True = True) : True := by
             right: (true))))
       type: (true)
       body: (by
-        (tactic_rewrite
+        tactic: (tactic_rewrite
           (tactic_config
             (identifier))
           (identifier))
-        (tactic_rewrite
+        tactic: (tactic_rewrite
           (tactic_config
             (identifier))
           (identifier))
-        (tactic_sorry)))))
+        tactic: (tactic_sorry)))))
 
 =================
 Tactic Expression
@@ -103,11 +103,11 @@ variable {m n : Nat}
   (hash_command
     (parenthesized
       (by
-        (tactic_rewrite
+        tactic: (tactic_rewrite
           arg: (projection
             term: (identifier)
             name: (identifier)))
-        (tactic_apply
+        tactic: (tactic_apply
           tactic: (identifier)
           arg: (projection
             term: (parenthesized
@@ -169,7 +169,7 @@ example : 2 = 2 := by simp [foo, bar]
         left: (number)
         right: (number))
       body: (by
-        (tactic_apply
+        tactic: (tactic_apply
           tactic: (identifier)
           arg: (tactic_config
             (identifier)
@@ -190,7 +190,7 @@ example : 2 = 2 := by simp?
         left: (number)
         right: (number))
       body: (by
-        (tactic_apply
+        tactic: (tactic_apply
           tactic: (identifier))))))
 
 ===========
@@ -208,7 +208,7 @@ example : 2 = 2 := by dsimp?
         left: (number)
         right: (number))
       body: (by
-        (tactic_apply
+        tactic: (tactic_apply
           tactic: (identifier))))))
 
 ==============
@@ -226,7 +226,7 @@ example : 2 = 2 := by simp_all?
         left: (number)
         right: (number))
       body: (by
-        (tactic_apply
+        tactic: (tactic_apply
           tactic: (identifier))))))
 
 ===============
@@ -244,7 +244,7 @@ example : 2 = 2 := by simp?!
         left: (number)
         right: (number))
       body: (by
-        (tactic_apply
+        tactic: (tactic_apply
           tactic: (identifier))))))
 
 ==============================
@@ -262,7 +262,7 @@ example : 2 = 2 := by simp? [foo, bar]
         left: (number)
         right: (number))
       body: (by
-        (tactic_apply
+        tactic: (tactic_apply
           tactic: (identifier)
           arg: (tactic_config
             (identifier)
@@ -374,21 +374,21 @@ example : (true ↔ true) ↔ (true ↔ true) := by
             left: (true)
             right: (true))))
       body: (by
-        (tactic_apply
+        tactic: (tactic_apply
           tactic: (identifier)
           arg: (projection
             term: (identifier)
             name: (identifier)))
-        (tactic_apply
+        tactic: (tactic_apply
           tactic: (identifier)
           arg: (identifier))
-        (tactic_apply
+        tactic: (tactic_apply
           tactic: (identifier)
           arg: (identifier))
-        (tactic_apply
+        tactic: (tactic_apply
           tactic: (identifier)
           arg: (identifier))
-        (tactic_apply
+        tactic: (tactic_apply
           tactic: (identifier)
           arg: (identifier))))))
 
@@ -438,7 +438,7 @@ theorem tacticConfig : 0 + 0 = 0 := by
           right: (number))
         right: (number))
       body: (by
-        (tactic_apply
+        tactic: (tactic_apply
           tactic: (identifier)
           arg: (tactic_config
             (projection
@@ -467,14 +467,14 @@ example (p q : Prop) : True := by
           type: (identifier)))
       type: (true)
       body: (by
-        (tactic_by_cases
+        tactic: (tactic_by_cases
           name: (identifier)
           condition: (identifier))
-        (tactic_by_cases
+        tactic: (tactic_by_cases
           condition: (identifier))
-        (tactic_by_cases
+        tactic: (tactic_by_cases
           condition: (identifier))
-        (tactic_apply
+        tactic: (tactic_apply
           tactic: (identifier))))))
 
 ====================
@@ -498,12 +498,12 @@ example (p q : Prop) : True := by
           type: (identifier)))
       type: (true)
       body: (by
-        (tactic_by_cases
+        tactic: (tactic_by_cases
           name: (identifier)
           condition: (identifier))
-        (tactic_by_cases
+        tactic: (tactic_by_cases
           condition: (identifier))
-        (tactic_apply
+        tactic: (tactic_apply
           tactic: (identifier))))))
 
 ===================
@@ -520,7 +520,7 @@ example : True := by
     declaration: (example
       type: (true)
       body: (by
-        (tactic_choose
+        tactic: (tactic_choose
           binder: (identifier)
           binder: (identifier)
           binder: (identifier)
@@ -544,7 +544,7 @@ example : True := by
     declaration: (example
       type: (true)
       body: (by
-        (tactic_choose
+        tactic: (tactic_choose
           binder: (identifier)
           binder: (identifier)
           binder: (identifier))))))
@@ -563,7 +563,7 @@ example : True := by
     declaration: (example
       type: (true)
       body: (by
-        (tactic_choose
+        tactic: (tactic_choose
           binder: (identifier)
           binder: (identifier)
           binder: (identifier))))))
@@ -582,7 +582,7 @@ example : True := by
     declaration: (example
       type: (true)
       body: (by
-        (tactic_use
+        tactic: (tactic_use
           arg: (parenthesized
             (application
               name: (identifier)
@@ -609,7 +609,7 @@ example : True := by
     declaration: (example
       type: (true)
       body: (by
-        (tactic_use
+        tactic: (tactic_use
           arg: (identifier))))))
 
 ===============
@@ -626,7 +626,7 @@ example : True := by
     declaration: (example
       type: (true)
       body: (by
-        (tactic_use
+        tactic: (tactic_use
           arg: (identifier))))))
 
 ===========================
@@ -647,7 +647,7 @@ def f : Nat × Nat := ⟨(by use 1, 2, 3), 4⟩
       body: (anonymous_constructor
         (parenthesized
           (by
-            (tactic_use
+            tactic: (tactic_use
               arg: (number)
               arg: (number)
               arg: (number))))
@@ -669,7 +669,7 @@ example : Nat × Nat := ⟨by exact foo, 2⟩
         right: (identifier))
       body: (anonymous_constructor
         (by
-          (tactic_apply
+          tactic: (tactic_apply
             tactic: (identifier)
             arg: (identifier)))
         (number)))))
@@ -688,7 +688,7 @@ example : True := by
     declaration: (example
       type: (true)
       body: (by
-        (tactic_calc
+        tactic: (tactic_calc
           (calc_first_step
             (binary_expression
               left: (number)
@@ -729,7 +729,7 @@ example (a b c : Nat) (h1 : a = b) (h2 : b = c) : a = c := by
         left: (identifier)
         right: (identifier))
       body: (by
-        (tactic_calc
+        tactic: (tactic_calc
           (calc_first_step
             (binary_expression
               left: (identifier)
@@ -782,7 +782,7 @@ example (a b c d : Nat) (h1 : a = b) (h2 : b = c) (h3 : c = d) : a = d := by
         left: (identifier)
         right: (identifier))
       body: (by
-        (tactic_calc
+        tactic: (tactic_calc
           (calc_first_step
             (binary_expression
               left: (identifier)
@@ -833,7 +833,7 @@ example (a b c : Nat) (h1 : a = b) (h2 : b = c) : a = c := by
         left: (identifier)
         right: (identifier))
       body: (by
-        (tactic_calc
+        tactic: (tactic_calc
           (calc_first_step
             (binary_expression
               left: (identifier)
@@ -844,7 +844,7 @@ example (a b c : Nat) (h1 : a = b) (h2 : b = c) : a = c := by
               left: (hole)
               right: (identifier))
             (by
-              (tactic_apply
+              tactic: (tactic_apply
                 tactic: (identifier)
                 arg: (identifier)))))))))
 
@@ -889,7 +889,7 @@ example (a b c d : Nat) (h1 : a ≤ b) (h2 : b < c) (h3 : c = d) : a < d := by
         left: (identifier)
         right: (identifier))
       body: (by
-        (tactic_calc
+        tactic: (tactic_calc
           (calc_first_step
             (binary_expression
               left: (identifier)
@@ -941,7 +941,7 @@ example (a b c : Nat) (h1 : a = b) (h2 : b = c) : a = c := by
         left: (identifier)
         right: (identifier))
       body: (by
-        (tactic_calc
+        tactic: (tactic_calc
           (calc_first_step
             (identifier))
           (calc_step
@@ -987,7 +987,7 @@ example (a b c : Nat) (h : a * b = c) : a * b = c := by
           right: (identifier))
         right: (identifier))
       body: (by
-        (tactic_calc
+        tactic: (tactic_calc
           (calc_first_step
             (binary_expression
               left: (identifier)
@@ -1037,7 +1037,7 @@ example (a b c d : Nat) (h1 : a * b = c) (h2 : c = d) : a * b = d := by
           right: (identifier))
         right: (identifier))
       body: (by
-        (tactic_calc
+        tactic: (tactic_calc
           (calc_first_step
             (binary_expression
               left: (identifier)
@@ -1079,7 +1079,7 @@ example (a b : Nat) : a ≤ b ∨ b ≤ a := by
           left: (identifier)
           right: (identifier)))
       body: (by
-        (tactic_wlog
+        tactic: (tactic_wlog
           name: (identifier)
           condition: (binary_expression
             left: (identifier)
@@ -1087,7 +1087,7 @@ example (a b : Nat) : a ≤ b ∨ b ≤ a := by
           generalizing: (identifier)
           generalizing: (identifier)
           with: (identifier))
-        (tactic_apply
+        tactic: (tactic_apply
           tactic: (identifier)
           arg: (identifier))))))
 
@@ -1117,12 +1117,12 @@ example (a b : Nat) : a ≤ b ∨ b ≤ a := by
           left: (identifier)
           right: (identifier)))
       body: (by
-        (tactic_wlog
+        tactic: (tactic_wlog
           name: (identifier)
           condition: (binary_expression
             left: (identifier)
             right: (identifier)))
-        (tactic_apply
+        tactic: (tactic_apply
           tactic: (identifier)
           arg: (identifier))))))
 
@@ -1160,11 +1160,11 @@ example (x : Nat) (h : x + x - x = 3) : x + x - x = 3 := by
           right: (identifier))
         right: (number))
       body: (by
-        (tactic_set
+        tactic: (tactic_set
           name: (identifier)
           value: (identifier)
           with: (identifier))
-        (tactic_sorry)))))
+        tactic: (tactic_sorry)))))
 
 ====================
 Tactic Set With Type
@@ -1187,12 +1187,12 @@ example (x : Nat) : x = x := by
         left: (identifier)
         right: (identifier))
       body: (by
-        (tactic_set
+        tactic: (tactic_set
           name: (identifier)
           type: (identifier)
           value: (identifier)
           with: (identifier))
-        (tactic_apply
+        tactic: (tactic_apply
           tactic: (identifier))))))
 
 ===============
@@ -1216,10 +1216,10 @@ example (x : Nat) : x = x := by
         left: (identifier)
         right: (identifier))
       body: (by
-        (tactic_set
+        tactic: (tactic_set
           name: (identifier)
           value: (identifier))
-        (tactic_apply
+        tactic: (tactic_apply
           tactic: (identifier))))))
 
 =================
@@ -1242,15 +1242,15 @@ example (n : Nat) : True := by
           type: (identifier)))
       type: (true)
       body: (by
-        (tactic_match
+        tactic: (tactic_match
           scrutinees: (identifier)
           (tactic_match_arm
             patterns: (number)
-            (tactic_apply
+            tactic: (tactic_apply
               tactic: (identifier)))
           (tactic_match_arm
             patterns: (hole)
-            (tactic_apply
+            tactic: (tactic_apply
               tactic: (identifier))))))))
 
 =====================
@@ -1273,11 +1273,11 @@ example (n : Nat) : True := by
           type: (identifier)))
       type: (true)
       body: (by
-        (tactic_induction
+        tactic: (tactic_induction
           major: (identifier)
           (cases_arm
             pattern: (identifier)
-            (tactic_apply
+            tactic: (tactic_apply
               tactic: (identifier)))
           (cases_arm
             pattern: (constructor_pattern
@@ -1285,7 +1285,7 @@ example (n : Nat) : True := by
               arg: (constructor_pattern
                 constructor: (identifier)
                 arg: (identifier)))
-            (tactic_apply
+            tactic: (tactic_apply
               tactic: (identifier))))))))
 
 =================================
@@ -1309,12 +1309,12 @@ example (a b : Nat) : True := by
           type: (identifier)))
       type: (true)
       body: (by
-        (tactic_induction
+        tactic: (tactic_induction
           major: (identifier)
           major: (identifier)
           (cases_arm
             pattern: (identifier)
-            (tactic_apply
+            tactic: (tactic_apply
               tactic: (identifier)))
           (cases_arm
             pattern: (constructor_pattern
@@ -1322,5 +1322,5 @@ example (a b : Nat) : True := by
               arg: (constructor_pattern
                 constructor: (identifier)
                 arg: (identifier)))
-            (tactic_apply
+            tactic: (tactic_apply
               tactic: (identifier))))))))

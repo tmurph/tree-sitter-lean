@@ -931,12 +931,12 @@ module.exports = grammar({
       $._layout_end,
     )),
 
-    // Tactics separated by `;`, `<;>` (broadcast), or newlines
+    // Tactics separated by `;`, `<;>` (broadcast), or newlines — see #55.
     _tactic_seq: $ => prec.right(seq(
-      $._tactic,
+      field('tactic', $._tactic),
       repeat(seq(
         choice($._layout_semicolon, ';', '<;>', '<;'),
-        $._tactic,
+        field('tactic', $._tactic),
       )),
       optional(';'),
     )),
