@@ -375,10 +375,17 @@ module.exports = grammar({
     _instance_decl: $ => seq(
       'instance',
       optional(field('name', $.identifier)),
-      repeat(field('binders', $._bracketed_binder)),
+      optional(field('binders', alias($._instance_binders, $.binders))),
       optional($._type_spec),
       $._declaration_body,
     ),
+
+    // Same node type as `binders` (bare identifiers excluded: instance
+    // binders are always bracketed, no ambiguity with `name` to guard
+    // against) so `definition`'s `binders` field has one consistent shape
+    // whether it came from `instance` or any other declaration keyword —
+    // see #56.
+    _instance_binders: $ => repeat1($._bracketed_binder),
 
     // A single method/field definition inside a `where` block
     where_decl: $ => seq(

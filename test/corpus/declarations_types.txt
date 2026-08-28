@@ -217,14 +217,15 @@ instance {f : Foo} (g : Bar 3) : Quux where
 (module
   (decorated_declaration
     declaration: (definition
-      binders: (implicit_binder
-        name: (identifier)
-        type: (identifier))
-      binders: (explicit_binder
-        name: (identifier)
-        type: (application
+      binders: (binders
+        (implicit_binder
           name: (identifier)
-          arguments: (number)))
+          type: (identifier))
+        (explicit_binder
+          name: (identifier)
+          type: (application
+            name: (identifier)
+            arguments: (number))))
       type: (identifier)
       body: (where_decl
         name: (identifier)
@@ -242,10 +243,11 @@ instance [Inhabited b] : Inhabited (a -> b) where
 (module
   (decorated_declaration
     declaration: (definition
-      binders: (instance_binder
-        type: (application
-          name: (identifier)
-          arguments: (identifier)))
+      binders: (binders
+        (instance_binder
+          type: (application
+            name: (identifier)
+            arguments: (identifier))))
       type: (application
         name: (identifier)
         arguments: (parenthesized
