@@ -69,6 +69,11 @@ module.exports = grammar({
   supertypes: $ => [
     $._expression,
     $._declaration,
+    $._do_binding,
+    $._do_if,
+    $._bracketed,
+    $._binding,
+    $._if,
     // See #5.
     $._tactic,
     $._closing_tactic,
@@ -564,20 +569,21 @@ module.exports = grammar({
       $.fun,
       $.quantifier,
       $.big_operator,
-      $.let,
-      $.have,
-      $.if,
-      $.if_let,
+      $._binding,
+      $._if,
       $.match,
       $.do,
       $.by,
       $.try,
       $.return,
       $.as_pattern,
-      $.show,
-      $.suffices,
       $.calc,
     ),
+
+    // See #58.
+    _binding: $ => choice($.let, $.have, $.show, $.suffices),
+
+    _if: $ => choice($.if, $.if_let),
 
     // `show T from proof` / `show T by tactic` — explicit type ascription with proof.
     show: $ => prec.right(seq(
@@ -637,14 +643,7 @@ module.exports = grammar({
       $.string,
       $.interpolated_string,
       $.char,
-      $.parenthesized,
-      $.named_argument,
-      $.tuple,
-      $.anonymous_constructor,
-      $.structure_instance,
-      $.array,
-      $.list,
-      $.range,
+      $._bracketed,
       $.hole,
       $.synthetic_hole,
       $.quoted_name,
@@ -654,11 +653,23 @@ module.exports = grammar({
       $.sorry,
       $._boolean,
       $.cdot,
-      $.subtype,
       $.empty_set,
       $.top,
       $.bot,
       $.infinity,
+    ),
+
+    // See #58.
+    _bracketed: $ => choice(
+      $.parenthesized,
+      $.named_argument,
+      $.tuple,
+      $.anonymous_constructor,
+      $.structure_instance,
+      $.subtype,
+      $.array,
+      $.list,
+      $.range,
     ),
 
     // Function application: `f x y z`
@@ -1342,9 +1353,7 @@ module.exports = grammar({
     )),
 
     _do_element: $ => choice(
-      $.do_let,
-      $.let_bind,
-      $.let_mut,
+      $._do_binding,
       $.reassign,
       $.do_return,
       $.for_in,
@@ -1354,11 +1363,15 @@ module.exports = grammar({
       $.do_assert,
       $.do_break,
       $.do_continue,
-      $.do_if,
-      $.do_if_let,
+      $._do_if,
       $.do_match,
       $._expression,
     ),
+
+    // See #58.
+    _do_binding: $ => choice($.do_let, $.let_bind, $.let_mut),
+
+    _do_if: $ => choice($.do_if, $.do_if_let),
 
     // Let in do-block: `let x := e` or `let [x] := e | fallback`
     do_let: $ => prec.right(2, seq(
