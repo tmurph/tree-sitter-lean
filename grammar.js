@@ -77,6 +77,12 @@ module.exports = grammar({
     // See #5.
     $._tactic,
     $._closing_tactic,
+    // See #53.
+    $._atom,
+    $._do_element,
+    $._pattern,
+    $._command,
+    $._bracketed_binder,
   ],
 
   // Inline rules to reduce tree depth
