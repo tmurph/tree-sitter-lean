@@ -1324,3 +1324,25 @@ example (a b : Nat) : True := by
                 arg: (identifier)))
             tactic: (tactic_apply
               name: (identifier))))))))
+
+=========================================
+Tactics Separated By Blank Line — see #59
+=========================================
+
+theorem foo : True := by
+  trivial
+
+  trivial
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      type: (true)
+      body: (by
+        tactic: (tactic_apply
+          name: (identifier))
+        tactic: (tactic_apply
+          name: (identifier))))))
