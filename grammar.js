@@ -60,6 +60,7 @@ module.exports = grammar({
     $._by_cases_name_token,     // Identifier immediately followed by `:` — see #14
     $._tactic_comma_token,      // `,` between `tactic_use` arguments — see #29
     $._calc_layout_start,       // Like _layout_start but for `calc`'s step chain — see #40
+    $._else_layout_start,       // Like _layout_start but for do_if's `else` — see #47
   ],
 
   // Keyword extraction improves error detection and compile time
@@ -1458,7 +1459,7 @@ module.exports = grammar({
       optional($._layout_end),
       optional(seq(
         'else',
-        $._layout_start,
+        $._else_layout_start,
         field('else', $._do_seq),
         optional($._layout_end),
       )),

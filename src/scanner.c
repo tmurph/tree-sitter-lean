@@ -36,6 +36,7 @@ enum TokenType {
   BY_CASES_NAME,          // identifier immediately (mod spaces) followed by `:`
   TACTIC_COMMA,           // `,` between `tactic_use` arguments (see step 6)
   CALC_LAYOUT_START,      // like LAYOUT_START, but for `calc`'s step chain (see KIND_CALC_PENDING)
+  ELSE_LAYOUT_START,      // like LAYOUT_START, but for do_if's `else` — see #47
 };
 
 #define MAX_DEPTH 64
@@ -243,6 +244,17 @@ static bool should_suppress_semicolon(TSLexer *lexer) {
   return starts_with_pipe(lexer) || starts_with_else(lexer);
 }
 
+/* Word-boundary peek for `if` — used to detect a same-line `else if`
+   chain — see #47. */
+static bool starts_with_if(TSLexer *lexer) {
+  static const char kw[] = "if";
+  for (size_t i = 0; i < 2; i++) {
+    if (lexer->lookahead != kw[i]) return false;
+    lexer->advance(lexer, false);
+  }
+  return !is_ident_continue(lexer->lookahead);
+}
+
 /**
  * Push indent for a layout-start-like token (shared by LAYOUT_START
  * and MATCH_BODY_START).
@@ -254,6 +266,27 @@ static void push_layout_indent(Scanner *s, TSLexer *lexer, uint8_t kind) {
     push(s, indent, kind);
   } else {
     push(s, lexer->get_column(lexer), kind);
+  }
+  s->queued_indent = NO_QUEUED;
+}
+
+/* Push indent for `_else_layout_start`. A same-line `else if`/`else if let`
+   is a chain, not a new indented block: it reuses the enclosing indent
+   (transparent level) instead of the `if`'s own column, so the chained
+   if's own `else` dedents back out at the right level — see #47. */
+static void push_else_layout_indent(Scanner *s, TSLexer *lexer) {
+  skip_spaces(lexer);
+  if (is_nl(lexer->lookahead)) {
+    uint32_t indent = measure_indent(lexer);
+    push(s, indent, KIND_LAYOUT);
+  } else {
+    uint32_t col = lexer->get_column(lexer);
+    lexer->mark_end(lexer);
+    if (starts_with_if(lexer)) {
+      push(s, top_indent(s), KIND_LAYOUT);
+    } else {
+      push(s, col, KIND_LAYOUT);
+    }
   }
   s->queued_indent = NO_QUEUED;
 }
@@ -407,6 +440,13 @@ bool tree_sitter_lean_external_scanner_scan(
   if (valid_symbols[MATCH_BODY_START]) {
     push_layout_indent(s, lexer, KIND_MATCH_BODY);
     lexer->result_symbol = MATCH_BODY_START;
+    return true;
+  }
+
+  /* 1b2. ELSE_LAYOUT_START — see #47. */
+  if (valid_symbols[ELSE_LAYOUT_START]) {
+    push_else_layout_indent(s, lexer);
+    lexer->result_symbol = ELSE_LAYOUT_START;
     return true;
   }
 

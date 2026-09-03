@@ -35,13 +35,13 @@ Nested If/Then/Else
 (module
   (hash_command
     (if
-      (true)
-      (do
+      condition: (true)
+      then: (do
         (do_if
-          (false)
-          (false)
-          (false)))
-      (true))))
+          condition: (false)
+          then: (false)
+          else: (false)))
+      else: (true))))
 
 ===============
 Bare Identifier
@@ -56,7 +56,7 @@ Bare Identifier
     (parenthesized
       (do
         (true))
-      (identifier))))
+      type: (identifier))))
 
 =================================
 If Condition Function Application
@@ -70,17 +70,17 @@ If Condition Function Application
   (hash_command
     (parenthesized
       (if
-        (application
-          (identifier)
-          (number))
-        (do
+        condition: (application
+          name: (identifier)
+          arguments: (number))
+        then: (do
           (projection
-            (identifier)
-            (identifier)))
-        (projection
-          (identifier)
-          (identifier)))
-      (identifier))))
+            term: (identifier)
+            name: (identifier)))
+        else: (projection
+          term: (identifier)
+          name: (identifier)))
+      type: (identifier))))
 
 ==============================
 Do Try Catch With Variable
@@ -349,3 +349,161 @@ def bareIf (b : Bool) : IO Unit := do
             term: (identifier)
             name: (identifier))
           arguments: (number))))))
+
+====================================
+Do If Else If Chain
+====================================
+
+def f (a b : Bool) : IO Unit := do
+  if a then
+    IO.println 1
+  else if b then
+    IO.println 2
+  else
+    IO.println 3
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      binders: (binders
+        (explicit_binder
+          name: (identifier)
+          name: (identifier)
+          type: (identifier)))
+      type: (application
+        name: (identifier)
+        arguments: (identifier))
+      body: (do
+        (do_if
+          condition: (identifier)
+          then: (application
+            name: (projection
+              term: (identifier)
+              name: (identifier))
+            arguments: (number))
+          else: (do_if
+            condition: (identifier)
+            then: (application
+              name: (projection
+                term: (identifier)
+                name: (identifier))
+              arguments: (number))
+            else: (application
+              name: (projection
+                term: (identifier)
+                name: (identifier))
+              arguments: (number))))))))
+
+====================================
+Do If Else If Chain Nested In Do
+====================================
+
+def f (xs : List Bool) : IO Unit := do
+  for a in xs do
+    if a then
+      IO.println 1
+    else if !a then
+      IO.println 2
+    else
+      IO.println 3
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      binders: (binders
+        (explicit_binder
+          name: (identifier)
+          type: (application
+            name: (identifier)
+            arguments: (identifier))))
+      type: (application
+        name: (identifier)
+        arguments: (identifier))
+      body: (do
+        (for_in
+          var: (identifier)
+          iterable: (identifier)
+          body: (do
+            (do_if
+              condition: (identifier)
+              then: (application
+                name: (projection
+                  term: (identifier)
+                  name: (identifier))
+                arguments: (number))
+              else: (do_if
+                condition: (unary_expression
+                  operand: (identifier))
+                then: (application
+                  name: (projection
+                    term: (identifier)
+                    name: (identifier))
+                  arguments: (number))
+                else: (application
+                  name: (projection
+                    term: (identifier)
+                    name: (identifier))
+                  arguments: (number))))))))))
+
+====================================
+Do If Else If Three Deep
+====================================
+
+def f (a b c : Bool) : IO Unit := do
+  if a then
+    IO.println 1
+  else if b then
+    IO.println 2
+  else if c then
+    IO.println 3
+  else
+    IO.println 4
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      binders: (binders
+        (explicit_binder
+          name: (identifier)
+          name: (identifier)
+          name: (identifier)
+          type: (identifier)))
+      type: (application
+        name: (identifier)
+        arguments: (identifier))
+      body: (do
+        (do_if
+          condition: (identifier)
+          then: (application
+            name: (projection
+              term: (identifier)
+              name: (identifier))
+            arguments: (number))
+          else: (do_if
+            condition: (identifier)
+            then: (application
+              name: (projection
+                term: (identifier)
+                name: (identifier))
+              arguments: (number))
+            else: (do_if
+              condition: (identifier)
+              then: (application
+                name: (projection
+                  term: (identifier)
+                  name: (identifier))
+                arguments: (number))
+              else: (application
+                name: (projection
+                  term: (identifier)
+                  name: (identifier))
+                arguments: (number)))))))))
