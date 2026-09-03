@@ -43,8 +43,10 @@ enum TokenType {
 #define NO_QUEUED UINT32_MAX
 
 /* Why a layout level was opened — see #1. KIND_CALC_PENDING: a
-   tactic_calc level whose anchor is still provisional — see #40. */
-enum LayoutKind { KIND_LAYOUT = 0, KIND_MATCH_BODY = 1, KIND_CALC_PENDING = 2 };
+   tactic_calc level whose anchor is still provisional — see #40.
+   KIND_ELSE_CHAIN: a same-line `else if` transparent level, whose
+   indent duplicates its enclosing frame's — see #47. */
+enum LayoutKind { KIND_LAYOUT = 0, KIND_MATCH_BODY = 1, KIND_CALC_PENDING = 2, KIND_ELSE_CHAIN = 3 };
 
 typedef struct {
   uint32_t indents[MAX_DEPTH];
@@ -283,7 +285,7 @@ static void push_else_layout_indent(Scanner *s, TSLexer *lexer) {
     uint32_t col = lexer->get_column(lexer);
     lexer->mark_end(lexer);
     if (starts_with_if(lexer)) {
-      push(s, top_indent(s), KIND_LAYOUT);
+      push(s, top_indent(s), KIND_ELSE_CHAIN);
     } else {
       push(s, col, KIND_LAYOUT);
     }
@@ -509,6 +511,14 @@ bool tree_sitter_lean_external_scanner_scan(
       lexer->mark_end(lexer);
       // Suppress-check must run before peek_command_keyword() — see #44.
       bool suppress = should_suppress_semicolon(lexer);
+      // A transparent else-chain level never grows its own _do_seq past
+      // the one nested if it was pushed for — close it instead of
+      // extending it, and let the frame below decide — see #47.
+      if (!suppress && top_kind(s) == KIND_ELSE_CHAIN && valid_symbols[LAYOUT_END]) {
+        pop(s);
+        lexer->result_symbol = LAYOUT_END;
+        return true;
+      }
       if (!suppress && valid_symbols[LAYOUT_END] && peek_command_keyword(lexer)) {
         pop(s);
         lexer->result_symbol = LAYOUT_END;
@@ -559,6 +569,13 @@ bool tree_sitter_lean_external_scanner_scan(
       // line, so the dedent above never fires) — see #21. Suppress-check
       // must run before peek_command_keyword() — see #44.
       bool suppress = should_suppress_semicolon(lexer);
+      // See the matching check in the queued-indent branch above — #47.
+      if (!suppress && top_kind(s) == KIND_ELSE_CHAIN && valid_symbols[LAYOUT_END]) {
+        pop(s);
+        s->queued_indent = next;
+        lexer->result_symbol = LAYOUT_END;
+        return true;
+      }
       if (!suppress && valid_symbols[LAYOUT_END] && peek_command_keyword(lexer)) {
         pop(s);
         s->queued_indent = next;
