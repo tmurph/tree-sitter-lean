@@ -1,5 +1,5 @@
 [package]
-authors = ["Willem Vanhulle <willemvanhulle@protonmail.com>"]
+authors = ["Willem Vanhulle <willemvanhulle@protonmail.com>", "Trevor Murphy <trevor.m.murphy@gmail.com>"]
 categories = ["parsing", "text-editors"]
 description = "Tree-sitter grammar for Lean 4 (generates parser at build time)"
 edition = "2021"
