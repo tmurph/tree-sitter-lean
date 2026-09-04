@@ -5,7 +5,7 @@ All notable changes to this project are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.0.0] - 2026-09-04
 
 ### Added
 
@@ -18,6 +18,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `_do_if`, `_bracketed` (#58). Downstream consumers can name a category in a
   query instead of maintaining their own list of member node types.
 - Trevor Murphy to the author lists.
+- `LICENSE` file (MIT). The project has declared MIT in its metadata since
+  `9dbb7c3` but shipped no license text — that commit removed the `COPYING`
+  file inherited from the original while adding `license = "MIT"` to
+  Cargo.toml. This is not a license change; it is the missing text.
 
 ### Changed
 

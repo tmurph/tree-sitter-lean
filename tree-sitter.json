@@ -11,7 +11,7 @@
     }
   ],
   "metadata": {
-    "version": "0.4.0",
+    "version": "1.0.0",
     "license": "MIT",
     "description": "tree-sitter parser for the Lean interactive theorem prover",
     "authors": [
