@@ -161,4 +161,5 @@ with no ERROR node**, so nothing signals to a consumer that anything is amiss.
 
 ## TODO
 
-- [ ] No CI (GitHub Actions).
+Nothing outstanding for the 1.0 release beyond the open issues listed under
+Known limitations.

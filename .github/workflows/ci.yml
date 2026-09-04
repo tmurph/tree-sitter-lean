@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches: [main, devel]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  grammar:
+    name: Generate, build and test the grammar
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install tree-sitter CLI
+        run: |
+          cargo install tree-sitter-cli --version 0.26.9 --locked
+          tree-sitter --version
+
+      # Generation is memory-hungry on this grammar (~3.7 GiB peak locally).
+      # Cap it so a runaway allocation fails the job instead of the runner —
+      # this has OOM-killed a developer machine before. Raise deliberately,
+      # not reflexively, if generation legitimately grows.
+      - name: Generate parser
+        run: (ulimit -v 5242880 && tree-sitter generate)
+
+      # src/parser.c is committed. If generation produces something different,
+      # the committed artifact is stale — but note that tree-sitter's output is
+      # not byte-reproducible run to run, so compare the state counts rather
+      # than the file.
+      - name: Check committed parser is not stale
+        run: |
+          for sym in STATE_COUNT LARGE_STATE_COUNT SYMBOL_COUNT FIELD_COUNT PRODUCTION_ID_COUNT; do
+            committed=$(git show HEAD:src/parser.c | grep -m1 "^#define $sym " | awk '{print $3}')
+            current=$(grep -m1 "^#define $sym " src/parser.c | awk '{print $3}')
+            echo "$sym: committed=$committed current=$current"
+            if [ "$committed" != "$current" ]; then
+              echo "::error::$sym differs — src/parser.c is stale, regenerate and commit it"
+              exit 1
+            fi
+          done
+
+      - name: Build shared library
+        run: cc -O2 -fPIC -shared -I src src/parser.c src/scanner.c -o "$PWD/libtree-sitter-lean.so"
+
+      # Point the test runner at the library we just built. tree-sitter's own
+      # cache at ~/.cache/tree-sitter/lib/<name>.so is keyed by grammar name
+      # only, and relying on it has produced false passes.
+      - name: Run corpus tests
+        run: tree-sitter test --lib-path "$PWD/libtree-sitter-lean.so" --lang-name lean
+
+  rust:
+    name: Rust crate builds
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Build
+        run: cargo build --locked --verbose
+      - name: Test
+        run: cargo test --locked --verbose
