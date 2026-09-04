@@ -118,7 +118,11 @@ This will report any errors such as incorrect node names in the query file.
 
 ## License
 
-See [LICENSE](LICENSE).
+GPL-3.0-or-later; see [LICENSE](LICENSE).
+
+Portions derive from MIT-licensed work by Julian Berman and Willem Vanhulle,
+whose notice is retained in [NOTICE](NOTICE) as that license requires. The
+combined work's redistribution terms are the GPL's.
 
 ## History
 

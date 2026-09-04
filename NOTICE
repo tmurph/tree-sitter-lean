@@ -1,0 +1,55 @@
+tree-sitter-lean
+================
+
+This work as a whole is distributed under the GNU General Public License,
+version 3 or later. See the LICENSE file.
+
+Portions of this work derive from earlier projects released under the MIT
+license. Those portions remain available under the MIT license from their
+original sources, and the MIT license requires that the notice below be
+retained. It is reproduced here in full for that purpose.
+
+The combined work's redistribution terms are the GPL's; this notice does not
+place the combined work under the MIT license, and it does not relicense the
+contributions of the copyright holders named below.
+
+
+Origin of the derived portions
+------------------------------
+
+- Julian Berman, `Julian/tree-sitter-lean` — the original Lean grammar for
+  tree-sitter. The external scanner has since been rewritten in full and the
+  grammar substantially reorganised, but some rule structure survives.
+
+- Willem Vanhulle, `wvhulle/tree-sitter-lean` — the fork this repository was
+  forked from, and the source of a substantial part of the grammar as it
+  stood before the current maintainer's work.
+
+Neither has assigned copyright, and neither has relicensed their
+contributions. Their work is included here under the MIT license's permission
+to sublicense, with the notice retained as that license requires.
+
+
+Retained MIT notice
+-------------------
+
+Copyright (c) 2021 Julian Berman
+Copyright (c) 2026 Willem Vanhulle
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
