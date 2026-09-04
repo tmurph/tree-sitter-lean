@@ -6,35 +6,10 @@ This project contains a Lean parser definition:
 
 - Tree-Sitter grammar for parsing [Lean 4](github.com/leanprover/lean4) source code.
 - Tree-Sitter queries for usage in the modal text editor [Helix](https://helix-editor.vercel.app/).
-- Rust library pushed to Crates.io for parsing Lean in a Rust program
 
 **Important**: Lean is a very extensible language. Therefore, the Tree-Sitter grammar is of limited use. For parsing advanced Lean programs you will need to use the Lean kernel. See also [Metaprogramming in Lean](https://github.com/leanprover-community/lean4-metaprogramming-book).
 
 ## Usage
-
-### Rust
-
-Add this crate as a normal dependency in your `Cargo.toml` file.
-
-```bash
-cargo add tree-sitter-lean4
-```
-
-During the first build, you need these binaries in your path:
-
-- C code generator `tree-sitter` (only if the `src/parser.c` is missing)
-- C compiler `cc`
-
-Then instantiate the parser:
-
-```rust
-use tree_sitter::{InputEdit, Language, Parser, Point};
-
-let mut parser = Parser::new();
-parser.set_language(&tree_sitter_lean4::LANGUAGE.into()).expect("Error loading Rust grammar");
-```
-
-See [Tree-Sitter-Rust](https://github.com/tree-sitter/tree-sitter/tree/master/lib/binding_rust).
 
 ### Nix Flake
 

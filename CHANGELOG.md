@@ -20,8 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Trevor Murphy to the author lists.
 - `LICENSE` file (MIT). The project has declared MIT in its metadata since
   `9dbb7c3` but shipped no license text — that commit removed the `COPYING`
-  file inherited from the original while adding `license = "MIT"` to
-  Cargo.toml. This is not a license change; it is the missing text.
+  file inherited from the original while adding a `license` field to the
+  package metadata. This is not a license change; it is the missing text.
 
 ### Changed
 

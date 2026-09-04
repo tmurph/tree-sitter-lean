@@ -49,14 +49,3 @@ jobs:
       # only, and relying on it has produced false passes.
       - name: Run corpus tests
         run: tree-sitter test --lib-path "$PWD/libtree-sitter-lean.so" --lang-name lean
-
-  rust:
-    name: Rust crate builds
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
-      - name: Build
-        run: cargo build --locked --verbose
-      - name: Test
-        run: cargo test --locked --verbose
