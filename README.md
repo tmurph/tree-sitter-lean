@@ -11,42 +11,24 @@ This project contains a Lean parser definition:
 
 ## Usage
 
-### Nix Flake
-
-This is the recommended approach for reproducible builds.
-
-```nix
-{
-  inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    tree-sitter-lean.url = "github:tmurph/tree-sitter-lean";
-  };
-
-  outputs = { nixpkgs, tree-sitter-lean, ... }:
-    let
-      system = "x86_64-linux";
-      pkgs = nixpkgs.legacyPackages.${system};
-    in
-    {
-      devShells.${system}.default = pkgs.mkShell {
-        # If you want to use ast-grep (see next section)
-        packages = [ pkgs.ast-grep ];
-        shellHook = ''
-          # Create a symlink in the working directory for easy access (add to .gitignore)
-          ln -sf ${tree-sitter-lean.packages.${system}.grammar}/parser tree-sitter-lean.so
-        '';
-      };
-    };
-}
-```
-
-See [`nixpkgs` tree-sitter documentation](https://nixos.org/manual/nixpkgs/stable/#tree-sitter) for more Tree-Sitter with Nix examples.
-
-Push build cache to public cache server:
+Build the shared library and point tree-sitter at it:
 
 ```bash
-nix build . --print-out-paths | cachix push <your-cache-name>
+tree-sitter generate
+cc -O2 -fPIC -shared -I src src/parser.c src/scanner.c -o libtree-sitter-lean.so
+tree-sitter parse --lib-path ./libtree-sitter-lean.so --lang-name lean <file.lean>
 ```
+
+Generation is memory-hungry — it peaks near 3.7 GiB. Cap it if you are running
+on a machine where an OOM would hurt:
+
+```bash
+(ulimit -v 5242880 && tree-sitter generate)
+```
+
+Editors that load tree-sitter grammars from a shared library (Emacs `treesit`,
+Helix, Neovim via `nvim-treesitter`) can consume the built `.so` directly;
+consult your editor's documentation for where it expects the file.
 
 ## Development
 
