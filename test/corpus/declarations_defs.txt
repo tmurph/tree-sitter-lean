@@ -627,3 +627,27 @@ where
           body: (application
             name: (identifier)
             arguments: (identifier)))))))
+
+=============================================================
+By Body Trailing Blank Line Before Next Declaration — see #59
+=============================================================
+
+theorem foo : True := by
+  trivial
+
+def bar := 1
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      type: (true)
+      body: (by
+        tactic: (tactic_apply
+          name: (identifier)))))
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      body: (number))))

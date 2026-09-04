@@ -123,3 +123,50 @@ def foo (a b : Nat) (h1 : a = b) : a = b :=
               right: (identifier))
             (identifier)))
         body: (identifier)))))
+
+=====================================
+Term Calc Absorbs Interior Blank Line
+=====================================
+
+def foo (a b c : Nat) (h1 : a = b) (h2 : b = c) : a = c :=
+  calc
+    a = b := h1
+
+    _ = c := h2
+
+---
+
+(module
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      binders: (binders
+        (explicit_binder
+          name: (identifier)
+          name: (identifier)
+          name: (identifier)
+          type: (identifier))
+        (explicit_binder
+          name: (identifier)
+          type: (binary_expression
+            left: (identifier)
+            right: (identifier)))
+        (explicit_binder
+          name: (identifier)
+          type: (binary_expression
+            left: (identifier)
+            right: (identifier))))
+      type: (binary_expression
+        left: (identifier)
+        right: (identifier))
+      body: (calc
+        (calc_first_step
+          (binary_expression
+            left: (identifier)
+            right: (identifier))
+          (identifier))
+        (calc_step
+          (binary_expression
+            left: (hole)
+            right: (identifier))
+          (identifier))))))

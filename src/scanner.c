@@ -474,24 +474,26 @@ bool tree_sitter_lean_external_scanner_scan(
       // work — there an inner match needs LAYOUT_END to fire so the outer
       // match's arm at a lower column can fire.
       if (s->depth == 1 && top_kind(s) == KIND_LAYOUT) {
-        lexer->mark_end(lexer);
         skip_spaces(lexer);
         while (is_nl(lexer->lookahead)) {
           lexer->advance(lexer, true);
           skip_spaces(lexer);
         }
+        // mark_end after the walk, not before — see #59.
+        lexer->mark_end(lexer);
         if (starts_with_pipe(lexer)) {
           s->queued_indent = NO_QUEUED;
           return false;
         }
       } else if (top_kind(s) == KIND_CALC_PENDING) {
         // Peek past blank lines for try_finalize_calc_anchor — see #40.
-        lexer->mark_end(lexer);
         skip_spaces(lexer);
         while (is_nl(lexer->lookahead)) {
           lexer->advance(lexer, true);
           skip_spaces(lexer);
         }
+        // mark_end after the walk, not before — see #59.
+        lexer->mark_end(lexer);
         if (try_finalize_calc_anchor(s, lexer, qi, valid_symbols)) return true;
       }
       pop(s);
@@ -542,6 +544,9 @@ bool tree_sitter_lean_external_scanner_scan(
 
   /* 4. Newline — measure indent of next line and start processing. */
   if (is_nl(lexer->lookahead) && s->depth > 0) {
+    // Early mark_end covers the true-EOF case below, whose token must stay
+    // at content-end — see #59 (extending it flips $.return/$.do_return-style
+    // declared GLR conflicts that key off trailing-newline consumption).
     lexer->mark_end(lexer);
     uint32_t next = measure_indent(lexer);
     uint32_t ci   = top_indent(s);
@@ -552,6 +557,11 @@ bool tree_sitter_lean_external_scanner_scan(
       lexer->result_symbol = LAYOUT_END;
       return true;
     }
+
+    // Not EOF: re-mark at the post-walk position, before any further
+    // peeking (peek_command_keyword() etc. below advance the lexer too,
+    // and must not push the boundary past the dedent point) — see #59.
+    lexer->mark_end(lexer);
 
     if (next < ci && valid_symbols[LAYOUT_END]) {
       if (try_finalize_calc_anchor(s, lexer, next, valid_symbols)) return true;

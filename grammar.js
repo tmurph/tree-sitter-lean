@@ -1217,7 +1217,7 @@ module.exports = grammar({
       'calc',
       $._calc_layout_start,
       $.calc_first_step,
-      repeat(seq($._layout_semicolon, $.calc_step)),
+      repeat($.calc_step),
       $._layout_end,
     ),
 
@@ -1229,12 +1229,14 @@ module.exports = grammar({
     calc_first_step: $ => prec.right(seq(
       $._expression,
       optional(seq(':=', $._expression)),
+      optional($._layout_semicolon),
     )),
 
     calc_step: $ => prec.right(seq(
       $._expression,
       ':=',
       $._expression,
+      optional($._layout_semicolon),
     )),
 
     // Goal-closing tactics get their own nodes — see #3.
