@@ -18,13 +18,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `_do_if`, `_bracketed` (#58). Downstream consumers can name a category in a
   query instead of maintaining their own list of member node types.
 - Trevor Murphy to the author lists.
-- `LICENSE` file (MIT). The project has declared MIT in its metadata since
-  `9dbb7c3` but shipped no license text — that commit removed the `COPYING`
-  file inherited from the original while adding a `license` field to the
-  package metadata. This is not a license change; it is the missing text.
+- `LICENSE` and `NOTICE` files. The project had declared a license in its
+  metadata since `9dbb7c3` while shipping no license text at all — that commit
+  removed the `COPYING` file inherited from the original at the same time it
+  added the metadata field.
+- `test/golden/`, real-world Lean files kept for manual smoke testing, with a
+  recorded baseline of parse-error counts. Not wired into `tree-sitter test`.
 
 ### Changed
 
+- **Breaking:** the combined work is now licensed **GPL-3.0-or-later**,
+  where the metadata previously declared MIT. Portions derive from
+  MIT-licensed work by Julian Berman and Willem Vanhulle; that notice is
+  retained in `NOTICE` as the MIT license requires, and those portions remain
+  available under MIT from their original sources. This does not relicense
+  their contributions.
 - **Breaking:** `tactic_apply`'s fields renamed from `tactic`/`arg` to
   `name`/`arguments`, matching `application` (#57). Consumers reading the old
   names will silently match nothing rather than erroring.
@@ -43,6 +51,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   with no ERROR node.
 - A blank line between two `calc` steps now belongs to the preceding step
   rather than to neither (#62).
+
+### Removed
+
+- The Rust crate and crates.io packaging (`Cargo.toml`, `Cargo.lock`,
+  `build.rs`, `src/lib.rs`). The published `tree-sitter-lean4` crate belongs
+  to the upstream author; this fork does not ship one. Consume the grammar via
+  the shared library or the tree-sitter CLI.
 
 ### Notes
 
