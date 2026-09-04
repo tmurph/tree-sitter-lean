@@ -44,7 +44,7 @@ This is the recommended approach for reproducible builds.
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    tree-sitter-lean.url = "github:wvhulle/tree-sitter-lean";
+    tree-sitter-lean.url = "github:tmurph/tree-sitter-lean";
   };
 
   outputs = { nixpkgs, tree-sitter-lean, ... }:
@@ -70,7 +70,7 @@ See [`nixpkgs` tree-sitter documentation](https://nixos.org/manual/nixpkgs/stabl
 Push build cache to public cache server:
 
 ```bash
-nix build . --print-out-paths | cachix push wvhulle
+nix build . --print-out-paths | cachix push <your-cache-name>
 ```
 
 ## Development
@@ -118,14 +118,47 @@ This will report any errors such as incorrect node names in the query file.
 
 ## License
 
-Based on <https://github.com/Julian/lean.nvim>. Grammar was completely rewritten to be simpler.
+See [LICENSE](LICENSE).
 
-MIT
+## History
+
+Forked from [wvhulle/tree-sitter-lean](https://github.com/wvhulle/tree-sitter-lean),
+which derives from [Julian/tree-sitter-lean](https://github.com/Julian/tree-sitter-lean)
+(Julian Berman, 2021). The grammar and external scanner have since been
+substantially rewritten — the scanner is a full layout/indentation
+implementation with no code remaining from the original, and the grammar has
+been reorganised around parser-generation cost.
+
+Earlier revisions of this README credited `Julian/lean.nvim` as the origin.
+That is incorrect: `lean.nvim` is a Neovim plugin by the same author that
+*consumes* a tree-sitter grammar and has never contained one. The actual
+lineage is `Julian/tree-sitter-lean`.
+
+## Known limitations
+
+These are real, reproducible parse bugs with open issues. They are documented
+here rather than only in the tracker because several produce a **wrong tree
+with no ERROR node**, so nothing signals to a consumer that anything is amiss.
+
+- A comment between an `if` body and its `else` silently breaks `else`
+  parsing — `else` is lexed as an identifier applied to the else-body
+  ([#65](https://github.com/tmurph/tree-sitter-lean/issues/65)).
+- A dedented fragment mid-edit can escape into the module-level fallback and
+  absorb arbitrary following text
+  ([#48](https://github.com/tmurph/tree-sitter-lean/issues/48),
+  fix tracked in [#60](https://github.com/tmurph/tree-sitter-lean/issues/60)).
+- A layout block closed by end-of-file does not extend through trailing blank
+  lines, unlike one closed by a dedent
+  ([#63](https://github.com/tmurph/tree-sitter-lean/issues/63)).
+- A blank line *between* two tactics or two do-statements belongs to neither
+  ([#64](https://github.com/tmurph/tree-sitter-lean/issues/64)).
+- Some Mathlib notation is unsupported and parses as an error: `√`, `∫`/`∂`,
+  `∀ᶠ`/`∃ᶠ ... in ...`, `𝟙`
+  ([#49](https://github.com/tmurph/tree-sitter-lean/issues/49)).
+- `macro`, `macro_rules`, `elab` and mixfix declarations fall through a
+  generic `notation` rule rather than having dedicated ones
+  ([#50](https://github.com/tmurph/tree-sitter-lean/issues/50)).
 
 ## TODO
 
-- [ ] No CHANGELOG.md exists yet.
-- [ ] No git tags.
 - [ ] No CI (GitHub Actions).
-- [ ] README.md still has two `wvhulle` references.
-- [ ] Authors list still lists Julian Berman/Willem Vanhulle, not Trevor.

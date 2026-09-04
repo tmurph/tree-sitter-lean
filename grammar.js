@@ -1,6 +1,6 @@
 /**
  * @file Lean 4 grammar for tree-sitter
- * @license MIT
+ * @license See the LICENSE file at the repository root.
  *
  * Based on best practices from tree-sitter-javascript and tree-sitter-rust
  */
