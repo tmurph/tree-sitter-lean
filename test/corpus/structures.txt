@@ -134,52 +134,52 @@ def foo | 0, => 2 | _, => 3
 
 (module
   (hash_command
-    (parenthesized
+    (tuple
       (number)
-      (tuple_tail
-        (number)
-        (number))
+      (number)
+      (number)
       (ERROR)))
   (hash_command
     (list
       (number)
       (number)
       (number)
-      (identifier
-        (MISSING _identifier))))
+      (ERROR)))
   (hash_command
     (array
       (number)
       (number)
       (number)
-      (identifier
-        (MISSING _identifier))))
-  (example
-    (identifier)
-    (anonymous_constructor
-      (number)
-      (number)
-      (identifier
-        (MISSING _identifier))))
-  (declaration
-    (attributes
-      (identifier)
-      (identifier)
-      (identifier
-        (MISSING _identifier)))
-    (definition
-      (identifier)
-      (number)))
-  (definition
-    (identifier)
-    (match_arm
-      (number)
-      (ERROR)
-      (number))
-    (match_arm
-      (hole)
-      (ERROR)
-      (number))))
+      (ERROR)))
+  (decorated_declaration
+    declaration: (example
+      type: (identifier)
+      body: (anonymous_constructor
+        (number)
+        (number)
+        (ERROR))))
+  (decorated_declaration
+    attributes: (attributes
+      (attribute_entry
+        name: (identifier))
+      (attribute_entry
+        name: (identifier))
+      (attribute_entry
+        name: (MISSING identifier)))
+    declaration: (definition
+      name: (identifier)
+      body: (number)))
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      (match_arm
+        patterns: (number)
+        (ERROR)
+        body: (number))
+      (match_arm
+        patterns: (hole)
+        (ERROR)
+        body: (number)))))
 
 ==============================
 Structure Instance With Extends

@@ -319,6 +319,7 @@ variable y
 ---
 
 (module
-  (ERROR)
+  (ERROR
+    (identifier))
   (hash_command
     (number)))

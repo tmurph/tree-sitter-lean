@@ -225,14 +225,15 @@ def foo :=
 ---
 
 (module
-  (definition
-    name: (identifier)
-    (ERROR
-      (identifier))
-    body: (unary_expression
-      operand: (application
-        name: (number)
-        arguments: (identifier)))))
+  (decorated_declaration
+    declaration: (definition
+      name: (identifier)
+      (ERROR
+        (identifier))
+      body: (unary_expression
+        operand: (application
+          name: (number)
+          arguments: (identifier))))))
 
 ====
 Have
@@ -415,12 +416,12 @@ axiom : 1 = 2
 ---
 
 (module
-  (axiom
-    name: (identifier
-      (MISSING _identifier))
-    type: (binary_expression
-      (number)
-      (number))))
+  (decorated_declaration
+    declaration: (axiom
+      name: (MISSING identifier)
+      type: (binary_expression
+        left: (number)
+        right: (number)))))
 
 ========
 Deriving
@@ -490,8 +491,9 @@ deriving
 ---
 
 (module
-  (inductive
-    name: (identifier)
-    constructors: (constructor
-      name: (identifier)))
+  (decorated_declaration
+    declaration: (inductive
+      name: (identifier)
+      constructors: (constructor
+        name: (identifier))))
   (ERROR))
