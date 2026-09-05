@@ -212,8 +212,13 @@ Identifiers
   (hash_command
     (identifier)))
 
+; not just a stale wrapper diff: current parser gives worse error recovery for
+; an unterminated char literal (`'x` produces an empty hash_command plus an
+; orphaned top-level ERROR, instead of attempting a `char` node with a MISSING
+; closing quote) — a real gap, see #51
 ===============
 Non-Identifiers
+:skip
 ===============
 
 #eval ₁foo

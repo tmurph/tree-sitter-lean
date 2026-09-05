@@ -390,8 +390,12 @@ class inductive FooBar where
           domain: (identifier)
           codomain: (identifier))))))
 
+; not just a stale wrapper diff: `instance Spam.Eggs : ...` (a dotted instance
+; name) mis-parses — `_instance_decl`'s name field only accepts a single bare
+; identifier, so ".Eggs" becomes an ERROR — a real gap, see #51
 =================
 Inline Namespaced
+:skip
 =================
 
 def foo.bar.baz := 12

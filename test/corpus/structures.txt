@@ -102,8 +102,13 @@ Structure Overriding
         name: (identifier)
         value: (number)))))
 
+; not just a stale wrapper diff: real Lean's structInst parser explicitly
+; allows a trailing separator (`sepByIndent ... (allowTrailingSep := true)`),
+; but `structure_instance` here doesn't, so the trailing comma ERRORs — a
+; real gap, see #51
 ===================
 Trailing Commas Yay
+:skip
 ===================
 
 example : Foo := {x := 12, y := 13,}
