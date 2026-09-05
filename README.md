@@ -122,5 +122,13 @@ with no ERROR node**, so nothing signals to a consumer that anything is amiss.
 
 ## TODO
 
-Nothing outstanding for the 1.0 release beyond the open issues listed under
-Known limitations.
+- [ ] **Ten corpus tests are marked `:skip`.** Four are aspirational, awaiting
+  dedicated `macro`/`macro_rules`/`elab`/mixfix rules
+  ([#50](https://github.com/tmurph/tree-sitter-lean/issues/50)). The other six
+  each mask a distinct real parse gap, enumerated in
+  [#51](https://github.com/tmurph/tree-sitter-lean/issues/51): dotted instance
+  names, `constant`'s type spec spanning lines, an empty `where` block before
+  `deriving`, `do_let`'s `|` fallback, trailing commas in
+  `structure_instance`, and recovery for an unterminated character literal.
+  They were skipped rather than deleted so the intended behaviour stays on
+  record.

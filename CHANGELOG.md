@@ -52,6 +52,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - A blank line between two `calc` steps now belongs to the preceding step
   rather than to neither (#62).
 
+### Known issues
+
+- Ten corpus tests are marked `:skip`. Four await unimplemented
+  `macro`/`macro_rules`/`elab`/mixfix support (#50); six mask distinct real
+  parse gaps enumerated in #51. They are skipped rather than deleted so the
+  intended behaviour remains recorded.
+
 ### Removed
 
 - The Rust crate and crates.io packaging (`Cargo.toml`, `Cargo.lock`,
