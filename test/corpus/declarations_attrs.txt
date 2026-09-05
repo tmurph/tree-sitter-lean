@@ -94,11 +94,11 @@ Missing Attribute
 ---
 
 (module
-  (declaration
-    (attributes
-      name: (identifier
-        (MISSING _identifier)))
-    (definition
+  (decorated_declaration
+    attributes: (attributes
+      (attribute_entry
+        name: (MISSING identifier)))
+    declaration: (definition
       name: (identifier)
       body: (number))))
 

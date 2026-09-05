@@ -160,21 +160,24 @@ example : Foo := ⟨, 2,⟩
 ---
 
 (module
-  (example
-    (identifier)
-    (anonymous_constructor
-      (ERROR)))
-  (example
-    (identifier)
-    (anonymous_constructor
-      (ERROR)
-      (number)))
-  (example
-    (identifier)
-    (anonymous_constructor
-      (ERROR)
-      (number)
-      (ERROR))))
+  (decorated_declaration
+    (example
+      (identifier)
+      (anonymous_constructor
+        (ERROR))))
+  (decorated_declaration
+    (example
+      (identifier)
+      (anonymous_constructor
+        (ERROR)
+        (number))))
+  (decorated_declaration
+    (example
+      (identifier)
+      (anonymous_constructor
+        (ERROR)
+        (number)
+        (ERROR)))))
 
 ===========
 Identifiers
