@@ -78,7 +78,7 @@
 
 ; Tactic let / have
 (tactic_let
-  pattern: (identifier) @local.definition)
+  name: (identifier) @local.definition)
 
 (tactic_have
   name: (identifier) @local.definition)

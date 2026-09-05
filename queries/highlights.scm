@@ -151,7 +151,7 @@
   name: (identifier) @variable)
 
 (tactic_let
-  pattern: (identifier) @variable)
+  name: (identifier) @variable)
 
 (tactic_case
   "case" @keyword)
