@@ -31,13 +31,14 @@ jobs:
         env:
           TS_VERSION: 0.26.9
         run: |
+          npm install -g --allow-scripts tree-sitter-cli "tree-sitter-cli@${TS_VERSION}"
           # --allow-scripts is required: npm 12 blocks install-time lifecycle
           # scripts by default, and this package's binary IS its install
           # script. Without it npm cheerfully installs a shim with nothing
           # behind it and the first `tree-sitter` call dies with ENOENT.
           # Scoped to the one package rather than
           # --dangerously-allow-all-scripts.
-          npm install -g --allow-scripts tree-sitter-cli "tree-sitter-cli@${TS_VERSION}"
+          #
           # Assert the version explicitly. Without this, a mismatch — or a
           # silently script-blocked install — would first surface as the
           # staleness check below failing with "src/parser.c is stale", which
