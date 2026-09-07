@@ -13,22 +13,38 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      # Prebuilt binary, not `cargo install` — that compiled the CLI and its
-      # dependencies from source and dominated the job's runtime. The distro
-      # package is not an option: ubuntu-latest ships tree-sitter-cli 0.20.8,
-      # which predates the --lib-path/--lang-name flags and the :skip test
-      # attribute this workflow and corpus rely on.
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+
+      # The npm package is a thin downloader: its install script fetches the
+      # prebuilt binary from tree-sitter's GitHub releases. Using it rather
+      # than curling that asset directly, because it is how the CLI is
+      # normally installed and so reads as familiar; it also tracks upstream
+      # if the release asset is ever renamed.
+      #
+      # Not `cargo install` — that compiled the CLI and its dependency tree
+      # from source and dominated this job's runtime. Not the distro package
+      # either: ubuntu-latest ships tree-sitter-cli 0.20.8, which predates the
+      # --lib-path/--lang-name flags and the :skip corpus attribute used here.
       - name: Install tree-sitter CLI
         env:
           TS_VERSION: 0.26.9
         run: |
-          curl -fsSL -o /tmp/ts.gz \
-            "https://github.com/tree-sitter/tree-sitter/releases/download/v${TS_VERSION}/tree-sitter-linux-x64.gz"
-          gunzip -c /tmp/ts.gz > /usr/local/bin/tree-sitter
-          chmod +x /usr/local/bin/tree-sitter
+          # --allow-scripts is required: npm 12 blocks install-time lifecycle
+          # scripts by default, and this package's binary IS its install
+          # script. Without it npm cheerfully installs a shim with nothing
+          # behind it and the first `tree-sitter` call dies with ENOENT.
+          # Scoped to the one package rather than
+          # --dangerously-allow-all-scripts.
+          npm install -g --allow-scripts tree-sitter-cli "tree-sitter-cli@${TS_VERSION}"
+          # Assert the version explicitly. Without this, a mismatch — or a
+          # silently script-blocked install — would first surface as the
+          # staleness check below failing with "src/parser.c is stale", which
+          # is true but misleading about the cause.
           installed="$(tree-sitter --version | awk '{print $2}')"
           echo "installed: $installed (pinned: $TS_VERSION)"
-          [ "$installed" = "$TS_VERSION" ] || { echo "::error::version mismatch"; exit 1; }
+          [ "$installed" = "$TS_VERSION" ] || { echo "::error::tree-sitter CLI is $installed, expected $TS_VERSION"; exit 1; }
 
       # Generation is memory-hungry on this grammar (~3.7 GiB peak locally).
       # Cap it so a runaway allocation fails the job instead of the runner —
